@@ -617,44 +617,6 @@
   "@dbUnreadable": {
     "description": "Shown once when the local database could not be opened with this phone's key."
   },
-  "settingsPrivacy": "Privacy on this phone",
-  "appLockTitle": "App lock",
-  "appLockBody": "Ask for your fingerprint, face or phone PIN when the app opens, or when you come back after a minute away. Get help now still works while it's locked. While this is on, screenshots are blocked and the app is hidden in recent apps.",
-  "@appLockBody": {
-    "description": "PENDING CLINICIAN REVIEW: explains the opt-in app lock in Settings, including that crisis help stays reachable while locked. Wording drafted by engineering, not yet approved."
-  },
-  "appLockUnavailable": "Set a screen lock on your phone first, then turn this on.",
-  "lockTitle": "Locked",
-  "@lockTitle": {
-    "description": "Neutral title of the lock screen. Deliberately does not name the app or what it is for."
-  },
-  "lockBody": "Unlock with your fingerprint, face or phone PIN.",
-  "lockUnlock": "Unlock",
-  "lockFailed": "That didn't unlock. Try again.",
-  "lockReason": "Unlock to continue",
-  "@lockReason": {
-    "description": "Shown by the phone's own fingerprint/PIN prompt. Neutral on purpose."
-  },
-  "quickExitTitle": "Quick exit",
-  "@quickExitTitle": {
-    "description": "PENDING CLINICIAN REVIEW: name of the quick-exit button and setting, a safety feature for people whose screen may be watched. Wording drafted by engineering, not yet approved."
-  },
-  "quickExitBody": "Shows a button at the top of each page that hides this app straight away, for when someone might be looking at your screen.",
-  "@quickExitBody": {
-    "description": "PENDING CLINICIAN REVIEW: explains the quick-exit setting. Wording drafted by engineering, not yet approved."
-  },
-  "quickExitNeutral": "Nothing open right now.",
-  "@quickExitNeutral": {
-    "description": "PENDING CLINICIAN REVIEW: the only text on the neutral screen shown after a quick exit. Must not hint at what the app is. Wording drafted by engineering, not yet approved."
-  },
-  "dbMigrationFailed": "Your chats on this phone couldn't be encrypted this time. They're still here, and the app will try again next time it opens.",
-  "@dbMigrationFailed": {
-    "description": "Shown once when a database from an earlier version could not be encrypted. Nothing was lost."
-  },
-  "dbUnreadable": "Your earlier chats on this phone couldn't be opened, so a new, empty space was started. The old file has been kept.",
-  "@dbUnreadable": {
-    "description": "Shown once when the local database could not be opened with this phone's key."
-  },
   "dbOpenFailed": "Your chats on this phone can't be opened right now, so nothing new is being saved. Try closing and reopening the app. If you need to talk to someone now, Get help now still works.",
   "@dbOpenFailed": {
     "description": "PENDING CLINICIAN REVIEW: shown when the local database could not be opened (key store or encryption failure). The app retries on next use. Wording drafted by engineering, not yet approved."
