@@ -1251,5 +1251,5 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get dbOpenFailed =>
-      'Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to Abhi madad lein ab bhi kaam karta hai.';
+      'Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to \'Abhi madad lein\' ab bhi kaam karta hai.';
 }
