@@ -10,6 +10,7 @@ tl-data = "therapylink_ml.data.build:app"
 tl-eval = "therapylink_ml.eval.run:app"
 tl-guardian = "therapylink_ml.train.guardian:app"
 tl-kaggle = "therapylink_ml.kaggle_push:app"
+tl-registry = "therapylink_ml.registry:app"
 
 [build-system]
 requires = ["setuptools>=68"]
