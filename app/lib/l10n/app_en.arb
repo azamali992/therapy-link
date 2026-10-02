@@ -1,0 +1,662 @@
+{
+  "@@locale": "en",
+  "appName": "TherapyLink",
+  "continueLabel": "Continue",
+  "retry": "Try again",
+  "errorGeneric": "Something went wrong. Check your connection and try again.",
+  "notShared": "Not shared",
+  "tabEve": "Eve",
+  "tabToday": "Today",
+  "tabJournal": "Journal",
+  "tabYou": "You",
+  "welcomeTitle": "Someone to talk to, any hour",
+  "welcomeBody": "Eve listens in English or Roman Urdu. By default she runs on this phone, so your conversations with her are kept here.",
+  "welcomeLanguage": "Which do you type in most?",
+  "welcomeEnglish": "English",
+  "welcomeRomanUrdu": "Roman Urdu",
+  "signInTitle": "Welcome back",
+  "signInSubtitle": "Sign in to keep your check-ins and journal with you.",
+  "continueWithGoogle": "Continue with Google",
+  "email": "Email",
+  "password": "Password",
+  "signIn": "Sign in",
+  "createAccount": "Create account",
+  "haveAccount": "Already have an account? Sign in",
+  "noAccount": "New here? Create an account",
+  "forgotPassword": "Forgot password?",
+  "resetSent": "Reset email sent.",
+  "signOut": "Sign out",
+  "eveGreeting": "I'm Eve. What's going on?",
+  "eveComposerHint": "Say anything…",
+  "eveListening": "Eve is listening",
+  "evePrivacy": "Runs on this device. Your words stay here.",
+  "evePrivacyCloud": "Cloud mode: messages are sent to your TherapyLink server.",
+  "modelMissingTitle": "Eve isn't on this device yet",
+  "modelMissingBody": "One-time download of about {gb} GB. Wi-Fi recommended. After that, Eve works fully offline.",
+  "@modelMissingBody": {
+    "placeholders": {
+      "gb": {
+        "type": "String"
+      }
+    }
+  },
+  "modelDownload": "Download Eve",
+  "modelDownloading": "Downloading Eve · {percent}%",
+  "@modelDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "modelFailed": "The download didn't finish. Check your connection and try again.",
+  "guardianTitle": "Safety check",
+  "guardianHeuristic": "Using the built-in keyword check. Download the trained model for better detection in English and Roman Urdu.",
+  "guardianReady": "Trained model installed. Runs on this device before every message.",
+  "guardianDownload": "Download safety model",
+  "guardianDownloading": "Downloading safety model · {percent}%",
+  "@guardianDownloading": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "guardianUnavailable": "Not published yet.",
+  "crisisCallUmang": "Call Umang · 0311 7786264",
+  "crisisCallEmergency": "Emergency · 1122",
+  "crisisKeepTalking": "Keep talking to Eve",
+  "todayMorning": "Good morning",
+  "todayAfternoon": "Good afternoon",
+  "todayEvening": "Good evening",
+  "moodPrompt": "How are you right now?",
+  "moodSaved": "Noted.",
+  "moodVeryLow": "Very low",
+  "moodLow": "Low",
+  "moodOkay": "Okay",
+  "moodGood": "Good",
+  "moodGreat": "Great",
+  "moodTrend": "Last 30 days",
+  "moodTrendEmpty": "Check in a few times and a trend will appear here.",
+  "groundingOffer": "That sounds like a lot to sit with. Would a minute of paced breathing help?",
+  "groundingAccept": "Try it",
+  "groundingDecline": "Not now",
+  "insightMorning": "mornings",
+  "insightAfternoon": "afternoons",
+  "insightEvening": "evenings",
+  "insightTimeOfDay": "Your {worse} have tended to be harder than your {better}.",
+  "@insightTimeOfDay": {
+    "placeholders": {
+      "worse": {
+        "type": "String"
+      },
+      "better": {
+        "type": "String"
+      }
+    }
+  },
+  "insightWeekUp": "This week has been a little lighter than last week.",
+  "insightWeekDown": "This week has been heavier than last week.",
+  "insightBasis": "Based on {n} check-ins. A pattern, not a diagnosis.",
+  "@insightBasis": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "exercisesTitle": "Grounding",
+  "exercisesSub": "A few minutes of paced breathing",
+  "exerciseSigh": "Reset breath",
+  "exerciseSighSub": "Two inhales, one long exhale · about 1 minute",
+  "exerciseBox": "Box breathing",
+  "exerciseBoxSub": "Even four counts · about 2 minutes",
+  "exerciseCalming": "4-7-8",
+  "exerciseCalmingSub": "Long exhale · about 1 minute",
+  "breathIn": "Breathe in",
+  "breathHold": "Hold",
+  "breathOut": "Breathe out",
+  "breathRest": "Rest",
+  "breathStart": "Start",
+  "breathPause": "Pause",
+  "breathAgain": "Go again",
+  "breathRestart": "Start over",
+  "breathDone": "Done",
+  "breathCycleOf": "Round {n} of {total}",
+  "@breathCycleOf": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "breathNote": "Stop any time. If you feel light-headed, breathe normally.",
+  "assessmentsTitle": "Check-ins",
+  "assessmentPhq9": "Mood check-in",
+  "assessmentPhq9Sub": "PHQ-9 · 9 questions · 2 minutes",
+  "assessmentGad7": "Anxiety check-in",
+  "assessmentGad7Sub": "GAD-7 · 7 questions · 2 minutes",
+  "assessmentLast": "Last: {score} · {band}",
+  "@assessmentLast": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "band": {
+        "type": "String"
+      }
+    }
+  },
+  "assessmentNever": "Not taken yet",
+  "assessmentIntro": "Over the last two weeks, how often have you been bothered by the following?",
+  "assessmentNext": "Next",
+  "assessmentBack": "Back",
+  "assessmentFinish": "See result",
+  "assessmentQuestionOf": "{n} of {total}",
+  "@assessmentQuestionOf": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "optNotAtAll": "Not at all",
+  "optSeveralDays": "Several days",
+  "optMoreThanHalf": "More than half the days",
+  "optNearlyEveryDay": "Nearly every day",
+  "resultTitle": "Your result",
+  "resultScore": "{score} out of {max}",
+  "@resultScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "resultDelta": "{delta} since last time",
+  "@resultDelta": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "bandMinimal": "Minimal",
+  "bandMild": "Mild",
+  "bandModerate": "Moderate",
+  "bandModeratelySevere": "Moderately severe",
+  "bandSevere": "Severe",
+  "resultNote": "This is a screening score, not a diagnosis. It's most useful as a trend over time.",
+  "resultFlagged": "You answered that you've had thoughts of being better off dead or of hurting yourself. That matters, and there are people who want to help right now.",
+  "resultDone": "Done",
+  "journalTitle": "Journal",
+  "journalNew": "New entry",
+  "journalEmptyTitle": "Nothing here yet",
+  "journalEmptyBody": "A few honest lines are enough. Entries stay private unless you choose to share them with a clinician.",
+  "journalTitleHint": "Title (optional)",
+  "journalBodyHint": "What's going on?",
+  "journalSave": "Save",
+  "journalDelete": "Delete entry",
+  "journalMood": "Mood while writing",
+  "youTitle": "You",
+  "youCare": "Your care team",
+  "youCareSub": "Who can see what",
+  "youSettings": "Settings",
+  "youDataTitle": "Where your data lives",
+  "youDataBody": "Conversations with Eve and her memory notes are kept on this phone; in cloud mode, messages are sent to the TherapyLink server to be answered. Check-in scores, your mood trend and journal entries are stored on your account so they follow you, and a clinician sees them only if you link one and switch that on.",
+  "settingsLanguage": "Language",
+  "settingsLanguageSystem": "System",
+  "settingsTextSize": "Text size",
+  "settingsReduceMotion": "Reduce motion",
+  "settingsTheme": "Appearance",
+  "settingsThemeSystem": "System",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsModel": "Eve runs",
+  "settingsModelOnDevice": "On this device",
+  "settingsModelCloud": "In the cloud",
+  "careTitle": "Your care team",
+  "careEmptyTitle": "No clinician linked",
+  "careEmptyBody": "If you're working with a clinician, ask them for their invite code and add it here. Nothing is shared until you switch it on.",
+  "careInvite": "Add a clinician",
+  "careInviteHint": "Invite code",
+  "careConsentTitle": "What they can see",
+  "careShareAssessments": "Check-in scores",
+  "careShareMood": "Mood trend",
+  "careShareSummaries": "Weekly summaries",
+  "careShareJournal": "Journal entries",
+  "careRevoke": "Remove clinician",
+  "careRevoked": "Removed",
+  "clinicianCaseload": "Patients",
+  "clinicianPending": "Your clinician account is awaiting verification. You'll be able to see patients once it's approved.",
+  "clinicianEmpty": "No patients yet. Give a patient your invite code and they can add you from their app.",
+  "clinicianYourId": "Your invite code",
+  "clinicianCopyId": "Copy",
+  "clinicianCopied": "Copied",
+  "clinicianSharing": "Sharing",
+  "clinicianAssessments": "Check-ins",
+  "clinicianMood": "Mood trend",
+  "clinicianSummaries": "Summaries",
+  "clinicianJournal": "Journal",
+  "clinicianNoConsent": "This patient hasn't shared anything yet.",
+  "youClinician": "I'm a clinician",
+  "youClinicianSub": "Open the clinician workspace",
+  "clinicianJoinTitle": "Clinician workspace",
+  "clinicianJoinBody": "Clinicians only see what a patient has linked them to and switched on. Accounts are checked against the licence number before any patient data opens.",
+  "clinicianLicense": "Licence number (e.g. PMDC)",
+  "clinicianSpecialty": "Specialty (optional)",
+  "clinicianLicenseRequired": "Enter your licence number",
+  "clinicianJoinAction": "Continue as clinician",
+  "clinicianUsePatient": "Switch to patient view",
+  "clinicianCodeHelp": "Patients enter this under You → Your care team.",
+  "clinicianNewCode": "New invite code",
+  "clinicianNewCodeBody": "Your current code will stop working. Patients already linked stay linked.",
+  "clinicianNewCodeDone": "New code ready",
+  "clinicianNotSharing": "Check-ins not shared",
+  "clinicianNoCheckins": "No check-ins yet",
+  "clinicianAttentionRisk": "Item 9 endorsed (self-harm thoughts)",
+  "clinicianAttentionWorsened": "Worsening",
+  "clinicianAttentionSevere": "Severe range",
+  "careInviteNotFound": "No approved clinician has that code. Check it with them.",
+  "eveGreetingSub": "I'll listen first. Everything here stays private, and you can start with something small.",
+  "eveSubtitleDevice": "On this device · private",
+  "eveSubtitleCloud": "Cloud mode · via your TherapyLink server",
+  "eveNewConversation": "New conversation",
+  "eveExercises": "Exercises",
+  "eveSend": "Send",
+  "eveTryHere": "Try it here",
+  "eveStarterAnxious": "I've been feeling anxious",
+  "eveStarterSleep": "I can't sleep",
+  "eveStarterVent": "I just need to vent",
+  "eveStarterRelationship": "Something happened with someone close",
+  "eveStarterCalm": "Help me calm down",
+  "eveDateToday": "Today",
+  "eveDateYesterday": "Yesterday",
+  "exerciseSheetTitle": "Take a minute",
+  "exerciseSheetBody": "These run right here in the chat. Stop any time.",
+  "groundingTitle": "5-4-3-2-1 grounding",
+  "groundingSub": "Notice what's around you · about 2 minutes",
+  "groundStep5": "Name 5 things you can see",
+  "groundStep4": "4 things you can feel or touch",
+  "groundStep3": "3 things you can hear",
+  "groundStep2": "2 things you can smell",
+  "groundStep1": "1 slow breath, in and out",
+  "groundHint": "Type them if it helps, or just notice them.",
+  "groundAnswerHint": "For example: the window, my cup…",
+  "groundNext": "Next",
+  "groundFinish": "Done",
+  "groundDone": "You're back in the room. How does it feel now?",
+  "muscleTitle": "Tense and release",
+  "muscleSub": "Seven muscle groups · about 2 minutes",
+  "muscleIntro": "Squeeze each muscle group for five seconds, then let it go completely. Notice the difference.",
+  "muscleTense": "Squeeze",
+  "muscleRelease": "Let go",
+  "muscleHands": "Your hands",
+  "muscleArms": "Your arms",
+  "muscleShoulders": "Your shoulders",
+  "muscleFace": "Your face",
+  "muscleStomach": "Your stomach",
+  "muscleLegs": "Your legs",
+  "muscleFeet": "Your feet",
+  "muscleDone": "Notice how loose feels different from tight.",
+  "todayTakeAMinute": "Take a minute",
+  "moodLogged": "Logged {mood} at {time}",
+  "@moodLogged": {
+    "placeholders": {
+      "mood": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "moodChange": "Change",
+  "assessmentAgo": "{days} days ago",
+  "@assessmentAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "resultOutOf": "out of {max}",
+  "@resultOutOf": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "resultExplainMinimal": "Your answers point to few or no symptoms over the last two weeks. That's a good place to be; checking in again in a fortnight keeps the picture honest.",
+  "resultExplainMild": "Some symptoms showed up, but at a level many people manage on their own. Sleep, movement and someone to talk to tend to matter most here.",
+  "resultExplainModerate": "Symptoms are affecting you often enough to be worth taking seriously. This is the range where talking to a psychologist or doctor usually helps, even if it feels manageable.",
+  "resultExplainModeratelySevere": "Symptoms are frequent and are likely getting in the way of daily life. Please consider seeing a psychologist or doctor soon; this responds well to treatment.",
+  "resultExplainSevere": "Your answers describe a heavy load, most days. You deserve proper support for this, and it helps: please book time with a psychologist or doctor this week.",
+  "resultTalk": "Talk it through with Eve",
+  "journalPromptsTitle": "Need a start?",
+  "journalPrompt1": "What drained me today",
+  "journalPrompt2": "One thing that went okay",
+  "journalPrompt3": "What I'd tell a friend in my place",
+  "welcomePointPrivate": "Your conversations with Eve are kept on this phone. Journal entries and check-ins are saved to your account.",
+  "welcomePointLanguage": "English, Roman Urdu, or both, the way you actually type.",
+  "welcomePointHelp": "When something is serious, real help is one tap away.",
+  "memoryTitle": "What Eve remembers",
+  "memoryRowSub": "See, delete, or switch off",
+  "memoryIntro": "Eve keeps a few short notes from your conversations, like who matters to you and what you agreed to try, so you don't have to start from zero each time. They're kept on this phone; in cloud mode, the notes that relate to a message are sent along with it.",
+  "memoryToggle": "Remember between conversations",
+  "memoryToggleOn": "Eve uses these notes and adds new ones",
+  "memoryToggleOff": "Nothing is kept or used",
+  "memoryEmptyTitle": "Nothing yet",
+  "memoryEmptyBody": "As you talk with Eve, the things worth remembering will show up here.",
+  "memoryDelete": "Forget this",
+  "memoryForgetAll": "Forget everything",
+  "memoryForgetAllTitle": "Forget everything?",
+  "memoryForgetAllBody": "Eve will lose all notes from earlier conversations. Your chats stay.",
+  "memoryKindPerson": "People",
+  "memoryKindSituation": "What's going on",
+  "memoryKindGoal": "What you want",
+  "memoryKindHelped": "What helped",
+  "memoryKindPlan": "Next steps you agreed",
+  "eveWrapUp": "Wrap up",
+  "eveWrapUpWorking": "Pulling today together…",
+  "eveWrapUpFailed": "Couldn't wrap up just now. Try again in a moment.",
+  "eveNextStep": "Next step: {step}",
+  "@eveNextStep": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "eveFollowUp": "Last time you planned to: {step}",
+  "@eveFollowUp": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "eveFollowUpStart": "How did it go?",
+  "eveFollowUpMessage": "Let's talk about how my last step went: {step}",
+  "@eveFollowUpMessage": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "eveBreakNudge": "We've been talking a while. It can help to take a break, or to share some of this with someone you trust.",
+  "eveBreakDismiss": "Keep talking",
+  "cancel": "Cancel",
+  "signOutConfirmTitle": "Sign out?",
+  "signOutConfirmBody": "Your conversations with Eve and her memory notes will be deleted from this phone. Check-ins, mood trend and journal stay on your account.",
+  "signOutUnsentTitle": "Some check-ins haven't been sent",
+  "signOutUnsentBody": "{count, plural, =1{1 check-in hasn't reached your account yet, probably because you're offline. If you sign out now it will be lost. Connect and try again to keep it.} other{{count} check-ins haven't reached your account yet, probably because you're offline. If you sign out now they will be lost. Connect and try again to keep them.}}",
+  "@signOutUnsentBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "signOutAnyway": "Sign out anyway",
+  "youDeleteChats": "Delete all Eve chats",
+  "youDeleteChatsSub": "Removes every conversation and memory note from this phone",
+  "deleteChatsTitle": "Delete all Eve chats?",
+  "deleteChatsBody": "Every conversation with Eve and everything she remembers will be removed from this phone. This can't be undone.",
+  "deleteChatsAction": "Delete chats",
+  "deleteChatsDone": "Eve chats deleted.",
+  "youDeleteAccount": "Delete account",
+  "youDeleteAccountSub": "Removes your account and everything stored with it",
+  "deleteAccountTitle": "Delete your account?",
+  "deleteAccountBody": "This deletes your account and your check-ins, mood trend, journal and clinician links from the TherapyLink server, and clears Eve's conversations from this phone. This can't be undone.",
+  "deleteAccountAction": "Delete account",
+  "deleteAccountFailed": "Your account couldn't be deleted just now, and nothing was removed. Check your connection and try again.",
+  "getHelpNow": "Get help now",
+  "youHelpSub": "Helplines you can call right away",
+  "consentTitle": "Before you start",
+  "@consentTitle": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentAiTitle": "Eve is an AI, not a therapist",
+  "@consentAiTitle": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentAiBody": "Eve is a computer program. She can listen and suggest simple exercises, but she can't diagnose or treat anything, she doesn't replace a doctor or psychologist, and she can get things wrong.",
+  "@consentAiBody": {
+    "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
+  },
+  "consentEmergencyTitle": "Not for emergencies",
+  "@consentEmergencyTitle": {
+    "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
+  },
+  "consentEmergencyBody": "If you might hurt yourself or someone else, or you're in danger, call 1122 or a helpline now. Eve can't call anyone for you.",
+  "@consentEmergencyBody": {
+    "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
+  },
+  "consentDataTitle": "What is stored where",
+  "@consentDataTitle": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentDataBody": "Your conversations with Eve are kept on this phone. Check-in scores, mood points, journal entries and your account details are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on. In cloud mode, your messages are sent to the TherapyLink server to be answered.",
+  "@consentDataBody": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentAge": "I am 18 or older",
+  "@consentAge": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentUnder18": "I'm under 18",
+  "@consentUnder18": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentAgree": "I've read the terms and privacy policy and agree to them",
+  "@consentAgree": {
+    "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
+  },
+  "consentTerms": "Terms of use",
+  "consentPrivacy": "Privacy policy",
+  "consentAccept": "Agree and continue",
+  "under18Title": "TherapyLink is for adults",
+  "@under18Title": {
+    "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
+  },
+  "under18Body": "This app is made for people 18 and over. If something is hard right now, you deserve real support. Talk to an adult you trust, or call one of these:",
+  "@under18Body": {
+    "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
+  },
+  "under18CallChild": "Madadgaar child helpline · 1098",
+  "@under18CallChild": {
+    "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
+  },
+  "under18Back": "I entered my age wrong",
+  "signInOr": "or",
+  "authErrorMismatch": "That email and password don't match.",
+  "authErrorInUse": "There's already an account with that email. Try signing in.",
+  "authErrorWeakPassword": "Use at least 8 characters.",
+  "authErrorInvalidEmail": "That doesn't look like an email address.",
+  "authErrorTooMany": "Too many attempts. Wait a minute and try again.",
+  "authErrorNetwork": "No connection. Check your network and try again.",
+  "validateEmail": "Enter your email",
+  "validatePassword": "At least 8 characters",
+  "settingsTextSmaller": "Smaller text",
+  "settingsTextLarger": "Larger text",
+  "cloudConfirmTitle": "Use cloud mode?",
+  "cloudConfirmBody": "In cloud mode your messages, and the memory notes that relate to them, leave this phone and are sent to the TherapyLink server to be answered. This is for testing only.",
+  "cloudConfirmAction": "Use cloud mode",
+  "careVerified": "Verified clinician",
+  "clinicianConfirmTitle": "Switch to the clinician workspace?",
+  "clinicianConfirmBody": "This is only for licensed clinicians. Your account becomes a clinician account and the patient tabs close. If you're here for yourself, you don't need this.",
+  "clinicianConfirmAction": "I'm a licensed clinician",
+  "clinicianRequests": "Link requests",
+  "clinicianRequestsWaiting": "{count, plural, =0{No one waiting} =1{1 patient waiting} other{{count} patients waiting}}",
+  "@clinicianRequestsWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "clinicianRequestsEmpty": "No one is waiting. When a patient adds your invite code, they appear here.",
+  "clinicianRequestsHelp": "Accepting lets you see only what the patient chooses to share with you.",
+  "clinicianRequestAccept": "Accept",
+  "clinicianRequestDecline": "Decline",
+  "clinicianRequestedOn": "Asked on {date}",
+  "@clinicianRequestedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "carePendingTitle": "Waiting for approval",
+  "carePendingBody": "Waiting for the clinician to accept. They can't see anything of yours until they do, and after that only what you switch on.",
+  "carePendingCancel": "Cancel request",
+  "careActiveTitle": "Linked clinicians",
+  "youExport": "Download my data",
+  "youExportSub": "A copy of everything your account holds, as a file. It isn't locked, so keep it somewhere safe.",
+  "youExportWorking": "Preparing your data…",
+  "youExportDone": "Saved to {path}",
+  "@youExportDone": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "youExportFailed": "Couldn't download your data. Check your connection and try again.",
+  "clinicianUnvalidatedTranslation": "Unvalidated translation",
+  "@clinicianUnvalidatedTranslation": {
+    "description": "PENDING CLINICIAN REVIEW: shown beside a PHQ-9/GAD-7 score answered in Roman Urdu. Wording drafted by engineering, not yet approved."
+  },
+  "clinicianUnvalidatedTranslationHelp": "Answered in the app's Roman Urdu wording, which has not been validated against the original questionnaire. Read the score and its band with care.",
+  "@clinicianUnvalidatedTranslationHelp": {
+    "description": "PENDING CLINICIAN REVIEW: tooltip for the unvalidated translation notice. Wording drafted by engineering, not yet approved."
+  },
+  "accessLogTitle": "Who viewed my data",
+  "accessLogSub": "Each time a clinician was shown your data",
+  "accessLogIntro": "Each time a clinician you linked opens your page or their patient list, it's recorded here with what they were shown.",
+  "accessLogEmpty": "No clinician has viewed your data.",
+  "accessLogSomeone": "A clinician",
+  "accessLogCaseload": "Saw you in their patient list",
+  "accessLogOverview": "Opened your page",
+  "accessLogNothingShown": "Nothing you share was shown",
+  "eveSaidLabel": "Eve said",
+  "@eveSaidLabel": {
+    "description": "Screen-reader prefix for Eve's chat bubbles."
+  },
+  "youSaidLabel": "You said",
+  "@youSaidLabel": {
+    "description": "Screen-reader prefix for the person's own chat bubbles."
+  },
+  "eveSafetyNotReadyTitle": "Safety check not ready",
+  "@eveSafetyNotReadyTitle": {
+    "description": "PENDING CLINICIAN REVIEW: shown in place of the composer when a release build has no working trained safety check. Wording drafted by engineering, not yet approved."
+  },
+  "eveSafetyNotReadyBody": "Eve checks every message for signs of danger before she replies. That check isn't ready on this phone yet, so chat is paused. You can still do an exercise, or get help now.",
+  "@eveSafetyNotReadyBody": {
+    "description": "PENDING CLINICIAN REVIEW: body of the paused-chat notice. Wording drafted by engineering, not yet approved."
+  },
+  "eveUnavailableTitle": "Eve isn't available in this version",
+  "@eveUnavailableTitle": {
+    "description": "PENDING CLINICIAN REVIEW: shown in place of the composer when a release build has no fine-tuned Eve model. Wording drafted by engineering, not yet approved."
+  },
+  "eveUnavailableBody": "Eve's model for this app hasn't been released yet. Exercises, your journal and help are all still here.",
+  "@eveUnavailableBody": {
+    "description": "PENDING CLINICIAN REVIEW: body of the Eve-unavailable notice. Wording drafted by engineering, not yet approved."
+  },
+  "guardianFailed": "The trained safety model couldn't be downloaded, set up or run on this phone, so the built-in keyword check is running on its own. Try downloading it again.",
+  "@guardianFailed": {
+    "description": "PENDING CLINICIAN REVIEW: safety-status line in Settings when the trained Guardian failed to download, failed its install or hash check, or failed at runtime. Only shown in debug and profile builds, where the keyword check keeps chat open; release builds hide this row and pause Eve instead. Wording drafted by engineering, not yet approved."
+  },
+  "settingsPrivacy": "Privacy on this phone",
+  "appLockTitle": "App lock",
+  "appLockBody": "Ask for your fingerprint, face or phone PIN when the app opens, or when you come back after a minute away. Get help now still works while it's locked. While this is on, screenshots are blocked and the app is hidden in recent apps.",
+  "@appLockBody": {
+    "description": "PENDING CLINICIAN REVIEW: explains the opt-in app lock in Settings, including that crisis help stays reachable while locked. Wording drafted by engineering, not yet approved."
+  },
+  "appLockUnavailable": "Set a screen lock on your phone first, then turn this on.",
+  "lockTitle": "Locked",
+  "@lockTitle": {
+    "description": "Neutral title of the lock screen. Deliberately does not name the app or what it is for."
+  },
+  "lockBody": "Unlock with your fingerprint, face or phone PIN.",
+  "lockUnlock": "Unlock",
+  "lockFailed": "That didn't unlock. Try again.",
+  "lockReason": "Unlock to continue",
+  "@lockReason": {
+    "description": "Shown by the phone's own fingerprint/PIN prompt. Neutral on purpose."
+  },
+  "quickExitTitle": "Quick exit",
+  "@quickExitTitle": {
+    "description": "PENDING CLINICIAN REVIEW: name of the quick-exit button and setting, a safety feature for people whose screen may be watched. Wording drafted by engineering, not yet approved."
+  },
+  "quickExitBody": "Shows a button at the top of each page that hides this app straight away, for when someone might be looking at your screen.",
+  "@quickExitBody": {
+    "description": "PENDING CLINICIAN REVIEW: explains the quick-exit setting. Wording drafted by engineering, not yet approved."
+  },
+  "quickExitNeutral": "Nothing open right now.",
+  "@quickExitNeutral": {
+    "description": "PENDING CLINICIAN REVIEW: the only text on the neutral screen shown after a quick exit. Must not hint at what the app is. Wording drafted by engineering, not yet approved."
+  },
+  "dbMigrationFailed": "Your chats on this phone couldn't be encrypted this time. They're still here, and the app will try again next time it opens.",
+  "@dbMigrationFailed": {
+    "description": "Shown once when a database from an earlier version could not be encrypted. Nothing was lost."
+  },
+  "dbUnreadable": "Your earlier chats on this phone couldn't be opened, so a new, empty space was started. The old file has been kept.",
+  "@dbUnreadable": {
+    "description": "Shown once when the local database could not be opened with this phone's key."
+  },
+  "settingsPrivacy": "Privacy on this phone",
+  "appLockTitle": "App lock",
+  "appLockBody": "Ask for your fingerprint, face or phone PIN when the app opens, or when you come back after a minute away. Get help now still works while it's locked. While this is on, screenshots are blocked and the app is hidden in recent apps.",
+  "@appLockBody": {
+    "description": "PENDING CLINICIAN REVIEW: explains the opt-in app lock in Settings, including that crisis help stays reachable while locked. Wording drafted by engineering, not yet approved."
+  },
+  "appLockUnavailable": "Set a screen lock on your phone first, then turn this on.",
+  "lockTitle": "Locked",
+  "@lockTitle": {
+    "description": "Neutral title of the lock screen. Deliberately does not name the app or what it is for."
+  },
+  "lockBody": "Unlock with your fingerprint, face or phone PIN.",
+  "lockUnlock": "Unlock",
+  "lockFailed": "That didn't unlock. Try again.",
+  "lockReason": "Unlock to continue",
+  "@lockReason": {
+    "description": "Shown by the phone's own fingerprint/PIN prompt. Neutral on purpose."
+  },
+  "quickExitTitle": "Quick exit",
+  "@quickExitTitle": {
+    "description": "PENDING CLINICIAN REVIEW: name of the quick-exit button and setting, a safety feature for people whose screen may be watched. Wording drafted by engineering, not yet approved."
+  },
+  "quickExitBody": "Shows a button at the top of each page that hides this app straight away, for when someone might be looking at your screen.",
+  "@quickExitBody": {
+    "description": "PENDING CLINICIAN REVIEW: explains the quick-exit setting. Wording drafted by engineering, not yet approved."
+  },
+  "quickExitNeutral": "Nothing open right now.",
+  "@quickExitNeutral": {
+    "description": "PENDING CLINICIAN REVIEW: the only text on the neutral screen shown after a quick exit. Must not hint at what the app is. Wording drafted by engineering, not yet approved."
+  },
+  "dbMigrationFailed": "Your chats on this phone couldn't be encrypted this time. They're still here, and the app will try again next time it opens.",
+  "@dbMigrationFailed": {
+    "description": "Shown once when a database from an earlier version could not be encrypted. Nothing was lost."
+  },
+  "dbUnreadable": "Your earlier chats on this phone couldn't be opened, so a new, empty space was started. The old file has been kept.",
+  "@dbUnreadable": {
+    "description": "Shown once when the local database could not be opened with this phone's key."
+  },
+  "dbOpenFailed": "Your chats on this phone can't be opened right now, so nothing new is being saved. Try closing and reopening the app. If you need to talk to someone now, Get help now still works.",
+  "@dbOpenFailed": {
+    "description": "PENDING CLINICIAN REVIEW: shown when the local database could not be opened (key store or encryption failure). The app retries on next use. Wording drafted by engineering, not yet approved."
+  }
+}

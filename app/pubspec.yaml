@@ -1,0 +1,60 @@
+name: therapylink
+description: A mental-health companion for English and Roman Urdu speakers in Pakistan.
+publish_to: 'none'
+version: 3.0.0+1
+
+environment:
+  sdk: ^3.13.3
+
+# Versions match the v16 build that ran on the owner's phone (see the APK recovery report).
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # state & navigation
+  flutter_riverpod: ^3.3.2
+  go_router: ^16.3.0
+
+  # auth
+  firebase_core: ^4.14.0
+  firebase_auth: ^6.6.1
+  google_sign_in: ^7.2.0
+
+  # network
+  dio: ^5.11.1
+  connectivity_plus: ^7.3.1
+
+  # local storage: chats and journal never leave the device; SQLCipher via sqlite3 hooks
+  drift: ^2.34.4
+  sqlite3: ^3.6.0
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  shared_preferences: ^2.5.3
+  flutter_secure_storage: ^9.2.4
+
+  # security
+  local_auth: ^3.0.2
+  crypto: ^3.0.7
+
+  # on-device safety classifier (Guardian)
+  flutter_onnxruntime: ^1.8.5
+
+  # ui
+  google_fonts: ^6.3.2
+  fl_chart: ^1.1.0
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
+  uuid: ^4.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  drift_dev: ^2.34.0
+  build_runner: ^2.4.15
+
+flutter:
+  uses-material-design: true
+  generate: true

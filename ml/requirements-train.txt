@@ -1,0 +1,6 @@
+# Environment for Eve training (Kaggle T4 / RTX 4050). Unsloth pulls in trl, bitsandbytes, xformers.
+unsloth
+trl>=0.15
+bitsandbytes
+datasets>=3.0
+pydantic>=2

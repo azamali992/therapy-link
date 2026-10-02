@@ -1,0 +1,8 @@
+# Separate environment for turning a trained Eve into on-device artifacts.
+# litetune wraps litert-torch with the right per-family flags for Gemma 4 E2B/E4B and Qwen3.5,
+# and measures the accuracy cost of quantization against the float model.
+litetune
+peft>=0.15
+transformers>=4.50
+safetensors
+typer

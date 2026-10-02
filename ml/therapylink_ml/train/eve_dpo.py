@@ -1,0 +1,413 @@
+"""Eve preference tuning.
+
+`build-pairs` makes (context, chosen, rejected) triples on-policy: the picked SFT checkpoint answers
+each prompt k times through a local OpenAI-compatible server (llama-server with the LoRA GGUF), the
+hard rules in reply_rules.py score every sample, and a passing sample is paired against a failing
+one. Both sides come from the model being tuned, so DPO learns "be safe" rather than "sound like a
+transcript". The gold AnnoMI/ESConv turns used before were a median of 12-18 words, which pulled
+towards the one-line collapse that sank v13, and ESConv is non-commercial.
+
+`train` runs DPO with Unsloth + TRL on those pairs. The SFT adapter is loaded twice: "default" is
+trained, "reference" stays frozen and is the KL anchor, so the reference is the SFT policy and not
+stock Gemma (which is what ref_model=None on a PEFT model means).
+"""
+
+from __future__ import annotations
+
+import hashlib
+import inspect
+import json
+import shutil
+from collections import Counter
+from collections.abc import Callable, Iterator
+from pathlib import Path
+from typing import NamedTuple
+
+import typer
+
+from therapylink_ml.prompts import fold_system_into_first_user
+from therapylink_ml.train.reply_rules import ReplyScore, crisis_turn, score_reply
+
+ML_ROOT = Path(__file__).resolve().parents[2]
+DATA = ML_ROOT / "data" / "processed"
+
+app = typer.Typer(add_completion=False, no_args_is_help=True)
+
+# The register v14's good replies had: long enough to reflect, short enough to not be an essay.
+TARGET_WORDS = 80
+# Below this a reply is the one-line register v13 collapsed into; the shortest authored gold reply
+# is 33 words. A short or cut-off sample can still be the rejected side, never the chosen one.
+MIN_WORDS = 30
+POLICY, REFERENCE = "default", "reference"
+
+
+def _read_jsonl(path: Path):
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                yield line
+
+
+def authored_prompts(include_pending: bool = False) -> Iterator[dict]:
+    """A pair prompt at every user turn of the authored rows (the loader's pending rule applies).
+
+    A crisis row is scored as crisis only from the turn its risk appears (crisis_turn). Its earlier,
+    ordinary turns are everyday prompts: scoring them as crisis would reward a helpline for "rough
+    time since losing my job", the over-reaction the system prompt rules out.
+    """
+    from therapylink_ml.data.loaders.authored import rows
+
+    for r in rows(include_pending=include_pending):
+        msgs = r["messages"]
+        risk_from = crisis_turn(r) if r["route"] == "crisis" else 0
+        for k, m in enumerate(msgs):
+            if m["role"] != "user":
+                continue
+            before_risk = k < risk_from
+            yield {
+                "id": f"{r['id']}@{k}",
+                "lang": r["lang"],
+                "route": "eve" if before_risk else r["route"],
+                "bucket": "none" if before_risk else r["category"],
+                "messages": msgs[: k + 1],
+                "notes": r.get("notes"),
+            }
+
+
+def load_prompts(spec: str, include_pending: bool = False) -> list[dict]:
+    """`authored`, or a JSONL of {id, lang, route, bucket?, messages | text, notes?, rewrite?}.
+
+    `rewrite` is a psychologist-approved chosen reply ({content, review_status: "approved"}), used
+    only when no sample passes. It is off-policy, so build-pairs caps its share.
+    """
+    if spec == "authored":
+        return list(authored_prompts(include_pending))
+    out = []
+    for line in _read_jsonl(Path(spec)):
+        r = json.loads(line)
+        if "messages" not in r:
+            r["messages"] = [{"role": "user", "content": r["text"]}]
+        out.append(r)
+    return out
+
+
+def pick_pair(samples: list[str], scores: list[ReplyScore]) -> tuple[int, int] | None:
+    """Indices (chosen, rejected), or None when the prompt teaches nothing.
+
+    All samples passing means the model already does this; none passing means there is no
+    on-policy chosen side. Chosen is the passing sample nearest TARGET_WORDS, so the pairs don't
+    reward length either way; rejected is the sample breaking the most rules.
+    """
+    passing = [i for i, s in enumerate(scores) if s.passed]
+    failing = [i for i, s in enumerate(scores) if not s.passed]
+    if not passing or not failing:
+        return None
+    chosen = min(passing, key=lambda i: abs(len(samples[i].split()) - TARGET_WORDS))
+    rejected = max(failing, key=lambda i: len(scores[i].failures))
+    return chosen, rejected
+
+
+class Sample(NamedTuple):
+    text: str
+    truncated: bool = False
+
+
+def score_sample(route: str, lang: str, sample: Sample) -> ReplyScore:
+    """score_reply plus what only matters for a chosen side: long enough, and not cut off."""
+    score = score_reply(route, lang, sample.text)
+    if len(sample.text.split()) < MIN_WORDS:
+        score.failures.append("too_short")
+    if sample.truncated:
+        score.failures.append("truncated")
+    return score
+
+
+def make_pairs(
+    prompts: list[dict],
+    generate: Callable[[list[dict]], str | Sample],
+    *,
+    k: int = 4,
+    done: set[str] | None = None,
+    max_rewrite_share: float = 0.25,
+) -> Iterator[dict]:
+    """Pair rows for `prompts`, sampling `k` replies each through `generate(messages)`.
+
+    `generate` returns the text, or a Sample that also says whether the reply hit the token cap.
+    """
+    done = done or set()
+    written = rewrites = 0
+    for p in prompts:
+        if p["id"] in done or p["messages"][-1]["role"] != "user":
+            continue
+        folded = fold_system_into_first_user(p["messages"], notes=p.get("notes"))
+        drawn = [_as_sample(generate(folded)) for _ in range(k)]
+        samples = [d.text for d in drawn]
+        scores = [score_sample(p["route"], p["lang"], d) for d in drawn]
+        picked = pick_pair(samples, scores)
+        chosen_source = "policy"
+        if picked is None:
+            rewrite = p.get("rewrite") or {}
+            all_fail = not any(s.passed for s in scores)
+            under_cap = rewrites + 1 <= max_rewrite_share * (written + 1)
+            if not (all_fail and rewrite.get("review_status") == "approved" and under_cap):
+                continue
+            worst = max(range(k), key=lambda i: len(scores[i].failures))
+            chosen_text, rejected = rewrite["content"], worst
+            chosen_failures: list[str] = []
+            chosen_source = "rewrite"
+            rewrites += 1
+        else:
+            chosen, rejected = picked
+            chosen_text, chosen_failures = samples[chosen], scores[chosen].failures
+        written += 1
+        yield {
+            "prompt_id": p["id"],
+            "bucket": p.get("bucket", ""),
+            "route": p["route"],
+            "lang": p["lang"],
+            "chosen_source": chosen_source,
+            "prompt": folded,
+            "chosen": [{"role": "assistant", "content": chosen_text}],
+            "rejected": [{"role": "assistant", "content": samples[rejected]}],
+            "chosen_failures": chosen_failures,
+            "rejected_failures": scores[rejected].failures,
+        }
+
+
+def _as_sample(out: str | Sample) -> Sample:
+    return Sample(out.strip()) if isinstance(out, str) else Sample(out.text.strip(), out.truncated)
+
+
+def hit_cap(tokens: int | None, text: str, max_tokens: int) -> bool:
+    """Whether a reply stopped at the token cap rather than finishing.
+
+    The backend keeps no finish_reason, but it does report completion tokens; a reply that used all
+    of them was cut. Without a count, a reply that doesn't end a sentence is treated as cut.
+    """
+    if tokens is not None:
+        return tokens >= max_tokens
+    return not text.rstrip().endswith((".", "!", "?", "\"", "'", ")", "۔"))
+
+
+@app.command("build-pairs")
+def build_pairs(
+    backend: str = typer.Option(..., help="The picked SFT checkpoint behind a local server: openai:<url>|<model>"),
+    prompts: str = typer.Option("authored", help="'authored' (every user turn of the authored rows) or a prompts JSONL. Never the eval probes."),
+    out: Path = DATA / "dpo_pairs.jsonl",
+    k: int = typer.Option(4, help="Samples per prompt"),
+    temperature: float = 0.9,
+    max_tokens: int = typer.Option(450, help="The app's reply cap"),
+    include_pending: bool = typer.Option(False, help="Also use authored rows still pending clinician review"),
+    max_rewrite_share: float = typer.Option(0.25, help="Cap on off-policy approved rewrites as the chosen side"),
+) -> None:
+    from rich.progress import track
+
+    from therapylink_ml.eval.backends import make_backend
+
+    # The HF backend computes in fp16, which Unsloth documents as broken for Gemma 4, and leaves
+    # thinking on. llama-server is what the eval measures, so pairs come from the same stack.
+    if not backend.startswith("openai:"):
+        raise typer.BadParameter("sample pairs through a local OpenAI-compatible server (openai:<url>|<model>)")
+    rows = load_prompts(prompts, include_pending)
+    done = {r["prompt_id"] for r in map(json.loads, _read_jsonl(out))} if out.exists() else set()
+    be = make_backend(backend)
+
+    def generate(messages: list[dict]) -> Sample:
+        g = be.generate(messages, max_tokens=max_tokens, temperature=temperature)
+        return Sample(g.text, hit_cap(g.tokens, g.text, max_tokens))
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    written: Counter[str] = Counter()
+    with out.open("a", encoding="utf-8") as f:
+        for row in make_pairs(list(track(rows, description="sampling")), generate, k=k, done=done, max_rewrite_share=max_rewrite_share):
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            f.flush()
+            written[row["bucket"]] += 1
+    typer.echo(f"{sum(written.values())} new pairs from {len(rows)} prompts → {out}: {dict(written)}")
+
+
+class MarginWatch:
+    """Abort DPO whose reward margins are still exactly zero `check_step` steps in.
+
+    Zero margins mean the policy and the reference score chosen and rejected identically, which is
+    what a frozen adapter (or a reference that is the policy itself) produces. The run would
+    otherwise burn its whole session and save an unchanged adapter.
+    """
+
+    KEY = "rewards/margins"
+
+    def __init__(self, check_step: int = 50, eps: float = 1e-6):
+        self.check_step, self.eps = check_step, eps
+        self.largest = 0.0
+        self.seen = 0
+        self.checked = False
+
+    def observe(self, step: int, logs: dict) -> str | None:
+        """Record one log line; return an abort reason once, at the check step, if margins stayed 0."""
+        if self.KEY in logs:
+            self.seen += 1
+            self.largest = max(self.largest, abs(float(logs[self.KEY])))
+        if self.checked or step < self.check_step:
+            return None
+        self.checked = True
+        if self.seen == 0:
+            return f"no '{self.KEY}' logged by step {step}; TRL renamed it or DPO is not computing rewards"
+        if self.largest < self.eps:
+            return f"reward margins stayed 0 through step {step}: the policy is not moving away from the reference"
+        return None
+
+
+def _margin_callback(watch: MarginWatch):
+    from transformers import TrainerCallback
+
+    class Callback(TrainerCallback):
+        def on_log(self, args, state, control, logs=None, **kwargs):
+            reason = watch.observe(state.global_step, logs or {})
+            if reason:
+                raise RuntimeError(f"aborting DPO: {reason}")
+            return control
+
+    return Callback()
+
+
+def split_pairs(rows: list[dict], eval_frac: float) -> tuple[list[dict], list[dict]]:
+    """Deterministic held-out split by prompt id, so DPO reports an eval accuracy."""
+    if eval_frac <= 0:
+        return rows, []
+
+    def held_out(r: dict) -> bool:
+        h = int(hashlib.sha1(str(r.get("prompt_id", r["prompt"])).encode("utf-8")).hexdigest()[:8], 16)
+        return h / 0xFFFFFFFF < eval_frac
+
+    return [r for r in rows if not held_out(r)], [r for r in rows if held_out(r)]
+
+
+@app.command()
+def train(
+    sft_adapter: Path = ML_ROOT / "runs" / "eve-sft" / "adapter",
+    pairs: Path = DATA / "dpo_pairs.jsonl",
+    out: Path = ML_ROOT / "runs" / "eve-dpo",
+    beta: float = 0.1,
+    lr: float = 5e-6,
+    epochs: float = 2.0,
+    batch: int = 1,
+    grad_accum: int = 8,
+    max_length: int = 1536,
+    max_prompt_length: int = 1024,
+    rpo_alpha: float = typer.Option(0.5, help="NLL weight on the chosen side, so its likelihood does not collapse (0 disables)"),
+    margin_check_steps: int = typer.Option(50, help="Abort if reward margins are still 0 at this step"),
+    eval_frac: float = typer.Option(0.2, help="Share of pairs held out for DPO eval accuracy"),
+    seed: int = 13,
+    max_hours: float = typer.Option(0.0, help="Stop after this many hours and still save (0 = no limit)"),
+    gguf: bool = True,
+) -> None:
+    import datasets as hf_datasets
+
+    # Before trl and Unsloth load, as in eve_sft: TRL's DPO dataset preparation map()s over the
+    # pairs, datasets hashes each map function with dill for its cache, and Unsloth's patches put
+    # an unpicklable torch module in that closure. With the cache off there is no hash.
+    hf_datasets.disable_caching()
+    from datasets import Dataset
+    from trl import DPOConfig, DPOTrainer
+    from unsloth import FastModel, PatchDPOTrainer
+
+    from therapylink_ml.train.eve_sft import PROMPT_MANIFEST, _pick, _real_bf16, _supported, _time_budget
+    from therapylink_ml.train.lora import unfreeze_lora
+
+    PatchDPOTrainer()
+    model, tokenizer = FastModel.from_pretrained(str(sft_adapter), max_seq_length=max_length, load_in_4bit=True)
+    tok = getattr(tokenizer, "tokenizer", tokenizer)
+    # Same adapter again under a second name: the frozen copy TRL switches to for reference logps.
+    model.load_adapter(str(sft_adapter), adapter_name=REFERENCE)
+    model.set_adapter(POLICY)
+    trainable = unfreeze_lora(model, str(sft_adapter), adapter_name=POLICY)
+    print(f"policy '{POLICY}': {trainable:,} trainable parameters; reference '{REFERENCE}' frozen", flush=True)
+
+    rows = [json.loads(line) for line in _read_jsonl(pairs)]
+    train_rows, eval_rows = split_pairs(rows, eval_frac)
+
+    def to_ds(items: list[dict]):
+        return Dataset.from_list([{"prompt": r["prompt"], "chosen": r["chosen"], "rejected": r["rejected"]} for r in items])
+
+    ds = to_ds(train_rows)
+    typer.echo(f"{len(ds)} preference pairs, {len(eval_rows)} held out")
+
+    # These three are the fix, not tuning: without them the run trains against stock Gemma, or
+    # lets the chosen side's likelihood fall. Refuse to run on a TRL that silently lacks them.
+    accepted = inspect.signature(DPOConfig.__init__).parameters
+    missing = [k for k in ("model_adapter_name", "ref_adapter_name", "rpo_alpha") if k not in accepted]
+    if missing:
+        raise RuntimeError(f"this TRL's DPOConfig has no {missing}; pin a TRL that does")
+
+    out.mkdir(parents=True, exist_ok=True)
+    steps = -(-len(ds) // (batch * grad_accum)) * epochs
+    cfg = dict(
+        beta=beta,
+        learning_rate=lr,
+        num_train_epochs=epochs,
+        per_device_train_batch_size=batch,
+        gradient_accumulation_steps=grad_accum,
+        max_length=max_length,
+        lr_scheduler_type="cosine",
+        # warmup_ratio was removed from transformers; 5% of optimizer steps as an explicit count.
+        warmup_steps=max(1, int(steps * 0.05)),
+        optim="adamw_8bit",
+        logging_steps=10,
+        save_steps=100,
+        save_total_limit=2,
+        seed=seed,
+        output_dir=str(out / "checkpoints"),
+        report_to="none",
+        model_adapter_name=POLICY,
+        ref_adapter_name=REFERENCE,
+        rpo_alpha=rpo_alpha or None,
+        # Reference logps once, before training: Gemma 4's E-series shares KV state across layers,
+        # and a reference forward inside the step broke gradient checkpointing's recompute
+        # ("saved [1, n, 512] vs recomputed [1, n, 1, 512]") on the first v16 DPO runs.
+        precompute_ref_log_probs=True,
+        # trl evaluates 8 pairs at a time by default: 16 sequences of Gemma's 262k-vocab logits ran a
+        # 15 GB T4 out of memory at the first eval (step 10) of the first full v16 DPO run.
+        per_device_eval_batch_size=1,
+        # Same constraint as SFT: T4s have no bf16 and Gemma 4 is broken in fp16 → fp32.
+        bf16=_real_bf16(),
+        fp16=False,
+    )
+    cfg.update(_supported(DPOConfig, max_prompt_length=max_prompt_length))
+    if eval_rows:
+        cfg[_pick(DPOConfig, "eval_strategy", "evaluation_strategy")] = "steps"
+        cfg["eval_steps"] = max(10, int(steps // 4))
+    watch = MarginWatch(margin_check_steps)
+    callbacks = [_margin_callback(watch)] + ([_time_budget(max_hours)] if max_hours > 0 else [])
+    class TextDPOTrainer(DPOTrainer):
+        # Gemma 4 is an image-text-to-text model type, so trl takes its vision path (process_row,
+        # which needs a processor with .tokenizer) although these pairs are text only. The first
+        # v16 DPO runs died on it: "GemmaTokenizer has no attribute tokenizer". is_vision_model is
+        # read only to pick the row function inside _prepare_dataset, so clear it just before.
+        def _prepare_dataset(self, *args, **kwargs):
+            self.is_vision_model = False
+            return super()._prepare_dataset(*args, **kwargs)
+
+    trainer = TextDPOTrainer(
+        model=model,
+        ref_model=None,
+        train_dataset=ds,
+        eval_dataset=to_ds(eval_rows) if eval_rows else None,
+        callbacks=callbacks,
+        **{_pick(DPOTrainer, "processing_class", "tokenizer"): tok},
+        args=DPOConfig(**cfg),
+    )
+    stats = trainer.train()
+    (out / "train_stats.json").write_text(json.dumps(stats.metrics, indent=2), encoding="utf-8")
+    model.save_pretrained(str(out / "adapter"), selected_adapters=[POLICY])
+    tok.save_pretrained(str(out / "adapter"))
+    # DPO pairs are folded with the SFT prompt, so the DPO adapter carries the SFT manifest on.
+    manifest = sft_adapter / PROMPT_MANIFEST
+    if manifest.exists():
+        shutil.copy(manifest, out / "adapter" / PROMPT_MANIFEST)
+    if gguf:
+        model.delete_adapter(REFERENCE)
+        model.save_pretrained_gguf(str(out / "gguf"), tok, quantization_method="q4_k_m")
+
+
+if __name__ == "__main__":
+    app()

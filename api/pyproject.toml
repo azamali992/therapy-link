@@ -1,0 +1,42 @@
+[project]
+name = "therapylink-api"
+version = "0.1.0"
+description = "TherapyLink gateway: auth, consent, assessments, clinician access, inference proxy"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "sqlalchemy[asyncio]>=2.0",
+  "asyncpg",
+  "aiosqlite",
+  "alembic>=1.13",
+  "pydantic>=2",
+  "pydantic-settings>=2",
+  "google-auth>=2.30",
+  "requests",
+  "httpx",
+  "firebase-admin>=6.5",
+  "tzdata",  # zoneinfo has no time zone database on Windows or slim images without it
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio", "ruff", "pyyaml"]  # pyyaml: test_deploy reads ci.yml
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["therapylink_api*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

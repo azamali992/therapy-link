@@ -1,0 +1,26 @@
+# Environment for the RTX 2050 / CPU box: data pipeline, Guardian training, quantized eval.
+# torch is installed separately with the CUDA index:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu126
+transformers>=4.50
+datasets>=3.0
+peft>=0.15
+accelerate>=1.0
+scikit-learn
+pandas
+pyarrow
+sentence-transformers
+huggingface_hub
+requests
+tqdm
+openai
+# Roman Urdu pipeline: MarianMT tokenizer + inter-rater agreement
+sentencepiece
+sacremoses
+krippendorff
+# llama-cpp-python: CPU wheel by default. For the 2050's CUDA build see ml/README.md.
+llama-cpp-python
+pydantic>=2
+typer
+rich
+pytest
+ruff

@@ -1,0 +1,32 @@
+[project]
+name = "therapylink-ml"
+version = "0.1.0"
+description = "Data pipeline, training and evaluation for TherapyLink's Guardian and Eve models"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+tl-data = "therapylink_ml.data.build:app"
+tl-eval = "therapylink_ml.eval.run:app"
+tl-guardian = "therapylink_ml.train.guardian:app"
+tl-kaggle = "therapylink_ml.kaggle_push:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["therapylink_ml*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# Notebook cells follow notebook conventions (grouped imports, top-level statements), not library ones.
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["E501", "B008"]  # B008: typer.Option()/Argument() in defaults is the Typer idiom
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

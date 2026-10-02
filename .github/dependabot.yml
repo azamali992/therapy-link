@@ -1,0 +1,7 @@
+# Keeps the digest-pinned base image in api/Dockerfile current, so it picks up upstream security fixes.
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: /api
+    schedule:
+      interval: weekly

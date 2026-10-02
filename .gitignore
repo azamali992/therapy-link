@@ -1,0 +1,83 @@
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# --- secrets (never commit) ---
+.env
+.env.*
+!.env.example
+*.pem
+*service-account*.json
+google_speech.json
+
+# --- python / ml ---
+ml/.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+ml/data/raw/
+ml/data/processed/
+ml/data/cache/
+ml/models/
+ml/runs/
+ml/outputs/
+*.safetensors
+*.gguf
+*.bin
+*.pt
+*.ckpt
+wandb/
+
+# --- api ---
+api/.venv/
+api/__pycache__/
+api/*.db
+api/*.db-journal
+
+# --- flutter / dart ---
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.packages
+app/build/
+app/.pub-cache/
+app/.pub/
+app/**/doc/api/
+app/ios/Flutter/.last_build_id
+app/android/app/debug
+app/android/app/profile
+app/android/app/release
+app/android/local.properties
+app/android/key.properties
+app/android/**/*.keystore
+app/android/**/*.jks
+app/app.*.symbols
+app/app.*.map.json
+app/*.log
+
+# --- node ---
+node_modules/
+*.log
+
+# --- legacy (kept for reference until the rebuild replaces it) ---
+legacy/build/
+legacy/.dart_tool/
+legacy/android/local.properties
+legacy/functions/node_modules/
+
+# v3 app
+app/.dart_tool/
+app/build/
+app/.flutter-plugins-dependencies
+app/*.iml
+*.egg-info/
