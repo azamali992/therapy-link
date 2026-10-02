@@ -23,6 +23,12 @@ def test_image_ships_migrations_and_a_release_entry():
     assert "--proxy-headers" in entry and "${WEB_CONCURRENCY:-1}" in entry
 
 
+def test_dockerfile_has_healthcheck():
+    dockerfile = (API / "Dockerfile").read_text()
+    assert "HEALTHCHECK" in dockerfile, "Dockerfile must include a HEALTHCHECK instruction"
+    assert "/health" in dockerfile, "HEALTHCHECK must probe the /health liveness endpoint"
+
+
 def test_base_image_is_pinned_to_a_digest():
     # A tag alone moves under us: the same commit could build a different image next week.
     froms = [line for line in (API / "Dockerfile").read_text().splitlines() if line.startswith("FROM ")]

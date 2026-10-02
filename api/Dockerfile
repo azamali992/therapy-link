@@ -20,5 +20,8 @@ RUN useradd -m app && chown -R app /srv
 USER app
 
 EXPOSE 7860
+# Liveness probe: the process is running and the HTTP stack is up.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:${PORT:-7860}/health')" || exit 1
 ENTRYPOINT ["tl-api"]
 CMD ["serve"]
