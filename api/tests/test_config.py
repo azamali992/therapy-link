@@ -6,10 +6,16 @@ from therapylink_api.main import create_app
 from therapylink_api.settings import Settings, config_problems
 
 PG = "postgresql+asyncpg://u:p@db.example/tl"
+REAL_SALT = "a-secret-production-salt-value"
 
 
 def _settings(**kw) -> Settings:
-    base = {"dev_auth_bypass": False, "dev_auto_verify_clinicians": False, "_env_file": None}
+    base = {
+        "dev_auth_bypass": False,
+        "dev_auto_verify_clinicians": False,
+        "log_uid_salt": REAL_SALT,
+        "_env_file": None,
+    }
     return Settings(**(base | kw))
 
 
@@ -18,8 +24,11 @@ def _settings(**kw) -> Settings:
     [
         {"dev_auth_bypass": True, "database_url": PG},
         {"dev_auth_bypass": True, "env": "prod"},
+        # staging is also a real environment: the bypass must be blocked there too.
+        {"dev_auth_bypass": True, "env": "staging"},
         {"dev_auto_verify_clinicians": True, "database_url": PG},
         {"dev_auto_verify_clinicians": True, "env": "prod"},
+        {"dev_auto_verify_clinicians": True, "env": "staging"},
         {"inference_base_url": "https://gpu.example"},
         {"inference_base_url": "https://gpu.example", "inference_api_key": ""},
         # A local model server is only exempt in dev on sqlite, never in prod or on a real database.
@@ -27,6 +36,8 @@ def _settings(**kw) -> Settings:
         {"inference_base_url": "http://127.0.0.1:8080", "database_url": PG},
         # A hostname that merely contains "localhost" is not loopback.
         {"inference_base_url": "http://localhost.evil.example:8080"},
+        # prod requires a non-default log salt.
+        {"env": "prod", "database_url": PG, "log_uid_salt": "dev-salt-change-me"},
     ],
 )
 def test_unsafe_settings_are_refused(kw):
@@ -39,6 +50,8 @@ def test_unsafe_settings_are_refused(kw):
         {"dev_auth_bypass": True, "dev_auto_verify_clinicians": True},  # local sqlite dev
         {"env": "prod", "database_url": PG},
         {"env": "prod", "database_url": PG, "inference_base_url": "https://gpu.example", "inference_api_key": "k"},
+        # staging with a real database and real salt is fine.
+        {"env": "staging", "database_url": PG},
     ],
 )
 def test_safe_settings_start(kw):
@@ -60,8 +73,23 @@ def test_app_refuses_to_start_with_the_bypass_in_prod(monkeypatch):
         create_app()
 
 
+def test_app_refuses_to_start_with_bypass_in_staging(monkeypatch):
+    monkeypatch.setenv("TL_ENV", "staging")  # conftest already turns the bypass on
+    with pytest.raises(RuntimeError, match="TL_DEV_AUTH_BYPASS"):
+        create_app()
+
+
 def test_app_refuses_cloud_inference_without_a_key(monkeypatch):
     monkeypatch.setenv("TL_INFERENCE_BASE_URL", "https://gpu.example")
     monkeypatch.delenv("TL_INFERENCE_API_KEY", raising=False)
     with pytest.raises(RuntimeError, match="TL_INFERENCE_API_KEY"):
+        create_app()
+
+
+def test_prod_requires_non_default_log_salt(monkeypatch):
+    monkeypatch.setenv("TL_ENV", "prod")
+    monkeypatch.setenv("TL_DATABASE_URL", PG)
+    monkeypatch.delenv("TL_DEV_AUTH_BYPASS", raising=False)
+    monkeypatch.delenv("TL_LOG_UID_SALT", raising=False)
+    with pytest.raises(RuntimeError, match="TL_LOG_UID_SALT"):
         create_app()
