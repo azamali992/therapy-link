@@ -1,12 +1,8 @@
-import contextlib
 import importlib.util
 from pathlib import Path
 
-import google.auth
 import pytest
 from firebase_admin import auth as firebase_auth
-from google.auth.credentials import AnonymousCredentials
-from google.auth.exceptions import DefaultCredentialsError
 from sqlalchemy import func, select
 
 from therapylink_api import auth, db, firebase
@@ -123,5 +119,7 @@ async def test_ready_checks_the_database(app, client):
 def test_verify_goes_through_the_admin_sdk(monkeypatch):
     seen = {}
     monkeypatch.setattr(firebase, "app", lambda: "the-app")
-    monkeypatch.setattr(firebase_auth, "verify_id_token", lambda tok, app=None: seen.update(tok=tok, app=app) or {"uid": "x"})
+    monkeypatch.setattr(
+        firebase_auth, "verify_id_token", lambda tok, app=None: seen.update(tok=tok, app=app) or {"uid": "x"}
+    )
     assert auth._verify("abc") == {"uid": "x"} and seen == {"tok": "abc", "app": "the-app"}

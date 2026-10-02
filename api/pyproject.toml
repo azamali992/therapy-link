@@ -36,7 +36,9 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
-ignore = ["E501"]
+# E501: line length (handled by formatter). B008: FastAPI Depends() in defaults is the
+# canonical pattern and safe in this context — the function call is evaluated lazily.
+ignore = ["E501", "B008"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

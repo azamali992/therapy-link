@@ -10,7 +10,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from therapylink_api import db, requestid
-from therapylink_api.ratelimit import DualTokenBucket, RedisRateLimiter, RedisDualLimiter, TokenBucket
+from therapylink_api.ratelimit import DualTokenBucket, RedisDualLimiter, RedisRateLimiter, TokenBucket
 from therapylink_api.routers import account_page, assessments, care, clinician, inference, journal, me, mood
 from therapylink_api.routers import admin as admin_router
 from therapylink_api.settings import check_config, get_settings
@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # JSON log formatter
 # ---------------------------------------------------------------------------
+
 
 class _JsonFormatter(logging.Formatter):
     """Emit every log record as a single JSON line — no bodies, no raw UIDs."""
@@ -58,6 +59,7 @@ def _configure_json_logging() -> None:
 # Lifespan & app factory
 # ---------------------------------------------------------------------------
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if get_settings().database_url.startswith("sqlite"):
@@ -78,9 +80,12 @@ def _make_limiters(settings):
     """
     if settings.redis_url:
         import redis.asyncio as aioredis
+
         client = aioredis.from_url(settings.redis_url, decode_responses=True)
         inference_limiter = RedisDualLimiter(
-            short=RedisRateLimiter(client, settings.inference_rate_capacity, int(settings.inference_rate_period_s), "inf"),
+            short=RedisRateLimiter(
+                client, settings.inference_rate_capacity, int(settings.inference_rate_period_s), "inf"
+            ),
             daily=RedisRateLimiter(client, settings.inference_daily_cap, 86400, "inf_day"),
         )
         write_limiter = RedisRateLimiter(client, settings.write_rate_capacity, 60, "write")
@@ -160,11 +165,13 @@ async def _ip_rate_limit_middleware(request, call_next):
     if not auth.lower().startswith("bearer ") and path not in _EXEMPT_IP_PATHS:
         ip_limiter = getattr(request.app.state, "ip_limiter", None)
         if ip_limiter is not None:
-            ip = (request.client.host if request.client else "unknown")
+            ip = request.client.host if request.client else "unknown"
             from therapylink_api.ratelimit import atake
+
             wait = await atake(ip_limiter, ip)
             if wait:
                 import math
+
                 return JSONResponse(
                     {"detail": "too many requests"},
                     status_code=429,

@@ -7,18 +7,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from therapylink_api.auth import Principal, current_principal
 from therapylink_api.db import get_session
-from therapylink_api.models import AccessLog, CareLink, ClinicianProfile, JournalEntry, LinkStatus, Role, SharedSummary, User
+from therapylink_api.models import (
+    AccessLog,
+    CareLink,
+    ClinicianProfile,
+    JournalEntry,
+    LinkStatus,
+    Role,
+    SharedSummary,
+    User,
+)
 from therapylink_api.routers.assessments import list_for as assessments_for
 from therapylink_api.routers.care import _link_out
 from therapylink_api.routers.me import _me_out
 from therapylink_api.routers.mood import trend_for, zone
-from therapylink_api.schemas import CareLinkOut, CaseloadRow, MeOut, PatientOverview, RequestOut
+from therapylink_api.schemas import CareLinkOut, CaseloadRow, PatientOverview, RequestOut
 from therapylink_api.scoring import attention
 
 router = APIRouter(prefix="/clinician", tags=["clinician"])
 
 
-async def _verified_clinician(p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)) -> Principal:
+async def _verified_clinician(
+    p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+) -> Principal:
     if p.role not in (Role.clinician, Role.admin):
         raise HTTPException(403, "clinician role required")
     profile = await session.get(ClinicianProfile, p.uid)
@@ -59,7 +70,9 @@ async def pending_requests(p: Principal = Depends(_verified_clinician), session:
 
 
 @router.post("/requests/{link_id}/accept", response_model=CareLinkOut)
-async def accept_request(link_id: str, p: Principal = Depends(_verified_clinician), session: AsyncSession = Depends(get_session)):
+async def accept_request(
+    link_id: str, p: Principal = Depends(_verified_clinician), session: AsyncSession = Depends(get_session)
+):
     """Accept a pending care request. Sets the link active and records shared_from = now."""
     link = await session.scalar(
         select(CareLink).where(
@@ -83,7 +96,9 @@ async def accept_request(link_id: str, p: Principal = Depends(_verified_clinicia
 
 
 @router.post("/requests/{link_id}/decline", response_model=CareLinkOut)
-async def decline_request(link_id: str, p: Principal = Depends(_verified_clinician), session: AsyncSession = Depends(get_session)):
+async def decline_request(
+    link_id: str, p: Principal = Depends(_verified_clinician), session: AsyncSession = Depends(get_session)
+):
     """Decline a pending care request. Clears share flags and sets status to revoked."""
     link = await session.scalar(
         select(CareLink).where(
@@ -141,7 +156,9 @@ async def caseload(p: Principal = Depends(_verified_clinician), session: AsyncSe
             latest = []
             att = []
 
-        result.append(CaseloadRow(patient=patient_out, latest=latest, attention=att, shares_assessments=link.share_assessments))
+        result.append(
+            CaseloadRow(patient=patient_out, latest=latest, attention=att, shares_assessments=link.share_assessments)
+        )
 
     await session.commit()
 

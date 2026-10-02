@@ -15,7 +15,10 @@ async def test_overview_and_caseload_reads_are_logged_for_the_patient(client):
     assert (await client.get("/clinician/patients/pat", headers=as_user("doc"))).status_code == 200
 
     log = (await client.get("/me/access-log", headers=as_user("pat"))).json()
-    assert [(e["action"], e["sections"]) for e in log] == [("overview", ["assessments", "journal"]), ("caseload", ["assessments"])]
+    assert [(e["action"], e["sections"]) for e in log] == [
+        ("overview", ["assessments", "journal"]),
+        ("caseload", ["assessments"]),
+    ]
     assert {e["clinician_uid"] for e in log} == {"doc"} and log[0]["clinician_name"] == "Dr Ayesha"
 
     quiet = (await client.get("/me/access-log", headers=as_user("quiet"))).json()

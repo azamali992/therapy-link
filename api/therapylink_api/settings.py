@@ -1,6 +1,5 @@
 from functools import lru_cache
 from typing import Literal
-from urllib.parse import urlparse
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -57,9 +56,13 @@ def config_problems(s: Settings) -> list[str]:
     if real and s.dev_auth_bypass:
         problems.append("TL_DEV_AUTH_BYPASS lets anyone act as any uid; it is only allowed with sqlite in dev")
     if real and s.dev_auto_verify_clinicians:
-        problems.append("TL_DEV_AUTO_VERIFY_CLINICIANS approves unchecked clinicians; it is only allowed with sqlite in dev")
+        problems.append(
+            "TL_DEV_AUTO_VERIFY_CLINICIANS approves unchecked clinicians; it is only allowed with sqlite in dev"
+        )
     if s.inference_base_url and not s.inference_api_key:
-        problems.append("TL_INFERENCE_BASE_URL is set without TL_INFERENCE_API_KEY; the model server must require a key")
+        problems.append(
+            "TL_INFERENCE_BASE_URL is set without TL_INFERENCE_API_KEY; the model server must require a key"
+        )
     # Guard against a common mistake of deploying with the placeholder salt.
     if s.env == "prod" and s.log_uid_salt == "dev-salt-change-me":
         problems.append("TL_LOG_UID_SALT is still the default; set a secret value before deploying to prod")

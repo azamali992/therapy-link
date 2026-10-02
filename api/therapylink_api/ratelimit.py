@@ -16,10 +16,10 @@ import time
 from collections.abc import Callable
 from typing import Protocol
 
-
 # ---------------------------------------------------------------------------
 # Protocols
 # ---------------------------------------------------------------------------
+
 
 class RateLimiter(Protocol):
     def take(self, key: str) -> float:
@@ -30,6 +30,7 @@ class RateLimiter(Protocol):
 # ---------------------------------------------------------------------------
 # In-memory token bucket
 # ---------------------------------------------------------------------------
+
 
 class TokenBucket:
     """`capacity` requests in a burst, refilled evenly so a key gets `capacity` per `period_s`."""
@@ -63,6 +64,7 @@ class TokenBucket:
 # Dual-window in-memory inference limiter (short window + daily cap)
 # ---------------------------------------------------------------------------
 
+
 class DualTokenBucket:
     """Enforces two independent token buckets simultaneously.
 
@@ -93,6 +95,7 @@ class DualTokenBucket:
 # Redis-backed sliding window (async)
 # ---------------------------------------------------------------------------
 
+
 class RedisRateLimiter:
     """Sliding-window rate limiter backed by Redis ZADD/ZCARD.
 
@@ -108,6 +111,7 @@ class RedisRateLimiter:
 
     async def take(self, key: str) -> float:
         import logging
+
         log = logging.getLogger(__name__)
         redis_key = f"tl:{self._name}:{key}"
         now = time.time()
@@ -143,6 +147,7 @@ class RedisDualLimiter:
         daily_key = f"tl:{self._daily._name}:{key}:d"
         now = time.time()
         import logging
+
         log = logging.getLogger(__name__)
         try:
             pipe = self._short._redis.pipeline()
@@ -174,6 +179,7 @@ class RedisDualLimiter:
 # ---------------------------------------------------------------------------
 # Helper: call sync or async limiter uniformly from an async context
 # ---------------------------------------------------------------------------
+
 
 async def atake(limiter, key: str) -> float:
     """Call take() on either a sync (TokenBucket) or async (Redis) limiter."""

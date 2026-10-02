@@ -37,7 +37,9 @@ async def my_links(p: Principal = Depends(current_principal), session: AsyncSess
 
 
 @router.post("/links", response_model=CareLinkOut, status_code=201)
-async def invite(body: CareLinkIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def invite(
+    body: CareLinkIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     """Patient initiates the relationship by typing the clinician's invite code.
     The link starts pending until the clinician accepts. Sharing flags start off."""
     code = normalise_code(body.code)
@@ -73,7 +75,9 @@ async def invite(body: CareLinkIn, p: Principal = Depends(current_principal), se
 
 
 @router.patch("/links/{link_id}/consent", response_model=CareLinkOut)
-async def set_consent(link_id: str, body: Consent, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def set_consent(
+    link_id: str, body: Consent, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     link = await _owned_link(session, p.uid, link_id)
     for k, v in body.model_dump(exclude_none=True).items():
         setattr(link, k, v)

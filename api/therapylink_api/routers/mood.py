@@ -14,7 +14,9 @@ from therapylink_api.schemas import MAX_MOOD_BATCH, MoodDay, MoodPointIn
 router = APIRouter(prefix="/mood", tags=["mood"])
 
 
-def zone(tz: str = Query("Asia/Karachi", max_length=64, description="IANA zone that decides where a day starts")) -> ZoneInfo:
+def zone(
+    tz: str = Query("Asia/Karachi", max_length=64, description="IANA zone that decides where a day starts"),
+) -> ZoneInfo:
     try:
         return ZoneInfo(tz)
     # A name that is a tzdata directory ("America") raises OSError: PermissionError on Windows,
@@ -34,7 +36,9 @@ async def trend_for(session: AsyncSession, uid: str, days: int, tz: ZoneInfo) ->
     since = datetime.now(UTC) - timedelta(days=days)
     rows = (
         await session.scalars(
-            select(MoodPoint).where(MoodPoint.patient_uid == uid, MoodPoint.recorded_at >= since).order_by(MoodPoint.recorded_at)
+            select(MoodPoint)
+            .where(MoodPoint.patient_uid == uid, MoodPoint.recorded_at >= since)
+            .order_by(MoodPoint.recorded_at)
         )
     ).all()
     by_day: dict[str, list[int]] = {}
@@ -44,11 +48,25 @@ async def trend_for(session: AsyncSession, uid: str, days: int, tz: ZoneInfo) ->
 
 
 @router.post("/batch", status_code=201)
-async def upload(points: list[MoodPointIn] = Body(max_length=MAX_MOOD_BATCH), p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def upload(
+    points: list[MoodPointIn] = Body(max_length=MAX_MOOD_BATCH),
+    p: Principal = Depends(current_principal),
+    session: AsyncSession = Depends(get_session),
+):
     """Points carrying a client_id already stored for this patient, or repeated in the batch, are
     skipped, so the app can resend a batch whose reply it never saw."""
     ids = {pt.client_id for pt in points if pt.client_id}
-    seen = set((await session.scalars(select(MoodPoint.client_id).where(MoodPoint.patient_uid == p.uid, MoodPoint.client_id.in_(ids)))).all()) if ids else set()
+    seen = (
+        set(
+            (
+                await session.scalars(
+                    select(MoodPoint.client_id).where(MoodPoint.patient_uid == p.uid, MoodPoint.client_id.in_(ids))
+                )
+            ).all()
+        )
+        if ids
+        else set()
+    )
     fresh: list[MoodPoint] = []
     for pt in points:
         if pt.client_id:
@@ -67,5 +85,10 @@ async def upload(points: list[MoodPointIn] = Body(max_length=MAX_MOOD_BATCH), p:
 
 
 @router.get("/trend", response_model=list[MoodDay])
-async def trend(days: int = 30, tz: ZoneInfo = Depends(zone), p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def trend(
+    days: int = 30,
+    tz: ZoneInfo = Depends(zone),
+    p: Principal = Depends(current_principal),
+    session: AsyncSession = Depends(get_session),
+):
     return await trend_for(session, p.uid, min(days, 365), tz)

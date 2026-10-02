@@ -38,7 +38,12 @@ def _database(tmp_path, *statements: str) -> str:
 
 
 def test_a_database_with_rows_is_refused_before_any_migration(tmp_path):
-    url = _database(tmp_path, "CREATE TABLE assessments (id INTEGER)", "INSERT INTO assessments VALUES (1)", "CREATE TABLE users (id INTEGER)")
+    url = _database(
+        tmp_path,
+        "CREATE TABLE assessments (id INTEGER)",
+        "INSERT INTO assessments VALUES (1)",
+        "CREATE TABLE users (id INTEGER)",
+    )
     upgrades = []
     assert prepare_test_database(url, lambda: upgrades.append(1)) == {"assessments": 1}
     assert upgrades == []
@@ -48,6 +53,11 @@ def test_an_empty_or_scratch_database_is_migrated(tmp_path):
     # A fresh database has no tables; a scratch one from the last run keeps only its alembic_version row.
     upgrades = []
     assert prepare_test_database(_database(tmp_path), lambda: upgrades.append(1)) == {}
-    url = _database(tmp_path, "CREATE TABLE alembic_version (version_num TEXT)", "INSERT INTO alembic_version VALUES ('head')", "CREATE TABLE users (id INTEGER)")
+    url = _database(
+        tmp_path,
+        "CREATE TABLE alembic_version (version_num TEXT)",
+        "INSERT INTO alembic_version VALUES ('head')",
+        "CREATE TABLE users (id INTEGER)",
+    )
     assert prepare_test_database(url, lambda: upgrades.append(1)) == {}
     assert upgrades == [1, 1]

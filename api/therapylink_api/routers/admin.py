@@ -47,7 +47,9 @@ async def _admin_identity(request: Request) -> str:
         raise HTTPException(401, "invalid token") from None
 
     if not claims.get("admin"):
-        log.warning("admin route accessed without admin claim [request %s] uid=%s", requestid.current(), claims.get("uid"))
+        log.warning(
+            "admin route accessed without admin claim [request %s] uid=%s", requestid.current(), claims.get("uid")
+        )
         raise HTTPException(403, "admin claim required")
 
     return claims["uid"]

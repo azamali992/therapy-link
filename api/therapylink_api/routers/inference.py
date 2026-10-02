@@ -112,7 +112,9 @@ async def _non_stream_response(s, payload: dict, headers: dict, rid: str) -> Cha
             usage.get("completion_tokens"),
             data.get("model", s.inference_model),
         )
-        return ChatOut(reply=data["choices"][0]["message"]["content"].strip(), model=data.get("model", s.inference_model))
+        return ChatOut(
+            reply=data["choices"][0]["message"]["content"].strip(), model=data.get("model", s.inference_model)
+        )
     except (KeyError, ValueError, TypeError):
         log.warning("inference upstream bad reply [request %s]", rid)
         raise HTTPException(502, _EVE_DOWN_DETAIL) from None
@@ -123,14 +125,16 @@ async def _stream_response(base_url: str, payload: dict, headers: dict, rid: str
 
     async def _generate():
         try:
-            async with httpx.AsyncClient(base_url=base_url, timeout=120, transport=upstream_transport) as client:
-                async with client.stream("POST", "/v1/chat/completions", json=payload, headers=headers) as r:
-                    if r.status_code != 200:
-                        log.warning("inference stream returned HTTP %s [request %s]", r.status_code, rid)
-                        yield b'data: {"error":"Eve is resting"}\n\n'
-                        return
-                    async for chunk in r.aiter_bytes():
-                        yield chunk
+            async with (
+                httpx.AsyncClient(base_url=base_url, timeout=120, transport=upstream_transport) as client,
+                client.stream("POST", "/v1/chat/completions", json=payload, headers=headers) as r,
+            ):
+                if r.status_code != 200:
+                    log.warning("inference stream returned HTTP %s [request %s]", r.status_code, rid)
+                    yield b'data: {"error":"Eve is resting"}\n\n'
+                    return
+                async for chunk in r.aiter_bytes():
+                    yield chunk
         except httpx.ConnectError:
             log.warning("inference upstream unreachable (stream) [request %s]", rid)
             yield b'data: {"error":"Eve is resting"}\n\n'

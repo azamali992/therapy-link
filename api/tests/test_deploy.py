@@ -53,9 +53,17 @@ def test_ci_builds_releases_serves_and_scans_the_image():
 
 
 def test_ci_round_trips_migrations_on_postgres():
-    steps = yaml.safe_load((API.parent / ".github" / "workflows" / "ci.yml").read_text())["jobs"]["api-postgres"]["steps"]
+    steps = yaml.safe_load((API.parent / ".github" / "workflows" / "ci.yml").read_text())["jobs"]["api-postgres"][
+        "steps"
+    ]
     runs = [step["run"] for step in steps if "run" in step]
-    order = ["alembic upgrade head", "alembic downgrade base", "alembic upgrade head", "alembic check", "python -m pytest -q"]
+    order = [
+        "alembic upgrade head",
+        "alembic downgrade base",
+        "alembic upgrade head",
+        "alembic check",
+        "python -m pytest -q",
+    ]
     assert [r for r in runs if r in order] == order
 
 
@@ -73,7 +81,9 @@ def test_release_entry_migrates_an_empty_database(tmp_path):
         "PATH": str(Path(sys.executable).parent) + os.pathsep + os.environ["PATH"],
         "PYTHONPATH": str(API),
     }
-    subprocess.run(["sh", "docker-entrypoint.sh", "release"], cwd=API, env=env, check=True, capture_output=True, timeout=120)
+    subprocess.run(
+        ["sh", "docker-entrypoint.sh", "release"], cwd=API, env=env, check=True, capture_output=True, timeout=120
+    )
     with sqlite3.connect(db) as conn:
         tables = {r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     assert {"alembic_version", "users", "care_links"} <= tables

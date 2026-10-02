@@ -1,25 +1,21 @@
 """The migrations, not create_all, build production. They must reach the models and come back down."""
 
 import io
-import io
 import uuid
 from pathlib import Path
 
+import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.config import Config
 from alembic.runtime.migration import MigrationContext
-from sqlalchemy import create_engine
-
-import pytest
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import command
+from tests.conftest import PG_URL
 from therapylink_api import models  # noqa: F401
 from therapylink_api.db import Base
 from therapylink_api.settings import get_settings
-
-from tests.conftest import PG_URL
 
 API = Path(__file__).resolve().parents[1]
 
@@ -70,7 +66,10 @@ def test_data_migrations(tmp_path, monkeypatch):
 
     command.upgrade(cfg, "head")
     with sync.connect() as conn:
-        assert conn.exec_driver_sql("SELECT status, shared_from FROM care_links").one() == ("active", "2026-01-01 00:00:00")
+        assert conn.exec_driver_sql("SELECT status, shared_from FROM care_links").one() == (
+            "active",
+            "2026-01-01 00:00:00",
+        )
         assert conn.exec_driver_sql("SELECT instrument FROM assessments").scalars().all() == ["phq9"]
         assert conn.exec_driver_sql("SELECT email_verified FROM users WHERE uid = 'p'").scalar() == 0
     sync.dispose()

@@ -67,6 +67,7 @@ async def _verify_app_check(request: Request) -> None:
     if not settings.app_check_required:
         return
     from firebase_admin import app_check
+
     token = request.headers.get("x-firebase-appcheck", "")
     if not token:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "App Check token required")
@@ -77,7 +78,9 @@ async def _verify_app_check(request: Request) -> None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "invalid App Check token") from None
 
 
-async def _ensure_user(session: AsyncSession, uid: str, email: str | None, name: str | None, email_verified: bool) -> None:
+async def _ensure_user(
+    session: AsyncSession, uid: str, email: str | None, name: str | None, email_verified: bool
+) -> None:
     """Insert the user if missing. Two first requests racing each other both succeed."""
     values = {"uid": uid, "email": email, "display_name": name, "email_verified": email_verified}
     dialect = session.bind.dialect.name
@@ -93,7 +96,9 @@ async def _ensure_user(session: AsyncSession, uid: str, email: str | None, name:
         await session.rollback()
 
 
-async def _get_or_create_user(session: AsyncSession, uid: str, email: str | None, name: str | None, email_verified: bool) -> User:
+async def _get_or_create_user(
+    session: AsyncSession, uid: str, email: str | None, name: str | None, email_verified: bool
+) -> User:
     user = await session.get(User, uid)
     if user is None:
         await _ensure_user(session, uid, email, name, email_verified)

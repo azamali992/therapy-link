@@ -10,22 +10,21 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from datetime import UTC, datetime
 
 import httpx
 import pytest
 
-from tests.conftest import PG_URL, as_user, linked, verify_clinician, verified_clinician
+from tests.conftest import as_user, linked, verified_clinician
 from therapylink_api import firebase
 from therapylink_api.main import create_app
 from therapylink_api.ratelimit import DualTokenBucket, TokenBucket
 from therapylink_api.routers import inference as inference_mod
 from therapylink_api.settings import get_settings
 
-
 # ---------------------------------------------------------------------------
 # Task 1 — TL_ENV: staging blocks dev bypass
 # ---------------------------------------------------------------------------
+
 
 def test_staging_blocks_dev_auth_bypass(monkeypatch):
     monkeypatch.setenv("TL_ENV", "staging")  # conftest already sets DEV_AUTH_BYPASS=true
@@ -39,15 +38,22 @@ def test_staging_allows_real_config(monkeypatch):
     monkeypatch.setenv("TL_DATABASE_URL", "sqlite+aiosqlite:///:memory:")
     monkeypatch.delenv("TL_DEV_AUTH_BYPASS", raising=False)
     # Should not raise a config error (may raise on DB setup, which is fine in this test).
-    from therapylink_api.settings import config_problems, Settings
-    s = Settings(env="staging", database_url="sqlite+aiosqlite:///:memory:", dev_auth_bypass=False,
-                 log_uid_salt="test-salt", _env_file=None)
+    from therapylink_api.settings import Settings, config_problems
+
+    s = Settings(
+        env="staging",
+        database_url="sqlite+aiosqlite:///:memory:",
+        dev_auth_bypass=False,
+        log_uid_salt="test-salt",
+        _env_file=None,
+    )
     assert config_problems(s) == []
 
 
 # ---------------------------------------------------------------------------
 # Task 3 — Rate limiting
 # ---------------------------------------------------------------------------
+
 
 async def test_dual_bucket_enforces_short_window(app, client):
     """Short-window limit triggers 429 with Retry-After."""
@@ -56,7 +62,10 @@ async def test_dual_bucket_enforces_short_window(app, client):
         daily=TokenBucket(capacity=300, period_s=86400),
     )
     body = {"messages": [{"role": "user", "content": "hi"}]}
-    assert [(await client.post("/inference/chat", json=body, headers=as_user("a"))).status_code for _ in range(2)] == [503, 503]
+    assert [(await client.post("/inference/chat", json=body, headers=as_user("a"))).status_code for _ in range(2)] == [
+        503,
+        503,
+    ]
     r = await client.post("/inference/chat", json=body, headers=as_user("a"))
     assert r.status_code == 429 and int(r.headers["retry-after"]) > 0
 
@@ -140,6 +149,7 @@ def test_dual_token_bucket_synergy():
 # Task 4 — Inference: streaming, prompt-hash, max_tokens cap
 # ---------------------------------------------------------------------------
 
+
 async def test_inference_prompt_hash_validation(client, monkeypatch):
     """When TL_PROMPT_SHA256 is set, a mismatched system prompt returns 422."""
     expected = hashlib.sha256(b"correct prompt").hexdigest()
@@ -153,9 +163,13 @@ async def test_inference_prompt_hash_validation(client, monkeypatch):
     assert r.status_code == 422
 
     correct = {"messages": [{"role": "system", "content": "correct prompt"}, {"role": "user", "content": "hi"}]}
-    monkeypatch.setattr(inference_mod, "upstream_transport", httpx.MockTransport(
-        lambda req: httpx.Response(200, json={"model": "m", "choices": [{"message": {"content": "ok"}}]})
-    ))
+    monkeypatch.setattr(
+        inference_mod,
+        "upstream_transport",
+        httpx.MockTransport(
+            lambda req: httpx.Response(200, json={"model": "m", "choices": [{"message": {"content": "ok"}}]})
+        ),
+    )
     r = await client.post("/inference/chat", json=correct, headers=as_user("u"))
     assert r.status_code == 200
 
@@ -174,7 +188,11 @@ async def test_inference_max_tokens_is_capped(client, monkeypatch):
     get_settings.cache_clear()
     monkeypatch.setattr(inference_mod, "upstream_transport", httpx.MockTransport(capture))
 
-    await client.post("/inference/chat", json={"messages": [{"role": "user", "content": "hi"}], "max_tokens": 999}, headers=as_user("u"))
+    await client.post(
+        "/inference/chat",
+        json={"messages": [{"role": "user", "content": "hi"}], "max_tokens": 999},
+        headers=as_user("u"),
+    )
     assert seen[0]["max_tokens"] == 512
 
 
@@ -199,7 +217,9 @@ async def test_inference_streaming_response(client, monkeypatch):
     monkeypatch.setenv("TL_INFERENCE_API_KEY", "k")
     get_settings.cache_clear()
     monkeypatch.setattr(inference_mod, "upstream_transport", _SSETransport())
-    r = await client.post("/inference/chat", json={"messages": [{"role": "user", "content": "hi"}], "stream": True}, headers=as_user("u"))
+    r = await client.post(
+        "/inference/chat", json={"messages": [{"role": "user", "content": "hi"}], "stream": True}, headers=as_user("u")
+    )
     assert "text/event-stream" in r.headers.get("content-type", "")
 
 
@@ -209,8 +229,6 @@ async def test_inference_streaming_response(client, monkeypatch):
 
 from firebase_admin import auth as firebase_auth  # noqa: E402
 
-from therapylink_api import auth as auth_mod  # noqa: E402
-
 
 @pytest.fixture
 def admin_token(monkeypatch):
@@ -218,7 +236,7 @@ def admin_token(monkeypatch):
     claims = {"uid": "admin1", "email": "admin@example.com", "email_verified": True, "admin": True}
 
     def verify(tok, app=None):
-        if isinstance(claims.get("raise"), type) or isinstance(claims.get("raise"), Exception):
+        if isinstance(claims.get("raise"), (type, Exception)):
             raise claims["raise"]
         return claims
 
@@ -236,6 +254,7 @@ async def test_admin_verify_clinician(client, admin_token):
     await client.post("/me/clinician", json={"license_no": "PMC-999"}, headers=as_user("doc99"))
     # Fake that email is verified by writing it directly to DB.
     from sqlalchemy import update
+
     from therapylink_api import db as db_mod
     from therapylink_api.models import User
 
@@ -281,11 +300,10 @@ async def test_admin_revoke_unknown_clinician_is_404(client, admin_token):
 
 async def test_admin_actions_are_written_to_access_log(client, admin_token):
     """Admin verify/revoke are appended to access_log for audit."""
-    from sqlalchemy import select
+    from sqlalchemy import select, update
+
     from therapylink_api import db as db_mod
-    from therapylink_api.models import AccessLog
-    from sqlalchemy import update
-    from therapylink_api.models import User
+    from therapylink_api.models import AccessLog, User
 
     await client.post("/me/clinician", json={"license_no": "PMC-audit"}, headers=as_user("doc-audit"))
     async with db_mod.sessionmaker()() as s:
@@ -305,6 +323,7 @@ async def test_admin_actions_are_written_to_access_log(client, admin_token):
 # Task 2 — App Check (optional gate)
 # ---------------------------------------------------------------------------
 
+
 async def test_app_check_not_required_by_default(client):
     """Without TL_APP_CHECK_REQUIRED=true, missing App Check header has no effect."""
     r = await client.post("/me/clinician", json={"license_no": "PMC-1"}, headers=as_user("u"))
@@ -315,13 +334,16 @@ async def test_app_check_required_rejects_missing_token(client, monkeypatch):
     """When TL_APP_CHECK_REQUIRED=true, inference routes require X-Firebase-AppCheck."""
     monkeypatch.setenv("TL_APP_CHECK_REQUIRED", "true")
     get_settings.cache_clear()
-    r = await client.post("/inference/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers=as_user("u"))
+    r = await client.post(
+        "/inference/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers=as_user("u")
+    )
     assert r.status_code == 403
 
 
 # ---------------------------------------------------------------------------
 # Task 7 — Structured JSON logging
 # ---------------------------------------------------------------------------
+
 
 async def test_structured_log_uses_route_template_not_actual_path(client, caplog):
     """Logs must contain the route template, never the actual uid in the path."""

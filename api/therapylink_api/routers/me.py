@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from therapylink_api import firebase, requestid
 from therapylink_api.auth import Identity, Principal, current_principal, erased_key, signed_in
 from therapylink_api.db import Base, get_session
-from therapylink_api.invite import new_code, unique_code
+from therapylink_api.invite import unique_code
 from therapylink_api.models import (
     AccessLog,
     Assessment,
@@ -114,7 +114,9 @@ async def access_log(p: Principal = Depends(current_principal), session: AsyncSe
 
 
 @router.patch("", response_model=MeOut)
-async def patch_me(body: MePatch, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def patch_me(
+    body: MePatch, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     user = await session.get(User, p.uid)
     for k, v in body.model_dump(exclude_none=True).items():
         setattr(user, k, v)
@@ -123,7 +125,9 @@ async def patch_me(body: MePatch, p: Principal = Depends(current_principal), ses
 
 
 @router.put("/consent", response_model=MeOut)
-async def accept_consent(body: ConsentIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def accept_consent(
+    body: ConsentIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     """Record that the user accepted this version of the consent screen. Accepting a new version
     moves the timestamp; accepting the same one again keeps the original."""
     user = await session.get(User, p.uid)
@@ -134,7 +138,9 @@ async def accept_consent(body: ConsentIn, p: Principal = Depends(current_princip
 
 
 @router.post("/clinician", response_model=MeOut, status_code=201)
-async def become_clinician(body: BecomeClinician, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def become_clinician(
+    body: BecomeClinician, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     """Registers as a clinician. Clinician endpoints stay closed until verified_at is set, by
     scripts/verify_clinician.py or, in local demos, TL_DEV_AUTO_VERIFY_CLINICIANS."""
     user = await session.get(User, p.uid)

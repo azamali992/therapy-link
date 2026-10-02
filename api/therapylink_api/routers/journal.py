@@ -18,13 +18,22 @@ async def _owned(session: AsyncSession, uid: str, entry_id: str) -> JournalEntry
 
 
 @router.get("/journal", response_model=list[JournalOut])
-async def list_entries(limit: int = 50, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
-    q = select(JournalEntry).where(JournalEntry.patient_uid == p.uid).order_by(JournalEntry.created_at.desc()).limit(min(limit, 200))
+async def list_entries(
+    limit: int = 50, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
+    q = (
+        select(JournalEntry)
+        .where(JournalEntry.patient_uid == p.uid)
+        .order_by(JournalEntry.created_at.desc())
+        .limit(min(limit, 200))
+    )
     return (await session.scalars(q)).all()
 
 
 @router.post("/journal", response_model=JournalOut, status_code=201)
-async def create_entry(body: JournalIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def create_entry(
+    body: JournalIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     e = JournalEntry(patient_uid=p.uid, **body.model_dump())
     session.add(e)
     await session.commit()
@@ -33,7 +42,12 @@ async def create_entry(body: JournalIn, p: Principal = Depends(current_principal
 
 
 @router.put("/journal/{entry_id}", response_model=JournalOut)
-async def update_entry(entry_id: str, body: JournalIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def update_entry(
+    entry_id: str,
+    body: JournalIn,
+    p: Principal = Depends(current_principal),
+    session: AsyncSession = Depends(get_session),
+):
     e = await _owned(session, p.uid, entry_id)
     for k, v in body.model_dump().items():
         setattr(e, k, v)
@@ -43,14 +57,18 @@ async def update_entry(entry_id: str, body: JournalIn, p: Principal = Depends(cu
 
 
 @router.delete("/journal/{entry_id}", status_code=204)
-async def delete_entry(entry_id: str, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def delete_entry(
+    entry_id: str, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     e = await _owned(session, p.uid, entry_id)
     await session.delete(e)
     await session.commit()
 
 
 @router.post("/summaries", response_model=SummaryOut, status_code=201)
-async def share_summary(body: SummaryIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def share_summary(
+    body: SummaryIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     """The device generated this; the patient is choosing to make it visible to consented clinicians."""
     s = SharedSummary(patient_uid=p.uid, **body.model_dump())
     session.add(s)

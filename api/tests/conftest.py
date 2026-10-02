@@ -26,10 +26,7 @@ def prepare_test_database(url: str, upgrade_fn) -> dict[str, int]:
     (which should run alembic upgrade head) and return {}.
     """
     # Strip the aiosqlite driver prefix to get the raw file path.
-    if ":///" in url:
-        path = url.split("///", 1)[1]
-    else:
-        path = url
+    path = url.split("///", 1)[1] if ":///" in url else url
 
     if path in (":memory:", ""):
         upgrade_fn()
@@ -40,9 +37,7 @@ def prepare_test_database(url: str, upgrade_fn) -> dict[str, int]:
         with _sqlite3.connect(path) as conn:
             tables = [
                 r[0]
-                for r in conn.execute(
-                    "SELECT name FROM sqlite_master WHERE type='table'"
-                ).fetchall()
+                for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
                 if r[0] not in _SKIP
             ]
             filled: dict[str, int] = {}
@@ -133,7 +128,10 @@ def _postgres_schema(pytestconfig):
     # database, not a scratch one: stop rather than wipe it.
     filled = {name: n for name, n in asyncio.run(_row_counts(PG_URL)).items() if n}
     if filled:
-        pytest.exit(f"test database {PG_URL.rsplit('@', 1)[-1]} is not empty ({filled}); point TL_TEST_DATABASE_URL at a scratch database", returncode=2)
+        pytest.exit(
+            f"test database {PG_URL.rsplit('@', 1)[-1]} is not empty ({filled}); point TL_TEST_DATABASE_URL at a scratch database",
+            returncode=2,
+        )
 
 
 @pytest.fixture
@@ -163,7 +161,9 @@ def as_user(uid: str) -> dict[str, str]:
 
 async def verify_clinician(uid: str) -> None:
     async with db.sessionmaker()() as s:
-        await s.execute(update(ClinicianProfile).where(ClinicianProfile.uid == uid).values(verified_at=datetime.now(UTC)))
+        await s.execute(
+            update(ClinicianProfile).where(ClinicianProfile.uid == uid).values(verified_at=datetime.now(UTC))
+        )
         await s.commit()
 
 
@@ -177,12 +177,18 @@ async def verified_clinician(client, uid: str = "doc") -> str:
 async def linked(client, patient: str, clinician: str = "doc", accept: bool = True, **share: bool) -> str:
     """A care link from patient to an approved clinician, accepted unless told otherwise, with the
     given share_* flags. Returns its id."""
-    code = (await client.get("/me", headers=as_user(clinician))).json()["invite_code"] or await verified_clinician(client, clinician)
+    code = (await client.get("/me", headers=as_user(clinician))).json()["invite_code"] or await verified_clinician(
+        client, clinician
+    )
     r = await client.post("/care/links", json={"code": code}, headers=as_user(patient))
     assert r.status_code == 201, r.text
     link_id = r.json()["id"]
     if accept:
-        assert (await client.post(f"/clinician/requests/{link_id}/accept", headers=as_user(clinician))).status_code == 200
+        assert (
+            await client.post(f"/clinician/requests/{link_id}/accept", headers=as_user(clinician))
+        ).status_code == 200
     if share:
-        await client.patch(f"/care/links/{link_id}/consent", json={f"share_{k}": v for k, v in share.items()}, headers=as_user(patient))
+        await client.patch(
+            f"/care/links/{link_id}/consent", json={f"share_{k}": v for k, v in share.items()}, headers=as_user(patient)
+        )
     return link_id
