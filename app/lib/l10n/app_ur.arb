@@ -478,19 +478,5 @@
   "quickExitNeutral": "Abhi kuch khula nahi.",
   "dbMigrationFailed": "Is phone par aap ki chats is baar encrypt nahi ho sakin. Woh yahin maujood hain, aur app agli baar khulne par dobara koshish karegi.",
   "dbUnreadable": "Is phone par aap ki pichli chats khul nahi sakin, is liye nayi khaali jagah shuru ki gayi. Purani file rakh li gayi hai.",
-  "settingsPrivacy": "Is phone par privacy",
-  "appLockTitle": "App lock",
-  "appLockBody": "App khulne par, ya ek minute baad wapas aane par, fingerprint, chehra ya phone ka PIN maangein. Lock hone par bhi 'Abhi madad lein' kaam karta hai. Jab yeh on ho, screenshots band hote hain aur app recent apps mein chhupi rehti hai.",
-  "appLockUnavailable": "Pehle apne phone par screen lock lagayein, phir isay on karein.",
-  "lockTitle": "Locked",
-  "lockBody": "Fingerprint, chehre ya phone ke PIN se kholein.",
-  "lockUnlock": "Kholein",
-  "lockFailed": "Nahi khula. Dobara koshish karein.",
-  "lockReason": "Aage barhne ke liye kholein",
-  "quickExitTitle": "Quick exit",
-  "quickExitBody": "Har page ke upar ek button dikhata hai jo app ko foran chhupa deta hai, jab koi aap ki screen dekh raha ho.",
-  "quickExitNeutral": "Abhi kuch khula nahi.",
-  "dbMigrationFailed": "Is phone par aap ki chats is baar encrypt nahi ho sakin. Woh yahin maujood hain, aur app agli baar khulne par dobara koshish karegi.",
-  "dbUnreadable": "Is phone par aap ki pichli chats khul nahi sakin, is liye nayi khaali jagah shuru ki gayi. Purani file rakh li gayi hai.",
-  "dbOpenFailed": "Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to Abhi madad lein ab bhi kaam karta hai."
+  "dbOpenFailed": "Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to 'Abhi madad lein' ab bhi kaam karta hai."
 }
