@@ -161,7 +161,8 @@ class PatientOverview(BaseModel):
 
 
 class ChatMessage(BaseModel):
-    role: str = Field(pattern="^(user|assistant)$")
+    # system is allowed so the app can send its registered prompt as the first message.
+    role: str = Field(pattern="^(user|assistant|system)$")
     content: str = Field(max_length=MAX_CHAT_CHARS)
 
 
@@ -169,6 +170,8 @@ class ChatIn(BaseModel):
     messages: list[ChatMessage] = Field(min_length=1, max_length=MAX_CHAT_MESSAGES)
     max_tokens: int = Field(default=256, le=1024)
     temperature: float = Field(default=0.7, ge=0, le=1.5)
+    # When true, the server streams an SSE response instead of waiting for the full reply.
+    stream: bool = False
 
     @model_validator(mode="after")
     def _fits_context(self) -> ChatIn:

@@ -16,6 +16,7 @@ dependencies = [
   "requests",
   "httpx",
   "firebase-admin>=6.5",
+  "redis>=5.0",
   "tzdata",  # zoneinfo has no time zone database on Windows or slim images without it
 ]
 
