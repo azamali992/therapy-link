@@ -6,6 +6,7 @@ import '../../app/locale.dart';
 import '../../app/theme/tokens.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/models.dart';
+import '../../ui/components/slab.dart';
 import '../shared/widgets.dart';
 
 /// Provider for a single patient's overview. Family keyed on patient UID.
@@ -87,48 +88,59 @@ class _PatientBody extends StatelessWidget {
           // Assessments
           if (consent.shareAssessments) ...[
             _SectionHeader(l.clinicianAssessments),
-            _AssessmentsBlock(assessments: overview.assessments ?? []),
+            Slab(
+              padding: const EdgeInsets.all(Tokens.s16),
+              child: _AssessmentsBlock(
+                  assessments: overview.assessments ?? []),
+            ),
           ],
 
           // Mood trend
-          if (consent.shareMoodTrend && (overview.moodTrend?.isNotEmpty ?? false)) ...[
+          if (consent.shareMoodTrend &&
+              (overview.moodTrend?.isNotEmpty ?? false)) ...[
             _SectionHeader(l.clinicianMood),
-            Padding(
-              padding: const EdgeInsets.only(bottom: Tokens.s12),
+            Slab(
+              padding: const EdgeInsets.all(Tokens.s16),
               child: Text(
                 l.moodTrend,
-                style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                style: t.bodyMedium
+                    ?.copyWith(color: scheme.onSurfaceVariant),
               ),
             ),
           ],
 
           // Weekly summaries
-          if (consent.shareSummaries && (overview.summaries?.isNotEmpty ?? false)) ...[
+          if (consent.shareSummaries &&
+              (overview.summaries?.isNotEmpty ?? false)) ...[
             _SectionHeader(l.clinicianSummaries),
             for (final s in overview.summaries!) ...[
-              Padding(
-                padding:
-                    const EdgeInsets.only(bottom: Tokens.s12),
+              Slab(
+                padding: const EdgeInsets.all(Tokens.s16),
                 child: Text(s.content,
-                    style: t.bodyMedium
-                        ?.copyWith(color: scheme.onSurfaceVariant)),
+                    style: t.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant)),
               ),
+              const SizedBox(height: Tokens.s8),
             ],
           ],
 
           // Journal entries (shared)
-          if (consent.shareJournal && (overview.journal?.isNotEmpty ?? false)) ...[
+          if (consent.shareJournal &&
+              (overview.journal?.isNotEmpty ?? false)) ...[
             _SectionHeader(l.clinicianJournal),
-            for (final e in overview.journal!)
-              Padding(
-                padding: const EdgeInsets.only(bottom: Tokens.s8),
+            for (final e in overview.journal!) ...[
+              Slab(
+                padding: const EdgeInsets.all(Tokens.s16),
                 child: Text(
                   e.body,
-                  style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                  style: t.bodyMedium?.copyWith(
+                      color: scheme.onSurfaceVariant),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(height: Tokens.s8),
+            ],
           ],
         ],
       ],

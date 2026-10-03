@@ -7,7 +7,9 @@ import '../../core/ml/onnx_guardian.dart';
 import '../../core/security/app_lock.dart';
 import '../../core/security/privacy_settings.dart';
 import '../../core/settings/settings.dart';
+import '../../ui/components/buttons.dart';
 import '../../ui/components/setting_row.dart';
+import '../../ui/components/slab.dart';
 import '../shared/widgets.dart';
 import 'account_actions.dart';
 
@@ -104,6 +106,13 @@ class SettingsScreen extends ConsumerWidget {
             ],
             selected: {s.themeMode},
             onSelectionChanged: (v) => n.setThemeMode(v.first),
+          ),
+
+          // ── Where things are kept ─────────────────────────────────────
+          SectionTitle(l.youDataTitle),
+          Slab(
+            padding: const EdgeInsets.all(Tokens.s16),
+            child: StorageRow(),
           ),
 
           // ── Privacy ────────────────────────────────────────────────────
@@ -227,14 +236,12 @@ class _GuardianRow extends ConsumerWidget {
           const SizedBox(height: Tokens.s12),
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: OutlinedButton.icon(
-              onPressed: manager.available ? manager.download : null,
-              style:
-                  OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
-              icon: const Icon(Icons.shield_outlined),
-              label: Text(manager.available
+            child: GhostButton(
+              label: manager.available
                   ? l.guardianDownload
-                  : l.guardianUnavailable),
+                  : l.guardianUnavailable,
+              onPressed:
+                  manager.available ? manager.download : () {},
             ),
           ),
         ],

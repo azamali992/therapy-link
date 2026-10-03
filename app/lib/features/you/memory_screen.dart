@@ -6,6 +6,10 @@ import '../../app/locale.dart';
 import '../../app/theme/tokens.dart';
 import '../../core/db/database.dart';
 import '../../core/settings/settings.dart';
+import '../../ui/components/buttons.dart';
+import '../../ui/components/inline_note.dart';
+import '../../ui/components/setting_row.dart';
+import '../../ui/components/slab.dart';
 import '../eve/memory.dart';
 import '../shared/widgets.dart';
 
@@ -25,12 +29,21 @@ class MemoryScreen extends ConsumerWidget {
     final l = context.l10n;
     final ok = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: Text(l.memoryForgetAllTitle),
         content: Text(l.memoryForgetAllBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(MaterialLocalizations.of(context).cancelButtonLabel)),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l.memoryForgetAll)),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child:
+                Text(MaterialLocalizations.of(ctx).cancelButtonLabel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+                minimumSize: const Size(0, Tokens.s48)),
+            child: Text(l.memoryForgetAll),
+          ),
         ],
       ),
     );
@@ -41,8 +54,9 @@ class MemoryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
-    final enabled = ref.watch(settingsProvider.select((s) => s.memoryEnabled));
+    final colors = Theme.of(context).extension<JugnuColors>()!;
+    final enabled =
+        ref.watch(settingsProvider.select((s) => s.memoryEnabled));
     final memories = ref.watch(memoriesProvider);
     final df = DateFormat.MMMd(dateLocaleOf(context));
 
@@ -51,21 +65,30 @@ class MemoryScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l.memoryIntro, style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
-          const SizedBox(height: Tokens.s12),
-          SwitchListTile.adaptive(
-            contentPadding: EdgeInsets.zero,
-            title: Text(l.memoryToggle),
-            subtitle: Text(enabled ? l.memoryToggleOn : l.memoryToggleOff),
+          // Eve's memory stays on-device: surface-level notice.
+          InlineNote(text: l.memoryIntro, isProtected: true),
+          const SizedBox(height: Tokens.s16),
+          SettingRow(
+            title: l.memoryToggle,
+            subtitle: enabled ? l.memoryToggleOn : l.memoryToggleOff,
             value: enabled,
-            onChanged: ref.read(settingsProvider.notifier).setMemoryEnabled,
+            onChanged:
+                ref.read(settingsProvider.notifier).setMemoryEnabled,
+            icon: Icons.psychology_outlined,
           ),
-          const Divider(),
+          Divider(height: 1, color: colors.hair),
+          const SizedBox(height: Tokens.s16),
           memories.when(
             loading: () => const SkeletonList(rows: 3),
-            error: (_, _) => ErrorState(onRetry: () => ref.invalidate(memoriesProvider)),
+            error: (_, _) => ErrorState(
+                onRetry: () => ref.invalidate(memoriesProvider)),
             data: (rows) {
-              if (rows.isEmpty) return EmptyState(title: l.memoryEmptyTitle, body: l.memoryEmptyBody);
+              if (rows.isEmpty) {
+                return EmptyState(
+                  title: l.memoryEmptyTitle,
+                  body: l.memoryEmptyBody,
+                );
+              }
               final byKind = <String, List<Memory>>{};
               for (final m in rows) {
                 byKind.putIfAbsent(m.kind, () => []).add(m);
@@ -73,44 +96,87 @@ class MemoryScreen extends ConsumerWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  for (final kind in memoryKinds.where(byKind.containsKey)) ...[
+                  for (final kind
+                      in memoryKinds.where(byKind.containsKey)) ...[
                     SectionTitle(memoryKindLabel(context, kind)),
-                    for (final m in byKind[kind]!)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: Tokens.s4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: Tokens.s12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(m.content, style: t.bodyLarge),
-                                    Text(df.format(m.createdAt), style: t.labelSmall?.copyWith(color: scheme.onSurfaceVariant)),
-                                  ],
-                                ),
-                              ),
+                    Slab(
+                      padding: const EdgeInsets.all(Tokens.s12),
+                      child: Column(
+                        children: [
+                          for (final m in byKind[kind]!) ...[
+                            _MemoryRow(
+                              memory: m,
+                              dateLabel: df.format(m.createdAt),
+                              colors: colors,
+                              t: t,
+                              onDelete: () => ref
+                                  .read(databaseProvider)
+                                  .deleteMemory(m.id),
                             ),
-                            IconButton(
-                              tooltip: l.memoryDelete,
-                              onPressed: () => ref.read(databaseProvider).deleteMemory(m.id),
-                              icon: const Icon(Icons.close_rounded),
-                            ),
+                            if (m != byKind[kind]!.last)
+                              Divider(height: 1, color: colors.hair),
                           ],
-                        ),
+                        ],
                       ),
+                    ),
                   ],
                   const SizedBox(height: Tokens.s24),
-                  OutlinedButton.icon(
+                  GhostButton(
+                    label: l.memoryForgetAll,
                     onPressed: () => _forgetAll(context, ref),
-                    icon: const Icon(Icons.delete_sweep_outlined),
-                    label: Text(l.memoryForgetAll),
                   ),
                 ],
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemoryRow extends StatelessWidget {
+  const _MemoryRow({
+    required this.memory,
+    required this.dateLabel,
+    required this.colors,
+    required this.t,
+    required this.onDelete,
+  });
+
+  final Memory memory;
+  final String dateLabel;
+  final JugnuColors colors;
+  final TextTheme t;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: Tokens.s8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(memory.content, style: t.bodyLarge),
+                const SizedBox(height: 2),
+                Text(dateLabel,
+                    style:
+                        t.labelSmall?.copyWith(color: colors.ink2)),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: Tokens.s48,
+            height: Tokens.s48,
+            child: IconButton(
+              tooltip: context.l10n.memoryDelete,
+              onPressed: onDelete,
+              icon: const Icon(Icons.close_rounded, size: 18),
+            ),
           ),
         ],
       ),

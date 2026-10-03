@@ -6,6 +6,7 @@ import '../../app/locale.dart';
 import '../../app/theme/tokens.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/models.dart';
+import '../../ui/components/slab.dart';
 import '../shared/widgets.dart';
 
 /// Provider for the clinician's pending link requests.
@@ -13,11 +14,10 @@ final clinicianRequestsProvider = FutureProvider<List<LinkRequest>>(
   (ref) => ref.watch(apiClientProvider).clinicianRequests(),
 );
 
-/// /clinic/requests — pending patient link requests.
+/// /clinic/requests -- pending patient link requests.
 ///
 /// Each request shows the patient name, when they asked, and
-/// Accept / Decline buttons. Accepting opens the patient view once the
-/// patient turns sharing on; declining removes the request.
+/// Accept / Decline buttons. All touch targets are >= 48 dp.
 class RequestsScreen extends ConsumerStatefulWidget {
   const RequestsScreen({super.key});
 
@@ -66,13 +66,13 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
 
     return Screen(
       title: l.clinicianRequests,
-      // Clinician screens do not show the patient help action.
       help: false,
       quickExit: false,
       child: ref.watch(clinicianRequestsProvider).when(
         loading: () => const SkeletonList(rows: 3),
-        error: (_, _) =>
-            ErrorState(onRetry: () => ref.invalidate(clinicianRequestsProvider)),
+        error: (_, _) => ErrorState(
+            onRetry: () =>
+                ref.invalidate(clinicianRequestsProvider)),
         data: (requests) {
           if (requests.isEmpty) {
             return EmptyState(
@@ -109,7 +109,6 @@ class _RequestList extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
     final colors = Theme.of(context).extension<JugnuColors>()!;
     final df = DateFormat.yMMMd(dateLocaleOf(context));
 
@@ -121,8 +120,8 @@ class _RequestList extends StatelessWidget {
             style: t.bodyMedium?.copyWith(color: colors.ink2)),
         const SizedBox(height: Tokens.s16),
         for (final r in requests) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: Tokens.s12),
+          Slab(
+            padding: const EdgeInsets.all(Tokens.s16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -136,20 +135,26 @@ class _RequestList extends StatelessWidget {
                     ),
                     if (r.requestedAt != null)
                       Text(
-                        l.clinicianRequestedOn(df.format(r.requestedAt!)),
+                        l.clinicianRequestedOn(
+                            df.format(r.requestedAt!)),
                         style: t.labelSmall
-                            ?.copyWith(color: scheme.onSurfaceVariant),
+                            ?.copyWith(color: colors.ink2),
                       ),
                   ],
                 ),
                 const SizedBox(height: Tokens.s12),
                 Row(
                   children: [
+                    // Accept: FilledButton with Jugnu 48dp min target.
+                    // (PrimaryButton has no disabled/loading state;
+                    //  FilledButton is used only here for the loading spinner.)
                     FilledButton(
-                      onPressed:
-                          busy[r.linkId] == true ? null : () => onAccept(r.linkId),
+                      onPressed: busy[r.linkId] == true
+                          ? null
+                          : () => onAccept(r.linkId),
                       style: FilledButton.styleFrom(
-                        minimumSize: const Size(88, 44),
+                        minimumSize:
+                            const Size(88, Tokens.s48),
                         padding: const EdgeInsets.symmetric(
                             horizontal: Tokens.s16),
                       ),
@@ -157,15 +162,18 @@ class _RequestList extends StatelessWidget {
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2))
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2))
                           : Text(l.clinicianRequestAccept),
                     ),
                     const SizedBox(width: Tokens.s12),
                     TextButton(
-                      onPressed:
-                          busy[r.linkId] == true ? null : () => onDecline(r.linkId),
+                      onPressed: busy[r.linkId] == true
+                          ? null
+                          : () => onDecline(r.linkId),
                       style: TextButton.styleFrom(
-                        minimumSize: const Size(88, 44),
+                        minimumSize:
+                            const Size(88, Tokens.s48),
                         padding: const EdgeInsets.symmetric(
                             horizontal: Tokens.s16),
                       ),
@@ -176,7 +184,7 @@ class _RequestList extends StatelessWidget {
               ],
             ),
           ),
-          Divider(height: 1, color: colors.hair),
+          const SizedBox(height: Tokens.s8),
         ],
       ],
     );

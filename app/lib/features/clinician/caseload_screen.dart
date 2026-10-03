@@ -7,6 +7,7 @@ import '../../app/theme/tokens.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/me_provider.dart';
 import '../../core/api/models.dart';
+import '../../ui/components/slab.dart';
 import '../shared/widgets.dart';
 
 /// Provider for the clinician's patient list. Ordered server-side by urgency.
@@ -39,11 +40,17 @@ class _CaseloadScreenState extends ConsumerState<CaseloadScreen> {
         content: Text(l.clinicianNewCodeBody),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(l.cancel)),
+            onPressed: () => Navigator.pop(ctx, false),
+            style: TextButton.styleFrom(
+                minimumSize: const Size(0, Tokens.s48)),
+            child: Text(l.cancel),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(l.clinicianNewCode)),
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+                minimumSize: const Size(0, Tokens.s48)),
+            child: Text(l.clinicianNewCode),
+          ),
         ],
       ),
     );
@@ -145,13 +152,8 @@ class _PendingBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<JugnuColors>()!;
     final t = Theme.of(context).textTheme;
-    return Container(
+    return Slab(
       padding: const EdgeInsets.all(Tokens.s16),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(Jugnu.rNested),
-        border: Border.all(color: colors.hair),
-      ),
       child: Row(
         children: [
           Icon(Icons.schedule_outlined, size: 20, color: colors.ink2),
@@ -187,13 +189,8 @@ class _InviteCodeCard extends StatelessWidget {
     final colors = Theme.of(context).extension<JugnuColors>()!;
     final t = Theme.of(context).textTheme;
 
-    return Container(
+    return Slab(
       padding: const EdgeInsets.all(Tokens.s16),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(Jugnu.rSlab),
-        border: Border.all(color: colors.hair),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -254,10 +251,12 @@ class _PatientList extends StatelessWidget {
       children: [
         for (final row in rows) ...[
           InkWell(
-            onTap: () => context.go('/clinic/patients/${row.patient.uid}'),
+            onTap: () =>
+                context.go('/clinic/patients/${row.patient.uid}'),
             borderRadius: BorderRadius.circular(Tokens.rSmall),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: Tokens.s16),
+              padding:
+                  const EdgeInsets.symmetric(vertical: Tokens.s12),
               child: Row(
                 children: [
                   Expanded(
@@ -282,7 +281,7 @@ class _PatientList extends StatelessWidget {
                             row.latest
                                 .map((a) =>
                                     '${instrumentTitle(context, a.instrument)}: ${a.score} ${bandLabel(context, a.band)}')
-                                .join(' · '),
+                                .join(', '),
                             style: t.bodySmall
                                 ?.copyWith(color: colors.ink2),
                             maxLines: 1,
@@ -294,7 +293,8 @@ class _PatientList extends StatelessWidget {
                             spacing: Tokens.s4,
                             children: [
                               for (final flag in row.attention)
-                                _MiniFlag(_attentionLabel(context, flag)),
+                                _MiniFlag(
+                                    _attentionLabel(context, flag)),
                             ],
                           ),
                         ],
