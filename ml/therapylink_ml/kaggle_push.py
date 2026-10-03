@@ -104,6 +104,7 @@ def run(
     slug: str = typer.Option("therapylink-eve-sft", help="Kernel slug on Kaggle"),
     title: str = typer.Option("", help="Defaults to the slug — Kaggle derives the real slug from the title, so they must agree"),
     datasets: list[str] = typer.Option(["therapylink-corpus"], "--dataset", help="Dataset slugs to attach"),
+    kernels: list[str] = typer.Option([], "--kernel", help="Kernel slugs whose output to attach (e.g. the SFT run, for DPO)"),
     gpu: bool = True,
     internet: bool = True,
 ) -> None:
@@ -128,7 +129,7 @@ def run(
                     "enable_internet": internet,
                     "dataset_sources": [f"{owner}/{d}" for d in datasets],
                     "competition_sources": [],
-                    "kernel_sources": [],
+                    "kernel_sources": [f"{owner}/{k}" for k in kernels],
                 },
                 indent=2,
             ),
