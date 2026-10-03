@@ -25,6 +25,20 @@ paths = ['''^app/lib/firebase_options\.dart$''']
 regexTarget = "match"
 regexes = ['''AIza[0-9A-Za-z_\-]{35}''']
 
+# Build outputs, caches and venvs only matter to `gitleaks dir` (they're gitignored, so history never
+# has them). Compiled kernel files and wheels are full of random strings that look like keys. A key
+# that got compiled into a build is still caught in the source it came from.
+[[allowlists]]
+description = "Gitignored build outputs, tool caches and virtual environments"
+paths = [
+  '''(^|/)app/build/''',
+  '''(^|/)\.dart_tool/''',
+  '''(^|/)\.gradle/''',
+  '''(^|/)\.venv[^/]*/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)(\.ruff_cache|\.pytest_cache|__pycache__)/''',
+]
+
 # --- Credentials by content ---------------------------------------------------------------------
 
 [[rules]]
@@ -33,15 +47,20 @@ description = "Google service-account key (JSON with type service_account)"
 regex = '''"type"\s*:\s*"service_account"'''
 keywords = ["service_account"]
 
+# Signing passwords typed in as values. Gradle code that reads them (keyProps.getProperty(...),
+# System.getenv(...)) has no string literal right after the name, so it doesn't match.
 [[rules]]
-id = "signing-password-property"
-description = "Keystore password written into a properties or Gradle file"
-regex = '''(?i)\b(storePassword|keyPassword)\b\s*[=:]\s*["']?[^\s"'$]{4,}'''
+id = "signing-password-literal"
+description = "Keystore password as a string literal in Gradle or other build code"
+regex = '''(?i)\b(storePassword|keyPassword)\b\s*[=:]?\s*["'][^"'$\s]{4,}["']'''
 keywords = ["storepassword", "keypassword"]
-[[rules.allowlists]]
-description = "Gradle reading the value from key.properties or the environment"
-regexTarget = "line"
-regexes = ['''(keystoreProperties|System\.getenv|providers\.|properties\[|\$\{)''']
+
+[[rules]]
+id = "signing-password-properties"
+description = "Keystore password in a .properties file (gradle.properties, local.properties, ...)"
+path = '''(?i)\.properties$'''
+regex = '''(?im)^\s*(storePassword|keyPassword)\s*[=:]\s*[^\s$]{4,}'''
+keywords = ["storepassword", "keypassword"]
 
 # --- Files that must never be committed, whatever they contain ----------------------------------
 # These rules fire on the file name alone, so an empty or placeholder copy is flagged too. That is
