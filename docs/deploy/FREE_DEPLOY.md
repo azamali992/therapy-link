@@ -144,6 +144,17 @@ The base GGUF downloads from Hugging Face. The LoRA (`eve-sft-v16c-e2-lora-f16.g
 - Oracle Object Storage: create a private bucket `eve-models`, upload `D:\dev\models\eve-sft-v16c-e2-lora-f16.gguf`, then ⋯ → Create Pre-Authenticated Request → Object, read-only, expiring tomorrow. Copy the URL (it is a credential, treat it like a password). Or:
 - `scp D:\dev\models\eve-sft-v16c-e2-lora-f16.gguf ubuntu@VM_IP:/tmp/` and use `EVE_ADAPTER_PATH=/tmp/eve-sft-v16c-e2-lora-f16.gguf`.
 
+### 4b. Put the Guardian bundle somewhere the VM can fetch it
+
+Guardian is the crisis classifier that runs on the phone before every message (v1b: XLM-R int8, 287 MB in four files). The API serves it to the app at `https://TL_DOMAIN/guardian/<file>`, public, with the file's sha256 as its ETag, and the app checks every file against hashes baked into the build. A release build won't open Eve's chat until it has the model, so this step isn't optional for a pilot.
+
+The four files are in `ml/runs/guardian-v1b-kaggle/runs/xlmr-base/bundle/` (gitignored): `guardian.int8.onnx`, `spm_vocab.json`, `config.json`, `thresholds.json`. Their sizes and sha256 are in `ml/releases/guardian-v1b/report.json`, which is what `get-models.sh` checks against. Either:
+
+- Upload them to the same Object Storage bucket under `guardian-v1b/`, make a pre-authenticated request for that prefix (read, objects with prefix), and set `GUARDIAN_BASE_URL` to the URL ending in `/o/guardian-v1b/`. Or a private Hugging Face repo: `GUARDIAN_BASE_URL=https://huggingface.co/<org>/<repo>/resolve/main/` with `GUARDIAN_HF_TOKEN`. Or:
+- `scp` the four files to `/tmp/guardian-v1b/` and set `GUARDIAN_SRC_DIR=/tmp/guardian-v1b`.
+
+Setup puts them in `/srv/guardian` (`GUARDIAN_DIR`) and compose mounts that read-only into the API as `TL_GUARDIAN_DIR`. If neither source is set, setup warns and carries on, and `/guardian/*` answers 404.
+
 ### 5. Backup key (on your laptop)
 
 ```powershell
@@ -166,11 +177,12 @@ cd /srv/therapylink && git checkout <branch-or-tag>
 sudo TL_DOMAIN=therapylink-pilot.duckdns.org \
      ACME_EMAIL=you@example.com \
      EVE_ADAPTER_URL='https://objectstorage.ap-mumbai-1.oraclecloud.com/p/.../eve-sft-v16c-e2-lora-f16.gguf' \
+     GUARDIAN_BASE_URL='https://objectstorage.ap-mumbai-1.oraclecloud.com/p/.../o/guardian-v1b/' \
      BACKUP_AGE_RECIPIENT=age1... \
      ops/free/setup.sh
 ```
 
-It takes 25–40 minutes, most of it the llama.cpp build and the 3.1 GB download. It is safe to re-run. At the end it prints the URL, one test reply's speed, and the `flutter build` line.
+It takes 25–40 minutes, most of it the llama.cpp build and the 3.1 GB download. It is safe to re-run. At the end it prints the URL, one test reply's speed, whether `/guardian/config.json` serves the expected file, and the `flutter build` line with the Guardian flags filled in.
 
 Then fill in what setup can't know, in `ops/free/.env`:
 
@@ -195,10 +207,18 @@ Account deletion (`DELETE /me`) needs the Firebase service-account JSON. Copy it
 
 ```powershell
 cd app
-flutter build apk --release --dart-define=TL_API_URL=https://therapylink-pilot.duckdns.org
+$guardianHashes = (Get-Content ..\ml\releases\guardian-v1b\report.json | ConvertFrom-Json).dart_define
+flutter build apk --release `
+  --dart-define=TL_API_URL=https://therapylink-pilot.duckdns.org `
+  --dart-define=TL_GUARDIAN_URL=https://therapylink-pilot.duckdns.org/guardian/ `
+  --dart-define=$guardianHashes
 ```
 
-Install it, sign in, open Eve and send a message. On the VM, `sudo docker compose -f /srv/therapylink/ops/free/docker-compose.yml logs --tail 20 api` should show an `inference ok ... completion_tokens=...` line (token counts only, never text).
+`dart_define` in the report is the whole `TL_GUARDIAN_SHA256=guardian.int8.onnx:<hex>,spm_vocab.json:<hex>,...` value. Without it every download fails verification and the release app keeps chat paused, which is the point: a model nobody can vouch for doesn't get to decide who sees a helpline.
+
+Check the route first: `curl -I https://therapylink-pilot.duckdns.org/guardian/guardian.int8.onnx` should give `200`, `content-length: 278239825` and an `etag` equal to the sha256 in the report.
+
+Install it, sign in, open Eve. On Wi-Fi the app starts the Guardian download by itself; on mobile data it waits, and Settings → Safety check offers "Download on mobile data". Until the model is in, Eve shows "Safety check not ready" where the composer would be. Then send a message. On the VM, `sudo docker compose -f /srv/therapylink/ops/free/docker-compose.yml logs --tail 20 api` should show an `inference ok ... completion_tokens=...` line (token counts only, never text).
 
 ### 9. Measure Eve on the VM
 
@@ -228,6 +248,12 @@ git pull && dc build api && dc run --rm api release && dc up -d api
 # New adapter: add it to ml/registry.json (sha256, size, status) and set serve.adapter, commit, then on the VM
 git pull && sudo EVE_ADAPTER_URL='...' ops/free/get-models.sh && dc build eve && dc up -d eve
 
+# New Guardian release (v1c, say): put its four files where GUARDIAN_BASE_URL points, then on the VM
+git pull && sudo GUARDIAN_RELEASE=guardian-v1c ops/free/get-models.sh && dc restart api
+#   and rebuild the app with TL_GUARDIAN_SHA256 from ml/releases/guardian-v1c/report.json. File names don't change.
+#   Responses carry Cache-Control max-age=3600, so a cache in front may serve the old files for up to an hour,
+#   and old app builds stop installing once the old files are gone (their hashes are pinned).
+
 # Restore drill (monthly, on a scratch DB or a second machine with the private key)
 age -d -i tl-backup.key tl-<stamp>.dump.age > tl.dump
 dc exec -T postgres pg_restore -U therapylink -d therapylink --clean --if-exists < tl.dump
@@ -242,6 +268,7 @@ Oracle's idle reclaim: the VM is "idle" only if CPU, network and memory are all 
 - Nothing was deployed and no image was built. Docker Desktop's disk on this machine lives on C:, so builds weren't run here. Checked: `docker compose config` renders for both the default (caddy + localdb) and the tunnel + Neon variants; shellcheck finds no warnings in the four scripts; `get-models.sh` passed against the real files in `D:\dev\models` and threw away a wrong file; `bench.py` ran the measurements above.
 - llama.cpp b10955 has no prebuilt image on ghcr.io. The nearest tags are b10951 and b10964, so `Dockerfile.eve-cpu` builds the tagged source and checks the commit (2f539596c, same as the local build). The same gap means **`ops/serving/Dockerfile.gpu` (`server-cuda-b10955`) won't pull either**. Pick b10964 there and re-run the smoke test, or build from source the same way.
 - The ARM speed is an estimate until step 9 runs on the VM.
+- The Guardian route and the app's download were tested with small stand-in files (API tests, a simulated `get-models.sh` run, Dart tests with fake files and network). Nobody has fetched the real 287 MB bundle through Caddy to a phone yet, so resume over a flaky mobile connection, and how long the first download takes, are unmeasured.
 - v16c-e2 has no clinician sign-off. The stack runs with `TL_ENV=staging` and `TL_LLM_ALLOW_UNAPPROVED=1`. With `TL_ENV=prod`, Eve refuses to start until `approved_by` is filled in the registry. That's on purpose, and it is the clinician's call, not ops'.
 - The timeout and busy-handling fixes under Capacity are app/API work for someone else.
 - Oracle could cut Always Free again, as it did in 2026 (2 OCPU / 12 GB is the current allowance, and third-party reports say instances over the new limit get stopped or deleted [3]).
