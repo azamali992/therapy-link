@@ -133,6 +133,8 @@
       }
     }
   },
+  "breathResume": "Resume",
+  "breathStop": "Stop whenever you like. Nothing is counted.",
   "breathNote": "Stop any time. If you feel light-headed, breathe normally.",
   "assessmentsTitle": "Check-ins",
   "assessmentPhq9": "Mood check-in",
@@ -198,6 +200,7 @@
   "resultNote": "This is a screening score, not a diagnosis. It's most useful as a trend over time.",
   "resultFlagged": "You answered that you've had thoughts of being better off dead or of hurting yourself. That matters, and there are people who want to help right now.",
   "resultDone": "Done",
+  "resultTalkToEve": "Talk it through with Eve",
   "journalTitle": "Journal",
   "journalNew": "New entry",
   "journalEmptyTitle": "Nothing here yet",

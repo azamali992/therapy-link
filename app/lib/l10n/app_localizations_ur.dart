@@ -290,6 +290,12 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get breathResume => 'Dobara shuru';
+
+  @override
+  String get breathStop => 'Jab chahein rok sakte hain. Kuch count nahi hota.';
+
+  @override
   String get breathNote =>
       'Jab chahein rok dein. Agar sar chakraye to normal saans lein.';
 
@@ -384,6 +390,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get resultDone => 'Ho gaya';
+
+  @override
+  String get resultTalkToEve => 'Eve se baat karein';
 
   @override
   String get journalTitle => 'Journal';

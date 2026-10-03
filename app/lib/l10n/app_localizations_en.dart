@@ -287,6 +287,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get breathResume => 'Resume';
+
+  @override
+  String get breathStop => 'Stop whenever you like. Nothing is counted.';
+
+  @override
   String get breathNote =>
       'Stop any time. If you feel light-headed, breathe normally.';
 
@@ -381,6 +387,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resultDone => 'Done';
+
+  @override
+  String get resultTalkToEve => 'Talk it through with Eve';
 
   @override
   String get journalTitle => 'Journal';

@@ -4,19 +4,25 @@ import '../../app/theme/tokens.dart';
 import '../jugnu_icons.dart';
 import 'slab.dart';
 
-/// One-sentence insight with a source footnote.
+/// One-sentence insight with a source footnote and an optional action row.
 ///
 /// Text: [body] at 16 sp. Footnote: "Based on [checkInCount] check-ins.
 /// A pattern, not a diagnosis." at 14 sp with an info icon.
+/// [action] is rendered below the footnote — used for an inline row-link
+/// (e.g. a breathing exercise shortcut from the Today screen).
 class InsightCard extends StatelessWidget {
   const InsightCard({
     super.key,
     required this.body,
     required this.checkInCount,
+    this.action,
   });
 
   final String body;
   final int checkInCount;
+
+  /// Optional widget at the bottom of the card, after the footnote.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +49,10 @@ class InsightCard extends StatelessWidget {
               ),
             ],
           ),
+          if (action != null) ...[
+            const SizedBox(height: Jugnu.s8),
+            action!,
+          ],
         ],
       ),
     );

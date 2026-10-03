@@ -608,6 +608,18 @@ abstract class AppLocalizations {
   /// **'Round {n} of {total}'**
   String breathCycleOf(int n, int total);
 
+  /// No description provided for @breathResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get breathResume;
+
+  /// No description provided for @breathStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop whenever you like. Nothing is counted.'**
+  String get breathStop;
+
   /// No description provided for @breathNote.
   ///
   /// In en, this message translates to:
@@ -775,6 +787,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get resultDone;
+
+  /// No description provided for @resultTalkToEve.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk it through with Eve'**
+  String get resultTalkToEve;
 
   /// No description provided for @journalTitle.
   ///
