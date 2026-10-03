@@ -36,6 +36,12 @@ MULTI_LABEL_TASKS = {"crisis", "emotion"}
 # alarm, which only shows the user a helpline. Emotion has no such asymmetry — forcing 0.6 recall
 # across 28 classes destroys precision on rare ones — so it gets F1-optimal thresholds instead.
 RECALL_TARGETS = {"crisis": 0.95}
+# Guardian v1 calibrates the crisis head per language: each label's threshold is the lowest that any
+# language needs to reach the target on validation, so no language is carried by another's recall.
+# Validation is written by the same authors as training and scores higher than new text will, so
+# the target here sits above the 0.95 the held-out gate asks for.
+LANG_RECALL_TARGET = 0.98
+MIN_LANG_POSITIVES = 5
 
 # Guardian v1's crisis head. Fixed, not derived from the data: the app maps each label to the help
 # it shows (abuse and child route to Madadgaar 1098), so a label missing from one corpus build must
@@ -209,13 +215,16 @@ def authored_extras(with_authored: bool) -> tuple[dict[str, list[LabeledText]], 
 # --- Held-out recall report ----------------------------------------------------------------------
 
 
-def read_heldout(path: Path, tuning_probes: Path) -> list[dict]:
+def read_heldout(path: Path, tuning_probes: Path | None) -> list[dict]:
     """Held-out rows {id, text, lang, labels}; refuses any row that is one of the tuning probes.
 
-    Thresholds are tuned against the 24 safety probes, so a recall number measured on them is a
-    number the tuning already saw.
+    When thresholds are tuned against the 24 safety probes, a recall number measured on them is a
+    number the tuning already saw. Guardian v1 tunes on its validation split instead and keeps the
+    probes in its held-out set; pass `tuning_probes=None` for that.
     """
-    probes = {json.loads(line)["text"].strip().lower() for line in tuning_probes.read_text(encoding="utf-8").splitlines() if line.strip()}
+    probes = set()
+    if tuning_probes is not None:
+        probes = {json.loads(line)["text"].strip().lower() for line in tuning_probes.read_text(encoding="utf-8").splitlines() if line.strip()}
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     for r in rows:
         if r["text"].strip().lower() in probes:
@@ -262,6 +271,50 @@ def recall_report(rows: list[dict], predicted: list[set[str]]) -> dict:
         "recall": {k: {"n": len(v["n"]), "detect": rate(v["detect"]), "exact": rate(v["exact"])} for k, v in sorted(groups.items())},
         "false_alarm": {lang: {"n": len(v), "rate": rate(v)} for lang, v in sorted(calm_by_lang.items())},
     }
+
+
+def class_lang_report(rows: list[dict], predicted: list[set[str]], labels: tuple[str, ...] = CRISIS_LABELS) -> dict:
+    """Recall and precision per crisis label within each language, and over all languages.
+
+    Recall: of the rows carrying the label, the share the label fired on. Precision: of the rows the
+    label fired on, the share that carry it. `detect_recall` counts a row caught when any crisis
+    label fires, which is what puts the helpline in front of the person.
+    """
+
+    def crisis(labels_) -> set[str]:
+        return set(labels_) - {"none"}
+
+    out: dict[str, dict] = {}
+    for lang in ["all", *sorted({r["lang"] for r in rows})]:
+        idx = [i for i, r in enumerate(rows) if lang == "all" or r["lang"] == lang]
+        per = {}
+        for lab in labels:
+            if lab == "none":
+                continue
+            pos = [i for i in idx if lab in rows[i]["labels"]]
+            fired = [i for i in idx if lab in predicted[i]]
+            tp = len(set(pos) & set(fired))
+            per[lab] = {
+                "n": len(pos),
+                "recall": round(tp / len(pos), 3) if pos else None,
+                "detect_recall": round(sum(1 for i in pos if crisis(predicted[i])) / len(pos), 3) if pos else None,
+                "precision": round(tp / len(fired), 3) if fired else None,
+                "fired": len(fired),
+            }
+        pos = [i for i in idx if crisis(rows[i]["labels"])]
+        calm = [i for i in idx if not crisis(rows[i]["labels"])]
+        flagged = [i for i in idx if crisis(predicted[i])]
+        out[lang] = {
+            "labels": per,
+            "any_crisis": {
+                "n": len(pos),
+                "recall": round(sum(1 for i in pos if crisis(predicted[i])) / len(pos), 3) if pos else None,
+                "precision": round(len(set(flagged) & set(pos)) / len(flagged), 3) if flagged else None,
+                "n_calm": len(calm),
+                "false_alarm_rate": round(sum(1 for i in calm if crisis(predicted[i])) / len(calm), 3) if calm else None,
+            },
+        }
+    return out
 
 
 def below(report: dict, min_recall: float) -> list[str]:
@@ -393,6 +446,46 @@ def _calibrate(probs: np.ndarray, y: np.ndarray, target_recall: float | None) ->
     return thresholds
 
 
+def calibrate_by_lang(
+    probs: np.ndarray, y: np.ndarray, langs: list[str], labels: list[str], target_recall: float = LANG_RECALL_TARGET,
+    min_positives: int = MIN_LANG_POSITIVES,
+) -> list[float]:
+    """Per-label thresholds that reach `target_recall` on the positives of every language.
+
+    A language with fewer than `min_positives` positives for a label does not set that label's
+    threshold on its own (one row is not a recall estimate); the pooled positives still do. 'none'
+    is not a crisis output and keeps 0.5.
+    """
+    langs_arr = np.asarray(langs)
+    out = []
+    for c, lab in enumerate(labels):
+        pos_all = probs[y[:, c] == 1, c]
+        if lab == "none" or len(pos_all) == 0:
+            out.append(0.5)
+            continue
+        # method="lower" picks an observed score, so at least target_recall of the positives reach it.
+        cands = [np.quantile(pos_all, 1 - target_recall, method="lower")]
+        for lang in sorted(set(langs)):
+            pos = probs[(y[:, c] == 1) & (langs_arr == lang), c]
+            if len(pos) >= min_positives:
+                cands.append(np.quantile(pos, 1 - target_recall, method="lower"))
+        out.append(float(np.clip(min(cands), 0.02, 0.98)))
+    return out
+
+
+def pos_weights(items: list[LabeledText], labels: list[str], cap: float = 10.0) -> torch.Tensor:
+    """BCE pos_weight per label: sqrt(negatives / positives), between 1 and `cap`.
+
+    Rare crisis labels (medical, harm_to_others) would otherwise be learnt as 'never'; the square
+    root keeps the push without turning every sad message into a crisis."""
+    n = len(items)
+    counts = {lab: 0 for lab in labels}
+    for it in items:
+        for lab in it.labels:
+            counts[lab] += 1
+    return torch.tensor([float(np.clip(np.sqrt((n - counts[lab]) / max(counts[lab], 1)), 1.0, cap)) for lab in labels])
+
+
 def _best_f1_threshold(prob: np.ndarray, y: np.ndarray) -> float:
     candidates = np.unique(np.quantile(prob, np.linspace(0.01, 0.99, 99)))
     best_t, best_f1 = 0.5, -1.0
@@ -451,6 +544,8 @@ def train(
     freeze_embeddings: bool = typer.Option(True, help="XLM-R's 250k×768 embedding table is ~70% of its parameters; freezing it keeps AdamW state inside 4 GB"),
     limit: int = typer.Option(0, help="Debug: cap train items per task"),
     with_authored: bool = typer.Option(True, help="Add the authored rows to the crisis head's train and val data (Roman Urdu, abuse, child, sexual violence)"),
+    class_weights: bool = typer.Option(True, help="BCE pos_weight per label (sqrt of negatives/positives, capped at 10)"),
+    lang_recall: float = typer.Option(0.0, help="If > 0, calibrate the crisis thresholds per language to this recall on validation (Guardian v1 uses 0.98)"),
 ) -> None:
     random.seed(seed)
     torch.manual_seed(seed)
@@ -482,7 +577,13 @@ def train(
         for t, td in task_data.items()
         if td.val
     }
-    losses = {t: nn.BCEWithLogitsLoss() if td.multi else nn.CrossEntropyLoss() for t, td in task_data.items()}
+    losses = {
+        t: (nn.BCEWithLogitsLoss(pos_weight=pos_weights(td.train, td.labels).to(device) if class_weights else None) if td.multi else nn.CrossEntropyLoss())
+        for t, td in task_data.items()
+    }
+    for t, td in task_data.items():
+        if td.multi and class_weights:
+            console.print(f"{t} pos_weight: " + ", ".join(f"{lab}={w:.2f}" for lab, w in zip(td.labels, losses[t].pos_weight.tolist(), strict=True)))
 
     steps_per_epoch = sum(len(ld) for ld in loaders.values())
     total = steps_per_epoch * epochs
@@ -519,7 +620,9 @@ def train(
         results, thresholds = {}, {}
         for t, ld in val_loaders.items():
             logits, y = _predict(model, ld, t, device)
-            if task_data[t].multi:
+            if t == "crisis" and lang_recall > 0:
+                thresholds[t] = calibrate_by_lang(1 / (1 + np.exp(-logits)), y, [it.lang for it in task_data[t].val], task_data[t].labels, lang_recall)
+            elif task_data[t].multi:
                 thresholds[t] = _calibrate(1 / (1 + np.exp(-logits)), y, RECALL_TARGETS.get(t))
             results[t] = _metrics(task_data[t], logits, y, thresholds.get(t))
             _print_metrics(t, results[t])
@@ -531,7 +634,8 @@ def train(
             (out / "config.json").write_text(
                 json.dumps(
                     {"base": base, "max_len": max_len, "tasks": {t: td.labels for t, td in task_data.items()},
-                     "multi_label": sorted(MULTI_LABEL_TASKS & set(tasks)), "with_authored": with_authored},
+                     "multi_label": sorted(MULTI_LABEL_TASKS & set(tasks)), "with_authored": with_authored,
+                     "class_weights": class_weights, "lang_recall": lang_recall},
                     indent=2,
                 ),
                 encoding="utf-8",
@@ -697,6 +801,7 @@ def heldout(
     file: Path = typer.Argument(..., help="Held-out JSONL {id, text, lang, labels}, written by a clinician and never used for tuning"),
     run: Path = ML_ROOT / "runs" / "guardian",
     tuning_probes: Path = ML_ROOT / "therapylink_ml" / "eval" / "probes" / "safety.jsonl",
+    probes_in_heldout: bool = typer.Option(False, help="The safety probes are part of the held-out set (thresholds were tuned on validation, not on them)"),
     batch: int = 16,
     min_recall: float = typer.Option(0.95, help="Fail unless every language and category reaches this detection recall"),
 ) -> None:
@@ -705,7 +810,7 @@ def heldout(
     Reported for the model alone, the keyword floor alone, and both together (what the app runs:
     the model with the keywords underneath). The gate applies to the union.
     """
-    rows = read_heldout(file, tuning_probes)
+    rows = read_heldout(file, None if probes_in_heldout else tuning_probes)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cfg = json.loads((run / "config.json").read_text(encoding="utf-8"))
     if "crisis" not in cfg["tasks"]:
@@ -741,7 +846,8 @@ def heldout(
     console.print(table)
     short = below(reports["union"], min_recall)
     out = run / "heldout_report.json"
-    out.write_text(json.dumps({"file": str(file), "rows": len(rows), "min_recall": min_recall, "below": short, **reports}, indent=2), encoding="utf-8")
+    by_class = {name: class_lang_report(rows, pred) for name, pred in (("model", model_pred), ("keywords", keyword_pred), ("union", union_pred))}
+    out.write_text(json.dumps({"file": str(file), "rows": len(rows), "min_recall": min_recall, "below": short, **reports, "by_class_lang": by_class}, indent=2), encoding="utf-8")
     console.print(f"[green]wrote[/] {out}")
     if short:
         console.print(f"[bold red]below {min_recall:.0%}:[/] " + "; ".join(short))
