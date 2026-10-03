@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/security/app_lock.dart';
 import 'package:therapylink/core/security/quick_exit.dart';
 import 'package:therapylink/core/settings/settings.dart';
@@ -67,6 +68,7 @@ Future<ProviderContainer> pumpGated(
       container: container,
       child: MaterialApp(
         locale: const Locale('en'),
+        theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => PrivacyGate(onQuickExit: () => fakes.resets++, child: child!),

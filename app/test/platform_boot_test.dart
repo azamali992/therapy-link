@@ -4,7 +4,6 @@
 // Firebase is bypassed by overriding authStateProvider directly so
 // FirebaseAuth.instance is never called during the test run.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,14 +47,10 @@ void main() {
     testWidgets('Get help button is present on the welcome screen', (tester) async {
       await pumpApp(tester);
 
-      // GetHelpButton renders an IconButton with the getHelpNow tooltip.
-      // We find it by tooltip text after l10n resolves.
+      // GetHelpButton renders as a Semantics widget with a "help" label.
+      // We find it by semantics label after l10n resolves.
       expect(
-        find.byWidgetPredicate(
-          (w) =>
-              w is IconButton &&
-              (w.tooltip?.toLowerCase().contains('help') ?? false),
-        ),
+        find.bySemanticsLabel(RegExp('help', caseSensitive: false)),
         findsWidgets,
       );
     });

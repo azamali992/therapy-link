@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/api/api_client.dart';
 import 'package:therapylink/core/api/models.dart';
 import 'package:therapylink/core/ml/guardian.dart';
@@ -50,6 +51,7 @@ Future<_Api> _pump(WidgetTester tester, {bool offline = false}) async {
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
       ),

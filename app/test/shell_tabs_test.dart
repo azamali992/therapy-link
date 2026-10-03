@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:therapylink/app/theme/theme.dart';
 import 'package:therapylink/features/shell/patient_shell.dart';
 import 'package:therapylink/l10n/app_localizations.dart';
+import 'package:therapylink/ui/components/jugnu_nav_bar.dart';
 
 // ---------------------------------------------------------------------------
 // Minimal widget harness — no Firebase, no Riverpod
@@ -87,9 +88,10 @@ void main() {
       await tester.pumpWidget(_harness(router));
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      // NavigationBar on narrow (test) viewport.
-      expect(find.byType(NavigationBar), findsOneWidget);
-      expect(find.byType(NavigationDestination), findsNWidgets(4));
+      // JugnuNavBar on narrow (test) viewport.
+      expect(find.byType(JugnuNavBar), findsOneWidget);
+      expect(find.text('Eve'), findsWidgets);
+      expect(find.text('Today'), findsWidgets);
     });
 
     testWidgets('tabs are Eve, Today, Journal, You in order', (tester) async {
@@ -114,8 +116,8 @@ void main() {
       // the button — the real EveScreen test covers button presence per-screen.
       //
       // For this shell test we just confirm the shell structure is correct.
-      expect(find.byType(NavigationBar), findsOneWidget);
-      expect(find.byType(NavigationDestination), findsNWidgets(4));
+      expect(find.byType(JugnuNavBar), findsOneWidget);
+      expect(find.text('Eve'), findsWidgets);
     });
   });
 }

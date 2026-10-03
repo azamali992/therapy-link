@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/security/app_lock.dart';
 import 'package:therapylink/core/security/privacy_settings.dart';
 import 'package:therapylink/core/settings/settings.dart';
@@ -24,7 +25,8 @@ void main() {
   testWidgets('every standard page carries it, on by default', (tester) async {
     await pumpGated(tester, _page, fakes: fakes);
     expect(quickExit(), findsOneWidget);
-    expect(find.byTooltip('Get help now'), findsOneWidget);
+    // GetHelpButton uses Semantics(label:) not IconButton(tooltip:) — find by type.
+    expect(find.byType(GetHelpButton), findsOneWidget);
   });
 
   testWidgets('one tap hides everything behind a neutral screen, resets navigation and leaves', (tester) async {
@@ -43,7 +45,7 @@ void main() {
     await pumpGated(tester, _page, fakes: fakes);
     await tester.tap(quickExit());
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Get help now'));
+    await tester.tap(find.byType(GetHelpButton));
     await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsOneWidget);
   });
@@ -185,6 +187,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         child: MaterialApp(
+          theme: buildTheme(Brightness.dark),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: _page,

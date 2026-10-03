@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/ml/guardian.dart';
 import 'package:therapylink/features/shared/crisis_copy.dart';
 import 'package:therapylink/features/shared/widgets.dart';
@@ -9,6 +10,7 @@ import 'package:therapylink/l10n/app_localizations.dart';
 
 Widget _app(Widget home) => ProviderScope(
   child: MaterialApp(
+    theme: buildTheme(Brightness.dark),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     home: home,
@@ -34,7 +36,7 @@ void main() {
     // No human has verified these yet, and debug builds say so.
     expect(find.text('unverified'), findsNWidgets(2));
 
-    await tester.tap(find.byTooltip(CrisisCopy.romanUrdu.call('Umang')));
+    await tester.tap(find.bySemanticsLabel(CrisisCopy.romanUrdu.call('Umang')));
     await tester.pump();
     expect(dialled.single, Uri(scheme: 'tel', path: '03117786264'));
   });
@@ -59,7 +61,7 @@ void main() {
     helplineDialer = (uri) async => false;
     await tester.pumpWidget(_app(Scaffold(body: CrisisCard(kind: CrisisKind.suicide, copy: CrisisCopy.en))));
 
-    await tester.tap(find.byTooltip(CrisisCopy.en.call('Umang')));
+    await tester.tap(find.bySemanticsLabel(CrisisCopy.en.call('Umang')));
     await tester.pumpAndSettle();
 
     expect(find.byType(AlertDialog), findsOneWidget);
@@ -71,7 +73,8 @@ void main() {
   testWidgets('every standard page has Get help now, and it opens the sheet', (tester) async {
     await tester.pumpWidget(_app(const Screen(title: 'Journal', child: Text('body'))));
 
-    await tester.tap(find.byTooltip(CrisisCopy.en.helpNow));
+    // GetHelpButton is a pill widget — find by type.
+    await tester.tap(find.byType(GetHelpButton));
     await tester.pumpAndSettle();
 
     expect(find.text(CrisisCopy.en.title(CrisisKind.suicide)), findsOneWidget);
@@ -80,7 +83,7 @@ void main() {
 
   testWidgets('a page can leave the action off', (tester) async {
     await tester.pumpWidget(_app(const Screen(title: 'Caseload', help: false, child: Text('body'))));
-    expect(find.byTooltip(CrisisCopy.en.helpNow), findsNothing);
+    expect(find.byType(GetHelpButton), findsNothing);
   });
 
   testWidgets('the sheet fits the danger: a child gets Madadgaar first', (tester) async {
@@ -101,7 +104,9 @@ void main() {
     expect(madadgaar.dy, lessThan(rescue.dy));
     expect(find.textContaining('0311'), findsNothing);
 
-    await tester.tap(find.textContaining('1098'));
+    // CrisisSheetView renders a separate "Call" pill button per helpline.
+    // Madadgaar is first in the sheet, so find.text('Call').first is its button.
+    await tester.tap(find.text('Call').first);
     await tester.pump();
     expect(dialled.single.path, '1098');
   });
