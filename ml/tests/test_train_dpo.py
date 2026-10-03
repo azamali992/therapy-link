@@ -4,6 +4,7 @@ import pytest
 import typer
 
 from therapylink_ml.train.eve_dpo import (
+    AccuracyWatch,
     MarginWatch,
     Sample,
     build_pairs,
@@ -74,6 +75,33 @@ def test_moving_margins_do_not_abort_and_a_missing_metric_does():
     watch.observe(10, {"rewards/margins": 0.02})
     assert watch.observe(50, {"rewards/margins": 0.0}) is None
     assert "no 'rewards/margins'" in MarginWatch(check_step=50).observe(50, {"loss": 0.7})
+
+
+def test_memorised_pairs_stop_the_run_while_eval_accuracy_is_flat():
+    # DPO v16's curve: train accuracy climbed to 1.0, eval stayed at 0.63-0.65.
+    watch = AccuracyWatch(threshold=1.0, patience=2)
+    assert watch.observe(10, {"rewards/accuracies": 0.43}) is None
+    assert watch.observe(10, {"eval_rewards/accuracies": 0.63}) is None
+    assert watch.observe(20, {"rewards/accuracies": 1.0}) is None  # one line is not a streak
+    assert watch.observe(30, {"rewards/accuracies": 0.9}) is None  # streak resets
+    assert watch.observe(30, {"eval_rewards/accuracies": 0.65}) is None
+    assert watch.observe(40, {"rewards/accuracies": 1.0}) is None
+    reason = watch.observe(50, {"rewards/accuracies": 1.0})
+    assert reason and "0.63 -> 0.65" in reason
+    assert watch.observe(60, {"rewards/accuracies": 1.0}) is None  # reported once
+
+
+def test_perfect_train_accuracy_with_rising_eval_accuracy_keeps_training():
+    watch = AccuracyWatch(threshold=1.0, patience=2)
+    watch.observe(10, {"eval_rewards/accuracies": 0.60})
+    watch.observe(20, {"eval_rewards/accuracies": 0.72})
+    assert watch.observe(30, {"rewards/accuracies": 1.0}) is None
+    assert watch.observe(40, {"rewards/accuracies": 1.0}) is None
+
+
+def test_accuracy_stop_can_be_turned_off():
+    watch = AccuracyWatch(threshold=0)
+    assert all(watch.observe(s, {"rewards/accuracies": 1.0}) is None for s in range(10, 100, 10))
 
 
 def test_pick_pair_needs_a_pass_and_a_fail():

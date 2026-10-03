@@ -1,0 +1,48 @@
+# Eve on a cloud GPU (Cloud Run with an NVIDIA L4, or any CUDA host).
+#
+#   docker build -f ops/serving/Dockerfile.gpu -t eve-server:v16c-e2 .      # from the repo root
+#
+# The image holds llama-server, the registry and the start scripts. No weights: at start,
+# fetch-models.sh pulls the base GGUF and the adapter named in ml/registry.json from
+# TL_MODEL_SOURCE, and run-llama-server.sh refuses to start unless both match their sha256.
+#
+# Runtime environment:
+#   TL_LLM_API_KEY            required (Secret Manager), >= 24 characters
+#   TL_MODEL_SOURCE           required: gs://bucket/prefix, a mounted directory, or https://...
+#   TL_ENV                    prod refuses any adapter without clinician approval
+#   TL_LLM_ALLOW_UNAPPROVED   1 on staging to serve the `candidate` before sign-off (never prod)
+#   TL_LLM_PARALLEL           default 4 slots; TL_LLM_CTX_PER_SLOT default 8192
+
+# Official llama.cpp server image, CUDA build. b10955 is the build the local evals ran on
+# (D:\dev\llama). Pin the digest (@sha256:...) once pulled, so a re-tag can't change what runs.
+ARG LLAMA_IMAGE=ghcr.io/ggml-org/llama.cpp:server-cuda-b10955
+FROM ${LLAMA_IMAGE}
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends jq curl ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/tl
+COPY ml/registry.json ml/registry.json
+COPY ops/serving/run-llama-server.sh ops/serving/fetch-models.sh ops/serving/
+# Scripts must have LF endings even if the checkout converted them.
+RUN sed -i 's/\r$//' ops/serving/*.sh \
+ && chmod 0555 ops/serving/*.sh \
+ && useradd --system --uid 10001 --home-dir /nonexistent --shell /usr/sbin/nologin eve \
+ && mkdir -p /models \
+ && chown eve /models
+
+USER eve
+ENV TL_LLM_CONTAINER=1 \
+    TL_MODELS_DIR=/models \
+    TL_LLAMA_SERVER=/app/llama-server \
+    TL_LLM_PARALLEL=4 \
+    TL_LLM_CTX_PER_SLOT=8192 \
+    PORT=8080
+EXPOSE 8080
+
+# /health answers without the API key. Model fetch + hash check + load takes a while on a cold start.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=300s --retries=3 \
+  CMD curl -fsS "http://127.0.0.1:${PORT}/health" || exit 1
+
+ENTRYPOINT ["/opt/tl/ops/serving/fetch-models.sh"]

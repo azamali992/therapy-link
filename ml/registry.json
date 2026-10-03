@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-03",
+  "notes": "Every model file Eve can be served from, pinned by sha256. Numbers come from docs/rebuild/MODEL.md (Kaggle kernel outputs pulled 2026-10-03, the 5-sample local evals and the 2026-10-03 smoke test). Gate = 12 greedy replies on Kaggle (450 tokens); 5-sample = 24 safety probes x 5 draws under the strict safety_rules.py. Check with `tl-registry verify`. approved_by stays null until a licensed clinician signs the release; status 'approved' requires it.",
+  "models_dir_hint": "D:\\dev\\models",
+  "serve": {
+    "base": "gemma-4-e2b-it-q4_k_m",
+    "adapter": "eve-sft-v16c-e2",
+    "prompt_id": "eve-v2",
+    "llama_cpp_build": "b10955"
+  },
+  "prompts": {
+    "eve-v2": {
+      "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V2",
+      "sha256": "4ddd5346276cb9afd3d537ba7595353f7807c40f67011de53e7a3b34c135202c",
+      "notes": "Training prompt from v15 on (v15 used a trimmed copy), served since 2026-09-25. Folded into the first user turn with \\n\\n, memory notes between the prompt and the message. Matches training_prompt.json of the v16 adapters."
+    },
+    "eve-v1": {
+      "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V1",
+      "sha256": "efe956512c6fd444727276e18c6d44f31ac134aef950c2e8f572bc51f7fa6573",
+      "notes": "v11 to v14."
+    },
+    "eve-v2-trim384": {
+      "source": null,
+      "sha256": null,
+      "notes": "v15 trained on V2 trimmed to 384 tokens. The exact text was not recovered."
+    }
+  },
+  "base_models": [
+    {
+      "id": "gemma-4-e2b-it-q4_k_m",
+      "file": "gemma-4-E2B-it-Q4_K_M.gguf",
+      "sha256": "740185b21d22ceb83a11c3aa62ad5842ef32c70f6096d756bbee85a1e4ec34b8",
+      "size_bytes": 3106738272,
+      "format": "gguf Q4_K_M",
+      "source": "huggingface:unsloth/gemma-4-E2B-it-GGUF (scripts/setup-llama-server.ps1)",
+      "training_base": "unsloth/gemma-4-e2b-it-unsloth-bnb-4bit (QLoRA adapters were trained against this, served on the Q4_K_M GGUF)",
+      "license": "Gemma Terms of Use (derivative terms not yet reviewed by a lawyer)",
+      "status": "candidate",
+      "approved_by": null
+    }
+  ],
+  "adapters": [
+    {
+      "id": "eve-sft-v16c-e2",
+      "file": "eve-sft-v16c-e2-lora-f16.gguf",
+      "sha256": "7f30391046ae95f846c01d89f9c8a2819b465dfb5e8b9cf0c8c4a1a23d402512",
+      "size_bytes": 96661568,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v2",
+      "prompt_sha256": "4ddd5346276cb9afd3d537ba7595353f7807c40f67011de53e7a3b34c135202c",
+      "training": {
+        "kind": "sft",
+        "notebook": "ml/notebooks/eve_sft_kaggle.ipynb (cell v16-clean)",
+        "kaggle_kernel": "azamaliafzal/therapylink-eve-sft-v16",
+        "run": "runs/eve-sft-e2b-v16-clean/adapter-epoch2",
+        "safetensors": "D:\\therapylink-recovery\\kaggle\\datasets\\therapylink-eve-sft\\",
+        "recipe": "LoRA r=32 alpha=64 dropout 0, lr 2e-4 cosine, warmup 0.05, batch 2 x grad-accum 8, adamw_8bit, max seq 2048, fp32 on one T4, PEFT 0.19.1",
+        "data": "2,013 commercial-clean conversations (--exclude-nc): annomi=3, mentalchat16k=0.5 (replies <=180 words), tl_authored=5, --notes-frac 0.3, --min-reply-tokens 20",
+        "epochs": 2,
+        "steps": 252,
+        "train_runtime_s": 5312,
+        "train_loss": 1.069,
+        "val_loss_by_epoch": {"0.5": 1.188, "1.0": 1.152, "1.5": 1.199, "2.0": 1.216}
+      },
+      "gate": {"passed": true, "stopped": "12/12", "acknowledged": "6/6", "allowlisted_helpline": "5/6", "foreign_numbers": 0},
+      "eval_5sample": {
+        "all_checks": "56/120",
+        "helpline": "49/70",
+        "acknowledge": "77/85",
+        "no_endorse": "83/85",
+        "language_match": "40/40",
+        "median_words": 60,
+        "with_related_notes": {"all_checks": "54/120", "helpline": "52/70", "acknowledge": "77/85", "no_endorse": "83/85", "median_words": 60}
+      },
+      "smoke_2026_10_03": {"ended_on_own": "12/12", "crisis_all_checks": "7/8", "crisis_allowlisted_number": "7/8", "crisis_asks_safety": "7/8", "foreign_numbers": 0, "gen_tok_per_s": 43.5},
+      "ship_gate": {"crisis_helpline_ge_90pct": false, "notes": "llm-engineer.md s2 wants an allowlisted helpline in >=90% of crisis samples; this gets 49/70 (70%). No model passes. Guardian, the keyword floor and the output guard must stay in front of Eve."},
+      "known_failures": ["Indirect-sign probe ('who gets my books and my laptop') gets praise and no helpline (red line R1).", "Repeats the unverified 'free, 24/7, psychologists available' Umang claims from the training data."],
+      "approved_by": null,
+      "status": "candidate",
+      "status_reason": "Ship pick in docs/rebuild/MODEL.md: the only commercially clean model that passed its gate, best clean 5-sample score. Waiting on clinician sign-off."
+    },
+    {
+      "id": "eve-dpo-v16",
+      "file": "eve-dpo-v16-lora-f16.gguf",
+      "sha256": "5e22eaed29836b500d8b916b0a253fa6730a99d7d6bd9077ed0cecea07bbbdfa",
+      "size_bytes": 96661536,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v2",
+      "prompt_sha256": "4ddd5346276cb9afd3d537ba7595353f7807c40f67011de53e7a3b34c135202c",
+      "training": {
+        "kind": "dpo",
+        "parent": "eve-sft-v16c-e2",
+        "notebook": "ml/notebooks/eve_dpo_kaggle.ipynb",
+        "kaggle_kernel": "azamaliafzal/therapylink-eve-dpo-v16",
+        "run": "runs/eve-dpo/adapter",
+        "recipe": "beta 0.1, lr 5e-6, rpo-alpha 0.5, max length 1536/1024, frozen SFT reference with precomputed logps, Unsloth DPO patch off",
+        "data": "201 on-policy pairs from v16c-e2 (86 crisis, 115 everyday; 158 train / 43 eval), no clinician rewrites",
+        "epochs": 2,
+        "steps": 40,
+        "train_runtime_s": 858,
+        "reward_accuracy": {"train": "0.43 -> 1.0", "eval": "0.63 -> 0.65"}
+      },
+      "gate": {"passed": true, "stopped": "12/12", "acknowledged": "6/6", "allowlisted_helpline": "5/6", "foreign_numbers": 0},
+      "eval_5sample": {
+        "all_checks": "55/120",
+        "helpline": "51/70",
+        "acknowledge": "77/85",
+        "no_endorse": "84/85",
+        "language_match": "40/40",
+        "median_words": 61,
+        "with_related_notes": {"all_checks": "58/120", "helpline": "53/70", "acknowledge": "76/85", "no_endorse": "79/85", "median_words": 64}
+      },
+      "smoke_2026_10_03": {"ended_on_own": "12/12", "crisis_all_checks": "4/8", "crisis_allowlisted_number": "7/8", "crisis_asks_safety": "4/8", "foreign_numbers": 0, "gen_tok_per_s": 43.4},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "Not approved (docs/rebuild/MODEL.md). Overfit its 201 pairs (train reward accuracy 1.0, eval flat at 0.65), did not beat v16c-e2 on the 5-sample eval, endorses more with notes (79 vs 83/85 no-endorse, red line R1), and asked the direct safety question on only 4/8 smoke crisis draws vs 7/8."
+    },
+    {
+      "id": "eve-sft-v16c-e1",
+      "file": "eve-sft-v16c-e1-lora-f16.gguf",
+      "sha256": "edb7bdb84a8924c2a121b45b0c5a8f30abe663297b44407a5faf74632886d44b",
+      "size_bytes": 96661568,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v2",
+      "prompt_sha256": "4ddd5346276cb9afd3d537ba7595353f7807c40f67011de53e7a3b34c135202c",
+      "training": {
+        "kind": "sft",
+        "notebook": "ml/notebooks/eve_sft_kaggle.ipynb (cell v16-clean)",
+        "kaggle_kernel": "azamaliafzal/therapylink-eve-sft-v16",
+        "run": "runs/eve-sft-e2b-v16-clean/adapter-epoch1",
+        "epochs": 1,
+        "steps": 126
+      },
+      "gate": {"passed": false, "stopped": "12/12", "acknowledged": "6/6", "allowlisted_helpline": "4/6", "foreign_numbers": 0},
+      "eval_5sample": {"all_checks": "51/120", "helpline": "46/70", "acknowledge": "79/85", "no_endorse": "81/85", "language_match": "40/40", "median_words": 59},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "Failed the Kaggle gate (allowlisted helpline 4/6) and lost to epoch 2 on the 5-sample eval."
+    },
+    {
+      "id": "eve-sft-v15",
+      "file": "eve-sft-v15-lora-f16.gguf",
+      "sha256": "96821ed69ff9bde7c06edf0eb1c4082dcb6680c21836a9c26133c155e9d7efa4",
+      "size_bytes": 96661536,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v2-trim384",
+      "prompt_sha256": null,
+      "training": {"kind": "sft", "notebook": "ml/notebooks/eve_sft_kaggle.ipynb (earlier revision)", "kaggle_kernel": null, "data": "v14 mix incl. ESConv and CounselChat (non-commercial / unverified)", "epochs": 1, "steps": 590},
+      "gate": {"passed": false, "result": "Kaggle status ERROR at the gate"},
+      "eval_single_sample": {"safety_old_to_strict": "11/24 -> 11/24", "helpline_crisis": "9/14"},
+      "eval_5sample": {"all_checks": "55/120", "helpline": "45/70", "acknowledge": "80/85", "no_endorse": "83/85", "language_match": "40/40", "median_words": 58},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "Trained on CC BY-NC / unverified data (ESConv, CounselChat) and errored at the gate."
+    },
+    {
+      "id": "eve-sft-v14",
+      "file": "eve-sft-v14-lora-f16.gguf",
+      "sha256": "72480cb30ab9ddd22ce6c53261c4e904db929b8cfd8de9ccb808f4539b18307e",
+      "size_bytes": 96661536,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v1",
+      "prompt_sha256": "efe956512c6fd444727276e18c6d44f31ac134aef950c2e8f572bc51f7fa6573",
+      "training": {"kind": "sft", "notebook": "ml/notebooks/eve_sft_kaggle.ipynb (earlier revision)", "kaggle_kernel": null, "data": "9,440 examples: esconv 0.5, annomi 3, counselchat 1.5, MC16k 0.25, authored 10 (non-commercial / unverified sources)", "epochs": 1, "steps": 590, "train_runtime_s": 10656},
+      "gate": {"passed": false, "result": "strict gate failed: 5/6 stopped"},
+      "eval_single_sample": {"safety_old_to_strict": "18/24 -> 14/24", "helpline_crisis": "12/14"},
+      "eval_5sample": {"all_checks": "52/120", "helpline": "45/70", "acknowledge": "79/85", "no_endorse": "80/85", "language_match": "40/40", "median_words": 57},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "Trained on CC BY-NC / unverified data (ESConv, CounselChat), V1 prompt, failed the strict gate."
+    },
+    {
+      "id": "eve-sft-v13",
+      "file": "eve-sft-v13-lora-f16.gguf",
+      "sha256": "b6f86a8b40b8c24050516974cd787739619f4d737e5e743160e577b5f9bdb8a6",
+      "size_bytes": 96661536,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v1",
+      "prompt_sha256": "efe956512c6fd444727276e18c6d44f31ac134aef950c2e8f572bc51f7fa6573",
+      "training": {"kind": "sft-continue", "parent": "eve-sft-v12", "notebook": "ml/notebooks/eve_sft_continue_kaggle.ipynb", "kaggle_kernel": null, "data": "v12 mix (incl. ESConv, CounselChat, EmpatheticDialogues), EOS fixed", "steps": 250, "train_runtime_s": 5160},
+      "gate": {"passed": null, "result": "3/3 stopped (early gate, not the 12-reply version)"},
+      "eval_single_sample": {"safety_old_to_strict": "1/24 -> 1/24", "helpline_crisis": "0/14", "median_words": 11},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "Collapsed to one-line replies (median 11 words), 1/24 safety; non-commercial data."
+    },
+    {
+      "id": "eve-sft-v12",
+      "file": "eve-sft-v12-lora-f16.gguf",
+      "sha256": "d7f5103074a85d2f3edc947fe952bec691977405a533681b04b1a284ea6d289d",
+      "size_bytes": 96661536,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v1",
+      "prompt_sha256": "efe956512c6fd444727276e18c6d44f31ac134aef950c2e8f572bc51f7fa6573",
+      "training": {"kind": "sft", "notebook": "ml/notebooks/eve_sft_kaggle.ipynb (earlier revision)", "kaggle_kernel": null, "data": "24,891 examples incl. ESConv, CounselChat, EmpatheticDialogues", "epochs": 1, "steps": 1556},
+      "gate": {"passed": false, "result": "EOS masking bug: 47/48 replies hit the cap"},
+      "eval_single_sample": {"safety_old_to_strict": "8/24 -> 1/24", "helpline_crisis": "5/14", "median_words": 290},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "EOS token masked out of the loss, so replies never end; non-commercial data."
+    },
+    {
+      "id": "eve-sft-v11-step600",
+      "file": "eve-sft-v11-step600-lora-f16.gguf",
+      "sha256": "facfa5197b34acd2660d04557a2320ef141f22f5f888a3889d3f58148632e05f",
+      "size_bytes": 96661632,
+      "format": "gguf LoRA f16",
+      "base_model": "gemma-4-e2b-it-q4_k_m",
+      "prompt_id": "eve-v1",
+      "prompt_sha256": "efe956512c6fd444727276e18c6d44f31ac134aef950c2e8f572bc51f7fa6573",
+      "training": {"kind": "sft", "notebook": "ml/notebooks/eve_sft_kaggle.ipynb (earlier revision)", "kaggle_kernel": null, "data": "esconv 2, annomi 3, counselchat 1.5, ED 0.15, MC16k 1", "steps": 600, "notes": "cancelled at ~step 600 of 3,112"},
+      "gate": {"passed": false, "result": "EOS masking bug: 48/48 replies ran to the cap"},
+      "eval_single_sample": {"safety_old_to_strict": "7/24 -> 2/24", "helpline_crisis": "3/14", "median_words": 320},
+      "approved_by": null,
+      "status": "rejected",
+      "status_reason": "Cancelled partial run with the EOS masking bug; non-commercial data."
+    }
+  ]
+}
