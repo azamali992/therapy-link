@@ -7,6 +7,8 @@
 //
 // Golden file paths are relative to the test file's location:
 //   app/test/ → ../../docs/design/screens/eve/
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -79,16 +81,61 @@ final _sampleConversations = <ConversationSummary>[
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Load Unbounded and AtkinsonHyperlegibleNext from the bundled assets so
-/// golden PNGs render with the actual Jugnu typefaces.
+/// Load Jugnu app fonts, Material Icons, and Phosphor icon fonts so golden
+/// PNGs render with real glyphs — matching the portable pattern used by the
+/// other review tests on main.
+///
+/// Uses [File] reads (not rootBundle) so the paths work when `flutter test`
+/// runs from the `app/` directory without a Flutter asset bundle.
 Future<void> _loadFonts() async {
-  final unbounded = FontLoader('Unbounded')
-    ..addFont(rootBundle.load('assets/fonts/Unbounded/Unbounded[wght].ttf'));
-  await unbounded.load();
+  // Wraps a File read as a Future<ByteData> for FontLoader.addFont.
+  Future<ByteData> readBytes(String path) async {
+    final data = await File(path).readAsBytes();
+    return data.buffer.asByteData();
+  }
 
-  final atkinson = FontLoader('AtkinsonHyperlegibleNext')
-    ..addFont(rootBundle.load('assets/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext[wght].ttf'));
-  await atkinson.load();
+  // Material Icons — needed for any Icon(Icons.xxx) in widgets.
+  final materialLoader = FontLoader('MaterialIcons')
+    ..addFont(
+      readBytes(
+        '${Platform.environment['FLUTTER_ROOT']}/bin/cache/artifacts/material_fonts/materialicons-regular.otf',
+      ),
+    );
+  await materialLoader.load();
+
+  // App fonts (variable-weight TTF). flutter test runs from app/.
+  final appDir = Directory.current.path;
+  for (final entry in {
+    'Unbounded': ['$appDir/assets/fonts/Unbounded/Unbounded[wght].ttf'],
+    'AtkinsonHyperlegibleNext': [
+      '$appDir/assets/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext[wght].ttf',
+    ],
+    'AtkinsonHyperlegibleMono': [
+      '$appDir/assets/fonts/AtkinsonHyperlegibleMono/AtkinsonHyperlegibleMono[wght].ttf',
+    ],
+    'NotoNastaliqUrdu': [
+      '$appDir/assets/fonts/NotoNastaliqUrdu/NotoNastaliqUrdu[wght].ttf',
+    ],
+  }.entries) {
+    final loader = FontLoader(entry.key);
+    for (final path in entry.value) {
+      loader.addFont(readBytes(path));
+    }
+    await loader.load();
+  }
+
+  // Phosphor icon fonts — JugnuIcons are PhosphorFlatIconData.
+  const kPhosphorBase =
+      'C:/Users/azama/AppData/Local/Pub/Cache/hosted/pub.dev'
+      '/phosphor_flutter-2.1.0/lib/fonts';
+  for (final entry in <String, String>{
+    'PhosphorRegular': '$kPhosphorBase/Phosphor.ttf',
+    'PhosphorFill': '$kPhosphorBase/Phosphor-Fill.ttf',
+  }.entries) {
+    final loader = FontLoader(entry.key);
+    loader.addFont(readBytes(entry.value));
+    await loader.load();
+  }
 }
 
 /// Standard provider overrides for all Eve-screen golden tests.

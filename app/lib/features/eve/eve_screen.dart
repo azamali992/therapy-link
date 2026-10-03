@@ -81,8 +81,8 @@ class _EveScreenState extends ConsumerState<EveScreen> {
 
     // EvePresence animation state (enum from presence_assets.dart).
     final presenceState = state.generating
-        ? EveState.thinking
-        : (_hasText ? EveState.listening : EveState.idle);
+        ? EvePresenceState.thinking
+        : (_hasText ? EvePresenceState.listening : EvePresenceState.idle);
 
     // Status line copy (Roman Urdu, third-person).
     final statusLine = state.generating
@@ -201,7 +201,7 @@ class _EveChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onQuickExit,
   });
 
-  final EveState presenceState;
+  final EvePresenceState presenceState;
   final String statusLine;
   final bool showQuickExit;
   final VoidCallback onGetHelp;

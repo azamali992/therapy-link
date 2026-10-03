@@ -34,7 +34,7 @@ void main() {
     testWidgets('welcome size renders a 232 dp SizedBox', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           size: EvePresentSize.welcome,
           showHalo: false,
         ),
@@ -54,7 +54,7 @@ void main() {
     testWidgets('chat header size is 52 dp', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           size: EvePresentSize.chatHeader,
           showHalo: false,
         ),
@@ -65,7 +65,7 @@ void main() {
     testWidgets('inline dot size is 20 dp', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           size: EvePresentSize.inlineDot,
           showHalo: false,
         ),
@@ -78,7 +78,7 @@ void main() {
     testWidgets('reduced motion → poster renders (no video)', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           showHalo: false,
         ),
         disableAnimations: true,
@@ -93,7 +93,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           showHalo: true,
         ),
         disableAnimations: true,
@@ -117,7 +117,7 @@ void main() {
             child: MaterialApp(
               home: Scaffold(
                 body: EvePresence(
-                  state: EveState.listening,
+                  state: EvePresenceState.listening,
                   showHalo: false,
                 ),
               ),
@@ -146,7 +146,7 @@ void main() {
             child: MaterialApp(
               home: Scaffold(
                 body: EvePresence(
-                  state: EveState.thinking,
+                  state: EvePresenceState.thinking,
                   showHalo: false,
                 ),
               ),
@@ -169,7 +169,7 @@ void main() {
     testWidgets('inline dot does not show halo', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           size: EvePresentSize.inlineDot,
           showHalo: true, // flag is overridden by size logic
         ),
@@ -185,7 +185,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           size: EvePresentSize.welcome,
           showHalo: false,
         ),
@@ -198,10 +198,10 @@ void main() {
 
   group('State transitions', () {
     testWidgets('changing state does not throw', (tester) async {
-      final stateNotifier = ValueNotifier(EveState.idle);
+      final stateNotifier = ValueNotifier(EvePresenceState.idle);
       await tester.pumpWidget(
         _wrap(
-          ValueListenableBuilder<EveState>(
+          ValueListenableBuilder<EvePresenceState>(
             valueListenable: stateNotifier,
             builder: (ctx, st, child) => EvePresence(state: st, showHalo: false),
           ),
@@ -209,11 +209,11 @@ void main() {
       );
       await tester.pump();
 
-      stateNotifier.value = EveState.listening;
+      stateNotifier.value = EvePresenceState.listening;
       await tester.pump();
-      stateNotifier.value = EveState.thinking;
+      stateNotifier.value = EvePresenceState.thinking;
       await tester.pump();
-      stateNotifier.value = EveState.idle;
+      stateNotifier.value = EvePresenceState.idle;
       await tester.pump();
 
       expect(tester.takeException(), isNull);
@@ -226,7 +226,7 @@ void main() {
       // The silhouette painter has no asset dependency — it should always render.
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           size: EvePresentSize.welcome,
           showHalo: false,
         ),
@@ -240,7 +240,7 @@ void main() {
     testWidgets('app lifecycle paused does not throw', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.idle,
+          state: EvePresenceState.idle,
           showHalo: false,
         ),
       ));
@@ -261,7 +261,7 @@ void main() {
     testWidgets('app lifecycle hidden does not throw', (tester) async {
       await tester.pumpWidget(_wrap(
         const EvePresence(
-          state: EveState.listening,
+          state: EvePresenceState.listening,
           showHalo: false,
         ),
       ));
