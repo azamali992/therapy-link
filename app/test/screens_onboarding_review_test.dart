@@ -29,9 +29,18 @@ import 'package:therapylink/l10n/app_localizations.dart';
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Load all Jugnu bundled fonts so text renders correctly in goldens.
+/// Load all Jugnu bundled fonts AND icon fonts so text and icons render
+/// correctly in goldens.
+///
+/// Absolute paths are used for fonts that live outside the project:
+/// - MaterialIcons: from the Flutter SDK cache (sign-in visibility toggle
+///   and any direct Icon() with a Material IconData).
+/// - Phosphor (Regular + Fill): from the pub cache; these back [JugnuIcons].
+///   The pub cache path is machine-specific; that is acceptable for a local
+///   design-review test -- this file is not a CI gate.
 Future<void> _loadFonts() async {
-  final fontSpecs = <String, List<String>>{
+  // Project fonts (paths relative to app/ working directory).
+  final projectFontSpecs = <String, List<String>>{
     'Unbounded': ['assets/fonts/Unbounded/Unbounded[wght].ttf'],
     'AtkinsonHyperlegibleNext': [
       'assets/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext[wght].ttf',
@@ -44,13 +53,43 @@ Future<void> _loadFonts() async {
     ],
   };
 
-  for (final entry in fontSpecs.entries) {
+  for (final entry in projectFontSpecs.entries) {
     final loader = FontLoader(entry.key);
     for (final path in entry.value) {
       loader.addFont(
         File(path).readAsBytes().then((bytes) => ByteData.view(bytes.buffer)),
       );
     }
+    await loader.load();
+  }
+
+  // Material icons font -- needed for Icons.xxx used directly in widgets
+  // (e.g. visibility toggle in the sign-in password field).
+  final materialLoader = FontLoader('MaterialIcons');
+  materialLoader.addFont(
+    File(
+      'D:/dev/flutter/bin/cache/artifacts/material_fonts/materialicons-regular.otf',
+    ).readAsBytes().then((bytes) => ByteData.view(bytes.buffer)),
+  );
+  await materialLoader.load();
+
+  // Phosphor icon fonts -- JugnuIcons constants are PhosphorFlatIconData
+  // backed by these two families (regular weight + fill weight).
+  // Paths point to the resolved pub cache entry; update if the version bumps.
+  const kPhosphorBase =
+      'C:/Users/azama/AppData/Local/Pub/Cache/hosted/pub.dev'
+      '/phosphor_flutter-2.1.0/lib/fonts';
+
+  for (final entry in <String, String>{
+    'PhosphorRegular': '$kPhosphorBase/Phosphor.ttf',
+    'PhosphorFill': '$kPhosphorBase/Phosphor-Fill.ttf',
+  }.entries) {
+    final loader = FontLoader(entry.key);
+    loader.addFont(
+      File(entry.value)
+          .readAsBytes()
+          .then((bytes) => ByteData.view(bytes.buffer)),
+    );
     await loader.load();
   }
 }
