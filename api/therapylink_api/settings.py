@@ -38,9 +38,14 @@ class Settings(BaseSettings):
     # When true, every mutating and inference request must carry a valid Firebase App Check token
     # in X-Firebase-AppCheck. Disabled by default so tests and curl work without an app.
     app_check_required: bool = False
-    # SHA-256 hex digest of the allowed system prompt. When set, /inference/chat rejects any
-    # conversation whose first message (role=system) does not hash to this value.
+    # SHA-256 hex digest of the first TL_PROMPT_CHARS characters of the expected system/folded
+    # prompt. When set together with TL_PROMPT_CHARS, /inference/chat checks that the first
+    # message (role=user for folded conversations, or role=system) starts with the registered
+    # prompt. Both must be set or neither; startup fails if only one is present.
     prompt_sha256: str | None = None
+    # Number of leading characters from the first message to hash against TL_PROMPT_SHA256.
+    # Must be set alongside TL_PROMPT_SHA256.
+    prompt_chars: int | None = None
     # Secret salt mixed into uid hashes in structured logs (never the raw uid).
     # Change this in every non-dev environment; a known salt defeats the hash.
     log_uid_salt: str = "dev-salt-change-me"
@@ -62,6 +67,13 @@ def config_problems(s: Settings) -> list[str]:
     if s.inference_base_url and not s.inference_api_key:
         problems.append(
             "TL_INFERENCE_BASE_URL is set without TL_INFERENCE_API_KEY; the model server must require a key"
+        )
+    sha256_set = bool(s.prompt_sha256)
+    chars_set = s.prompt_chars is not None
+    if sha256_set != chars_set:
+        problems.append(
+            "TL_PROMPT_SHA256 and TL_PROMPT_CHARS must be set together or not at all; "
+            "set both to enable the prompt integrity check"
         )
     # Guard against a common mistake of deploying with the placeholder salt.
     if s.env == "prod" and s.log_uid_salt == "dev-salt-change-me":
