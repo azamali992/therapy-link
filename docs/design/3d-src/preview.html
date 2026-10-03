@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script type="module" src="https://unpkg.com/@google/model-viewer@4/dist/model-viewer.min.js"></script>
+<style>body{margin:0;background:#1D1E2C;display:grid;grid-template-columns:repeat(4,300px);gap:0}
+model-viewer{width:300px;height:300px;background:#1D1E2C;--poster-color:transparent}
+p{color:#ccc;font:12px sans-serif;margin:2px}</style></head><body>
+<div><model-viewer src="../eve.glb" animation-name="idle" autoplay tone-mapping="neutral" camera-orbit="0deg 82deg auto" interaction-prompt="none"></model-viewer><p id="a">idle</p></div>
+<div><model-viewer src="../eve.glb" animation-name="listening" autoplay camera-orbit="0deg 82deg auto" interaction-prompt="none"></model-viewer><p>listening</p></div>
+<div><model-viewer src="../eve.glb" animation-name="thinking" autoplay camera-orbit="0deg 82deg auto" interaction-prompt="none"></model-viewer><p>thinking</p></div>
+<div><model-viewer id="b" src="../breath.glb" animation-name="box" autoplay interaction-prompt="none"></model-viewer><p id="info">breath</p></div>
+<script>
+setTimeout(()=>{const m=document.querySelectorAll('model-viewer');
+ document.getElementById('info').textContent='anims eve:'+m[0].availableAnimations.join(',')+' breath:'+m[3].availableAnimations.join(',')+' dur:'+m[0].duration.toFixed(2)+'/'+m[3].duration.toFixed(2)+' loaded:'+[...m].map(x=>x.loaded).join(',');},6000);
+</script></body></html>
