@@ -1,7 +1,14 @@
+// Re-export the real implementations so screens only need to import widgets.dart.
+export 'crisis_sheet.dart' show GetHelpButton, showCrisisSheet, CrisisCard, callHelpline, copyHelpline, helplineDialer;
+export 'quick_exit_button.dart' show QuickExitButton;
+
 import 'package:flutter/material.dart';
 
 import '../../app/theme/tokens.dart';
+import '../../core/api/models.dart';
 import '../../l10n/app_localizations.dart';
+import 'crisis_sheet.dart';
+import 'quick_exit_button.dart';
 
 /// Convenience accessor — avoids importing AppLocalizations on every screen.
 extension L10nX on BuildContext {
@@ -9,119 +16,10 @@ extension L10nX on BuildContext {
 }
 
 // ---------------------------------------------------------------------------
-// Get help button
-// ---------------------------------------------------------------------------
-
-/// "Get help now" action reachable from every screen, including before sign-in.
-///
-/// Tapping opens the crisis help sheet. The actual sheet content (helpline
-/// numbers, crisis logic) is wired by the core team.
-/// TODO(core-team): replace the stub [_showHelpSheet] with the real crisis
-/// sheet implementation from lib/features/shared/crisis_sheet.dart.
-class GetHelpButton extends StatelessWidget {
-  const GetHelpButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: context.l10n.getHelpNow,
-      icon: const Icon(Icons.health_and_safety_outlined),
-      color: Theme.of(context).colorScheme.tertiary,
-      onPressed: () => _showHelpSheet(context),
-    );
-  }
-}
-
-/// TODO(core-team): replace with the real crisis sheet.
-void _showHelpSheet(BuildContext context) {
-  showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    builder: (ctx) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        Tokens.s24,
-        Tokens.s8,
-        Tokens.s24,
-        Tokens.s24 + MediaQuery.viewInsetsOf(ctx).bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            context.l10n.getHelpNow,
-            style: Theme.of(ctx).textTheme.titleMedium,
-          ),
-          const SizedBox(height: Tokens.s12),
-          // TODO(core-team): replace with data-driven helpline list.
-          Text(
-            'Umang · 0311 7786264\n'
-            'Madadgaar · 1098\n'
-            'Emergency · 1122',
-            style: Theme.of(ctx).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(ctx).colorScheme.tertiary,
-                ),
-          ),
-          const SizedBox(height: Tokens.s16),
-          FilledButton.icon(
-            icon: const Icon(Icons.call_outlined),
-            label: Text(context.l10n.crisisCallEmergency),
-            onPressed: () => Navigator.pop(ctx),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.tertiary,
-              foregroundColor: Theme.of(ctx).colorScheme.onTertiary,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Quick exit button
-// ---------------------------------------------------------------------------
-
-/// One-tap "panic close" visible in every AppBar. When activated it navigates
-/// to a neutral screen (e.g. home feed / clock) via the platform channel.
-///
-/// TODO(core-team): wire [onQuickExit] through a provider so the router can
-/// handle navigation and the privacy service can clear the recents preview.
-/// For now the button shows a snackbar to confirm the intent.
-class QuickExitButton extends StatelessWidget {
-  const QuickExitButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: context.l10n.quickExitTitle,
-      icon: const Icon(Icons.exit_to_app_rounded),
-      onPressed: () => _quickExit(context),
-    );
-  }
-}
-
-/// TODO(core-team): implement real quick-exit: navigate to '/', clear the
-/// Flutter recents preview, and optionally open a neutral system app.
-void _quickExit(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(context.l10n.quickExitNeutral),
-      duration: const Duration(seconds: 2),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Screen — standard page frame
 // ---------------------------------------------------------------------------
 
 /// Standard page scaffold: title, optional back, reading-width constraint.
-///
-/// Every screen carries "Get help now" and "Quick exit" in the AppBar by
-/// default so help is never more than one tap away, even before sign-in. Pass
-/// [help] = false or [quickExit] = false only for screens where the control
-/// would be confusing (e.g. the crisis sheet itself).
 class Screen extends StatelessWidget {
   const Screen({
     super.key,
@@ -137,21 +35,11 @@ class Screen extends StatelessWidget {
 
   final String title;
   final Widget child;
-
-  /// Extra AppBar actions placed to the left of the standard safety controls.
   final List<Widget>? actions;
   final Widget? fab;
-
-  /// Wrap [child] in a [SingleChildScrollView] (default true).
   final bool scroll;
-
-  /// Apply standard reading-width padding (default true).
   final bool padding;
-
-  /// Show the [GetHelpButton] in the AppBar (default true).
   final bool help;
-
-  /// Show the [QuickExitButton] in the AppBar (default true).
   final bool quickExit;
 
   @override
@@ -162,8 +50,7 @@ class Screen extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: Tokens.readingWidth),
         child: Padding(
           padding: padding
-              ? const EdgeInsets.fromLTRB(
-                  Tokens.s20, Tokens.s8, Tokens.s20, Tokens.s48)
+              ? const EdgeInsets.fromLTRB(Tokens.s20, Tokens.s8, Tokens.s20, Tokens.s48)
               : EdgeInsets.zero,
           child: child,
         ),
@@ -202,8 +89,7 @@ class SectionTitle extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(text,
-                style: Theme.of(context).textTheme.titleMedium),
+            child: Text(text, style: Theme.of(context).textTheme.titleMedium),
           ),
           ?trailing,
         ],
@@ -228,23 +114,193 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: Tokens.s48),
+      padding: const EdgeInsets.symmetric(vertical: Tokens.s32),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: t.titleMedium,
-              textAlign: TextAlign.center),
+          Text(title, style: t.titleLarge),
           const SizedBox(height: Tokens.s8),
-          Text(body,
-              style: t.bodyMedium,
-              textAlign: TextAlign.center),
-          if (action != null) ...[
-            const SizedBox(height: Tokens.s24),
-            action!,
-          ],
+          Text(body, style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          if (action != null) ...[const SizedBox(height: Tokens.s20), action!],
         ],
       ),
     );
   }
 }
+
+class ErrorState extends StatelessWidget {
+  const ErrorState({super.key, required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: Tokens.s32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.l10n.errorGeneric),
+          const SizedBox(height: Tokens.s16),
+          OutlinedButton(onPressed: onRetry, child: Text(context.l10n.retry)),
+        ],
+      ),
+    );
+  }
+}
+
+class Skeleton extends StatelessWidget {
+  const Skeleton({super.key, this.height = 16, this.width, this.radius = 6});
+
+  final double height;
+  final double? width;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+  }
+}
+
+class SkeletonList extends StatelessWidget {
+  const SkeletonList({super.key, this.rows = 3});
+
+  final int rows;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (var i = 0; i < rows; i++)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: Tokens.s12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Skeleton(width: 180), SizedBox(height: Tokens.s8), Skeleton(height: 12, width: 260)],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// A tappable row with the same shape everywhere: leading glyph, title, subtitle, chevron.
+class RowTile extends StatelessWidget {
+  const RowTile({super.key, required this.title, this.subtitle, this.leading, this.onTap, this.trailing});
+
+  final String title;
+  final String? subtitle;
+  final IconData? leading;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Tokens.rSmall),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: Tokens.s16, horizontal: Tokens.s4),
+          child: Row(
+            children: [
+              if (leading != null) ...[Icon(leading, color: scheme.primary), const SizedBox(width: Tokens.s16)],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: Theme.of(context).textTheme.titleMedium),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                    ],
+                  ],
+                ),
+              ),
+              trailing ?? (onTap != null ? Icon(Icons.chevron_right, color: scheme.onSurfaceVariant) : const SizedBox.shrink()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String moodLabel(BuildContext context, int valence) => switch (valence) {
+  -2 => context.l10n.moodVeryLow,
+  -1 => context.l10n.moodLow,
+  0 => context.l10n.moodOkay,
+  1 => context.l10n.moodGood,
+  _ => context.l10n.moodGreat,
+};
+
+/// Five labelled targets. Colour never carries the meaning alone.
+class MoodPicker extends StatelessWidget {
+  const MoodPicker({super.key, required this.onPick, this.selected});
+
+  final ValueChanged<int> onPick;
+  final int? selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    return Row(
+      children: [
+        for (var v = -2; v <= 2; v++)
+          Expanded(
+            child: Semantics(
+              button: true,
+              selected: selected == v,
+              label: moodLabel(context, v),
+              child: InkWell(
+                onTap: () => onPick(v),
+                borderRadius: BorderRadius.circular(Tokens.rSmall),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: Tokens.s8),
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        duration: context.motion(Tokens.fast),
+                        width: selected == v ? 40 : 32,
+                        height: selected == v ? 40 : 32,
+                        decoration: BoxDecoration(
+                          color: Tokens.valenceColor(v),
+                          shape: BoxShape.circle,
+                          border: selected == v ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2) : null,
+                        ),
+                      ),
+                      const SizedBox(height: Tokens.s8),
+                      Text(moodLabel(context, v), style: t.labelMedium, textAlign: TextAlign.center, maxLines: 2),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+String bandLabel(BuildContext context, String band) => switch (band) {
+  'minimal' => context.l10n.bandMinimal,
+  'mild' => context.l10n.bandMild,
+  'moderate' => context.l10n.bandModerate,
+  'moderately_severe' => context.l10n.bandModeratelySevere,
+  _ => context.l10n.bandSevere,
+};
+
+/// [Instrument.bdi2] does not exist in v3 (licensed instrument); phq9 and gad7 only.
+String instrumentTitle(BuildContext context, Instrument i) => switch (i) {
+  Instrument.phq9 => context.l10n.assessmentPhq9,
+  Instrument.gad7 => context.l10n.assessmentGad7,
+};

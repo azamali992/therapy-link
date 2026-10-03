@@ -1,32 +1,33 @@
 // Tests that the app shell boots correctly: routes to /welcome and renders the
 // screen with the "Get help now" button present before sign-in.
 //
-// Firebase is bypassed by overriding the auth stub provider so no real
-// network call is made during the test run.
+// Firebase is bypassed by overriding authStateProvider directly so
+// FirebaseAuth.instance is never called during the test run.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:therapylink/app/app.dart';
-import 'package:therapylink/app/router.dart';
+import 'package:therapylink/core/auth/auth_providers.dart';
+import 'package:therapylink/core/settings/settings.dart';
 
-// ---------------------------------------------------------------------------
-// Minimal Firebase stub — avoids requiring a real Firebase project in tests.
-// The test overrides auth/consent providers so Firebase is never initialised.
-// ---------------------------------------------------------------------------
-
-/// Pumps [TherapyLinkApp] with stub overrides that keep the app at /welcome
-/// (not consented, not signed in).
+/// Pumps [TherapyLinkApp] with real provider overrides that keep the app at
+/// /welcome (empty prefs → not consented, not onboarded; auth stream → null).
 Future<void> pumpApp(WidgetTester tester) async {
+  // Provide empty SharedPreferences so settingsProvider can boot.
+  // Defaults: onboarded=false, consentVersion=null → consented=false.
+  SharedPreferences.setMockInitialValues({});
+  final prefs = await SharedPreferences.getInstance();
+
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        // Not consented → router sends the user to /welcome.
-        consentedStubProvider.overrideWithValue(false),
-        onboardedStubProvider.overrideWithValue(false),
-        authStateStubProvider.overrideWith((_) => const AsyncValue.data(null)),
-        isClinicianStubProvider.overrideWithValue(false),
+        // Real settings backed by empty prefs: not onboarded, not consented.
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        // Not signed in — bypasses FirebaseAuth entirely.
+        authStateProvider.overrideWith((ref) => Stream.value(null)),
       ],
       child: const TherapyLinkApp(),
     ),

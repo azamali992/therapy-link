@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/api/me_provider.dart';
+import '../core/api/models.dart';
+import '../core/auth/auth_providers.dart';
+import '../core/settings/settings.dart';
 import '../features/auth/sign_in_screen.dart';
 import '../features/clinician/caseload_screen.dart';
 import '../features/clinician/patient_screen.dart';
@@ -24,52 +28,31 @@ import '../features/you/memory_screen.dart';
 import '../features/you/settings_screen.dart';
 import '../features/you/you_screen.dart';
 
-// ---------------------------------------------------------------------------
-// Stub providers — TODO(core-team): replace with real implementations in
-// lib/core/auth/ and lib/core/settings/. These stubs keep the app and tests
-// runnable before the core layer is wired in.
-// ---------------------------------------------------------------------------
-
-/// Authentication state. Resolves to null (not signed in) until the real
-/// Firebase auth stream is wired. Replace with authStateProvider from core.
-/// TODO(core-team): wire to `firebase_auth.FirebaseAuth.instance.authStateChanges()`.
-final authStateStubProvider = Provider<AsyncValue<Object?>>(
-  (ref) => const AsyncValue.data(null),
-);
-
-/// Whether the current consent version has been accepted.
-/// TODO(core-team): wire to the settings / consent-sync provider.
-final consentedStubProvider = Provider<bool>((ref) => false);
-
-/// Whether the device has completed onboarding (shown the welcome screen).
-/// TODO(core-team): wire to the settings provider (shared_preferences).
-final onboardedStubProvider = Provider<bool>((ref) => false);
-
-/// User role. True when the signed-in user is a clinician.
-/// TODO(core-team): wire to `meProvider` from lib/core/api/me_provider.dart.
-final isClinicianStubProvider = Provider<bool>((ref) => false);
-
-// ---------------------------------------------------------------------------
-// Router
-// ---------------------------------------------------------------------------
+/// The instruments reachable by link; any other name is turned away.
+Instrument? instrumentFromPath(String? name) => switch (name) {
+  'phq9' => Instrument.phq9,
+  'gad7' => Instrument.gad7,
+  _ => null,
+};
 
 class _RouterNotifier extends ChangeNotifier {
   _RouterNotifier(this._ref) {
-    _ref.listen(authStateStubProvider, (_, _) => notifyListeners());
-    _ref.listen(consentedStubProvider, (_, _) => notifyListeners());
-    _ref.listen(onboardedStubProvider, (_, _) => notifyListeners());
-    _ref.listen(isClinicianStubProvider, (_, _) => notifyListeners());
+    _ref.listen(authStateProvider, (_, _) => notifyListeners());
+    _ref.listen(meProvider, (_, _) => notifyListeners());
+    _ref.listen(settingsProvider.select((s) => s.onboarded), (_, _) => notifyListeners());
+    _ref.listen(settingsProvider.select((s) => s.consented), (_, _) => notifyListeners());
   }
 
   final Ref _ref;
 
   String? redirect(BuildContext context, GoRouterState state) {
+    final settings = _ref.read(settingsProvider);
     return routeRedirect(
       state.uri,
-      consented: _ref.read(consentedStubProvider),
-      onboarded: _ref.read(onboardedStubProvider),
-      auth: _ref.read(authStateStubProvider),
-      isClinician: _ref.read(isClinicianStubProvider),
+      consented: settings.consented,
+      onboarded: settings.onboarded,
+      auth: _ref.read(authStateProvider),
+      me: _ref.read(meProvider),
     );
   }
 }
@@ -82,11 +65,11 @@ String? routeRedirect(
   required bool consented,
   required bool onboarded,
   required AsyncValue<Object?> auth,
-  required bool isClinician,
+  required AsyncValue<Me?> me,
 }) {
   final path = uri.path;
 
-  // Nothing opens until the current consent version is accepted.
+  // Nothing opens, signed in or not, until the current consent version is accepted.
   if (!consented) {
     if (path == '/welcome' || path == '/consent') return null;
     return onboarded ? '/consent' : '/welcome';
@@ -94,21 +77,20 @@ String? routeRedirect(
 
   if (auth.isLoading) return null;
   final signedIn = auth.value != null;
-  final onAuthPages =
-      path == '/welcome' || path == '/sign-in' || path == '/consent';
+  final onAuthPages = path == '/welcome' || path == '/sign-in' || path == '/consent';
 
   if (!signedIn) {
     if (path == '/welcome' || path == '/sign-in') return null;
     return onboarded ? '/sign-in' : '/welcome';
   }
-
-  if (onAuthPages || path == '/') {
-    return isClinician ? '/clinic' : '/eve';
-  }
-
+  if (me.isLoading) return null;
+  final isClinician = me.value?.role == Role.clinician;
+  if (onAuthPages || path == '/') return isClinician ? '/clinic' : '/eve';
   if (isClinician && !path.startsWith('/clinic')) return '/clinic';
   if (!isClinician && path.startsWith('/clinic')) return '/eve';
-
+  // A deep link to an instrument the app doesn't know would otherwise throw in the builder.
+  final seg = uri.pathSegments;
+  if (seg.length >= 3 && seg[0] == 'today' && seg[1] == 'assess' && instrumentFromPath(seg[2]) == null) return '/today';
   return null;
 }
 
@@ -157,14 +139,15 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (_, _) => const TodayScreen(),
                 routes: [
                   GoRoute(
-                    path: 'assess/:id',
-                    builder: (_, s) =>
-                        AssessmentScreen(id: s.pathParameters['id']!),
+                    path: 'assess/:instrument',
+                    builder: (_, s) => AssessmentScreen(
+                      // The redirect has already turned unknown instrument names away.
+                      instrument: instrumentFromPath(s.pathParameters['instrument']) ?? Instrument.phq9,
+                    ),
                   ),
                   GoRoute(
                     path: 'exercises/:id',
-                    builder: (_, s) =>
-                        ExercisesScreen(id: s.pathParameters['id']),
+                    builder: (_, s) => ExercisesScreen(id: s.pathParameters['id']),
                   ),
                 ],
               ),
@@ -180,13 +163,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'new',
-                    builder: (_, s) =>
-                        JournalEditorScreen(prompt: s.extra as String?),
+                    builder: (_, s) => JournalEditorScreen(prompt: s.extra as String?),
                   ),
                   GoRoute(
                     path: ':id',
-                    builder: (_, s) => JournalEditorScreen(
-                        entryId: s.pathParameters['id']),
+                    builder: (_, s) => JournalEditorScreen(entryId: s.pathParameters['id']),
                   ),
                 ],
               ),
@@ -200,26 +181,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/you',
                 builder: (_, _) => const YouScreen(),
                 routes: [
-                  GoRoute(
-                    path: 'settings',
-                    builder: (_, _) => const SettingsScreen(),
-                  ),
-                  GoRoute(
-                    path: 'memory',
-                    builder: (_, _) => const MemoryScreen(),
-                  ),
-                  GoRoute(
-                    path: 'access-log',
-                    builder: (_, _) => const AccessLogScreen(),
-                  ),
-                  GoRoute(
-                    path: 'care',
-                    builder: (_, _) => const CareScreen(),
-                  ),
-                  GoRoute(
-                    path: 'clinician',
-                    builder: (_, _) => const ClinicianJoinScreen(),
-                  ),
+                  GoRoute(path: 'settings', builder: (_, _) => const SettingsScreen()),
+                  GoRoute(path: 'memory', builder: (_, _) => const MemoryScreen()),
+                  GoRoute(path: 'access-log', builder: (_, _) => const AccessLogScreen()),
+                  GoRoute(path: 'care', builder: (_, _) => const CareScreen()),
+                  GoRoute(path: 'clinician', builder: (_, _) => const ClinicianJoinScreen()),
                 ],
               ),
             ],
@@ -239,8 +205,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: 'patients/:id',
-                builder: (_, s) =>
-                    PatientScreen(uid: s.pathParameters['id']!),
+                builder: (_, s) => PatientScreen(uid: s.pathParameters['id']!),
               ),
               GoRoute(
                 path: 'requests',
