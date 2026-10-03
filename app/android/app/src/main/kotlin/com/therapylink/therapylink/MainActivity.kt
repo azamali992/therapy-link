@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
 import android.os.PowerManager
+import android.os.StatFs
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -24,6 +25,9 @@ import io.flutter.plugin.common.MethodChannel
  *      - totalMemoryMb (Int)   : total device RAM in megabytes
  *      - batterySaver (Boolean): whether Battery Saver / Low Power mode is active
  *      - dataSaver (Boolean)   : whether Data Saver (background data restriction) is on
+ *
+ * 3. "com.therapylink/storage" - freeBytes(path) returns the bytes free to this app on the disk
+ *    holding path, so the safety model's download can check for room before it starts.
  */
 class MainActivity : FlutterFragmentActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -74,6 +78,21 @@ class MainActivity : FlutterFragmentActivity() {
                         )
                     }
                     else -> result.notImplemented()
+                }
+            }
+
+        // ── Storage channel ──────────────────────────────────────────────────
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.therapylink/storage")
+            .setMethodCallHandler { call, result ->
+                if (call.method == "freeBytes") {
+                    try {
+                        val path = call.argument<String>("path") ?: filesDir.path
+                        result.success(StatFs(path).availableBytes)
+                    } catch (e: IllegalArgumentException) {
+                        result.success(null)
+                    }
+                } else {
+                    result.notImplemented()
                 }
             }
     }
