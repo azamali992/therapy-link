@@ -50,3 +50,16 @@ Use the opt-in for internal-testing models (v17 candidates) only.
 - Read all 59 rows, starting with the 20 `rl-prep-*` rows and the rewritten child rows.
 - The Roman Urdu has not had a native-speaker clinical review (UX.md D8).
 - `prompts.py` V2 still says "Umang 0311-7786264 (free, 24/7)". I don't own that file. The ML team should drop "(free, 24/7)" before v17 trains, since the prompt is part of the model.
+
+## 2026-10-03: the rest of the clinical review
+
+All `ai-clinical-review`. **Licensed clinician sign-off: PENDING** on every item.
+
+| Deliverable | Where | Summary |
+|---|---|---|
+| Guardian v1 labelling guide | `GUARDIAN_LABELS.md` | The eight labels the head already uses, acuity and hard-negative fields, 13 decision rules, 15–24 worked examples per class in English, Roman Urdu and Urdu script, recall/precision targets for MG-11 |
+| Helplines | `helplines.md`, `app/lib/features/shared/helplines.dart` | Public-source check of Umang, 1122, 1098, 15, 1099; Punjab 1043 and 1121 added to the sheet. Umang's website is suspended and madadgaar.org serves a gambling site, so both are first for a phone check. 46 unverified claim sentences removed from the authored crisis rows |
+| Red lines | `red-lines.md` | R1–R12 with pass conditions and checks; R11 and R12 new |
+| Crisis, consent and privacy copy | `crisis_copy.dart`, ARB files, `docs/l10n/REVIEW.md` | Every REVIEW.md item decided; storage wording now matches v3; consent says nobody watches the chat; under-18 text rewritten |
+| PHQ-9 / GAD-7 | `assessments-urdu.md`, `assessment_items.dart` | Roman Urdu follows the validated Urdu versions (Ahmad et al. 2017, 2018); unvalidated-translation notice kept |
+| Model | `MODEL_REVIEW.md` | v16c-e2 accepted for internal testing only; 0/8 smoke crisis replies free of red-line violations under R1/R11; keyword floor misses the smoke crisis prompts; v17 must-fix list and release gate |
