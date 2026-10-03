@@ -6,20 +6,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../app/theme/tokens.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/session.dart';
 import '../shared/widgets.dart';
 
 /// Asks before anything that removes data. Returns true only on an explicit yes.
-Future<bool> confirmDestructive(BuildContext context, {required String title, required String body, required String action}) async {
+///
+/// Uses Jugnu-compliant dialog styling: 48 dp minimum on the confirm button,
+/// calm and specific copy on the caller's side.
+Future<bool> confirmDestructive(BuildContext context,
+    {required String title,
+    required String body,
+    required String action}) async {
   final ok = await showDialog<bool>(
     context: context,
-    builder: (context) => AlertDialog(
+    builder: (ctx) => AlertDialog(
       title: Text(title),
       content: Text(body),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.cancel)),
-        FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(action)),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          style: TextButton.styleFrom(
+              minimumSize: const Size(0, Tokens.s48)),
+          child: Text(ctx.l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          style: FilledButton.styleFrom(
+              minimumSize: const Size(0, Tokens.s48)),
+          child: Text(action),
+        ),
       ],
     ),
   );

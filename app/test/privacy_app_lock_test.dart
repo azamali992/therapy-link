@@ -6,10 +6,28 @@ import 'package:therapylink/core/security/privacy_settings.dart';
 import 'package:therapylink/core/settings/settings.dart';
 import 'package:therapylink/features/shared/widgets.dart';
 import 'package:therapylink/features/you/settings_screen.dart';
+import 'package:therapylink/ui/components/setting_row.dart';
 
 import 'privacy_harness.dart';
 
 const _page = Screen(title: 'Journal', child: Text('private words'));
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+/// Finds the InkWell that carries the 'App lock' label inside [SettingRow].
+Finder _lockRow() => find.ancestor(
+      of: find.text('App lock'),
+      matching: find.byType(InkWell),
+    );
+
+/// Reads the value of the [Switch] inside the App lock [SettingRow].
+bool _lockValue(WidgetTester tester) =>
+    tester.widget<Switch>(find.descendant(
+      of: _lockRow(),
+      matching: find.byType(Switch),
+    )).value;
+
+// ── Tests ──────────────────────────────────────────────────────────────────
 
 void main() {
   late PrivacyFakes fakes;
@@ -145,18 +163,18 @@ void main() {
 
     testWidgets('app lock is off, and turning it on asks the phone first', (tester) async {
       final container = await settings(tester);
-      final tile = find.widgetWithText(SwitchListTile, 'App lock');
-      expect(tester.widget<SwitchListTile>(tile).value, isFalse);
+      // With SettingRow, the InkWell wraps both label and Switch.
+      expect(_lockValue(tester), isFalse);
       expect(find.textContaining('Get help now still works'), findsOneWidget);
 
       fakes.auth.next = AuthOutcome.failed;
-      await tester.tap(tile);
+      await tester.tap(_lockRow().first);
       await tester.pumpAndSettle();
       expect(fakes.auth.calls, 1);
       expect(container.read(privacySettingsProvider).appLock, isFalse);
 
       fakes.auth.next = AuthOutcome.success;
-      await tester.tap(tile);
+      await tester.tap(_lockRow().first);
       await tester.pumpAndSettle();
       expect(container.read(privacySettingsProvider).appLock, isTrue);
       expect(container.read(sharedPreferencesProvider).getBool('appLock'), isTrue);
@@ -168,7 +186,7 @@ void main() {
     testWidgets('a phone without a screen lock is told to set one', (tester) async {
       fakes.auth.next = AuthOutcome.unavailable;
       final container = await settings(tester);
-      await tester.tap(find.widgetWithText(SwitchListTile, 'App lock'));
+      await tester.tap(_lockRow().first);
       await tester.pumpAndSettle();
       expect(find.text('Set a screen lock on your phone first, then turn this on.'), findsOneWidget);
       expect(container.read(privacySettingsProvider).appLock, isFalse);
@@ -179,7 +197,7 @@ void main() {
       await tester.tap(find.text('Unlock'));
       await tester.pumpAndSettle();
       fakes.auth.calls = 0;
-      await tester.tap(find.widgetWithText(SwitchListTile, 'App lock'));
+      await tester.tap(_lockRow().first);
       await tester.pumpAndSettle();
       expect(fakes.auth.calls, 0);
       expect(container.read(privacySettingsProvider).appLock, isFalse);

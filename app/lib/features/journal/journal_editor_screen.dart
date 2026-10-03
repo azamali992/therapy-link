@@ -7,9 +7,19 @@ import '../../core/api/api_client.dart';
 import '../../core/api/models.dart';
 import '../../core/ml/guardian.dart';
 import '../../core/ml/onnx_guardian.dart';
+import '../../ui/components/moon_glyph.dart';
 import '../shared/crisis_copy.dart';
 import '../shared/widgets.dart';
 import 'journal_providers.dart';
+
+/// Maps a mood valence (-2..+2) to a [MoonPhase].
+MoonPhase _moodToPhase(int v) => switch (v) {
+  -2 => MoonPhase.newMoon,
+  -1 => MoonPhase.crescent,
+  0 => MoonPhase.half,
+  1 => MoonPhase.gibbous,
+  _ => MoonPhase.full,
+};
 
 /// /journal/new or /journal/:id — journal entry editor.
 ///
@@ -65,9 +75,11 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
     var saved = false;
     try {
       if (widget.entryId == null) {
-        await api.createJournal(title: title, body: _body.text.trim(), mood: _mood);
+        await api.createJournal(
+            title: title, body: _body.text.trim(), mood: _mood);
       } else {
-        await api.updateJournal(widget.entryId!, title: title, body: _body.text.trim(), mood: _mood);
+        await api.updateJournal(widget.entryId!,
+            title: title, body: _body.text.trim(), mood: _mood);
       }
       ref.invalidate(journalProvider);
       saved = true;
@@ -121,12 +133,15 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
     final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final t = Theme.of(context).textTheme;
+    final colors = Theme.of(context).extension<JugnuColors>() ?? JugnuColors.dark;
 
     if (widget.entryId != null && !_loaded) {
       final entries = ref.watch(journalProvider);
       final e = entries.value?.where((x) => x.id == widget.entryId).firstOrNull;
       if (e != null) _hydrate(e);
-      if (entries.isLoading) return Screen(title: l.journalTitle, child: const SkeletonList(rows: 2));
+      if (entries.isLoading) {
+        return Screen(title: l.journalTitle, child: const SkeletonList(rows: 2));
+      }
     }
 
     return Screen(
@@ -134,7 +149,11 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
       scroll: false,
       actions: [
         if (widget.entryId != null)
-          IconButton(tooltip: l.journalDelete, onPressed: _saving ? null : _delete, icon: const Icon(Icons.delete_outline_rounded)),
+          IconButton(
+            tooltip: l.journalDelete,
+            onPressed: _saving ? null : _delete,
+            icon: const Icon(Icons.delete_outline_rounded),
+          ),
       ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -142,7 +161,13 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
           TextField(
             controller: _title,
             style: t.titleLarge,
-            decoration: InputDecoration(hintText: l.journalTitleHint, filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none),
+            decoration: InputDecoration(
+              hintText: l.journalTitleHint,
+              filled: false,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+            ),
             textCapitalization: TextCapitalization.sentences,
           ),
           Expanded(
@@ -153,22 +178,108 @@ class _JournalEditorScreenState extends ConsumerState<JournalEditorScreen> {
               expands: true,
               textAlignVertical: TextAlignVertical.top,
               style: t.bodyLarge,
-              decoration: InputDecoration(hintText: l.journalBodyHint, filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none),
+              decoration: InputDecoration(
+                hintText: l.journalBodyHint,
+                filled: false,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
               textCapitalization: TextCapitalization.sentences,
             ),
           ),
-          Text(l.journalMood, style: t.labelLarge?.copyWith(color: scheme.onSurfaceVariant)),
+          // Moon-glyph mood picker — journal-specific, per design spec.
+          Text(l.journalMood,
+              style: t.labelLarge?.copyWith(color: colors.ink2)),
           const SizedBox(height: Tokens.s8),
-          MoodPicker(selected: _mood, onPick: (v) => setState(() => _mood = _mood == v ? null : v)),
-          if (_error != null) Padding(padding: const EdgeInsets.only(top: Tokens.s8), child: Text(_error!, style: TextStyle(color: scheme.error))),
+          _MoonMoodPicker(
+            selected: _mood,
+            onPick: (v) => setState(() => _mood = _mood == v ? null : v),
+          ),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.only(top: Tokens.s8),
+              child: Text(_error!, style: TextStyle(color: scheme.error)),
+            ),
           const SizedBox(height: Tokens.s12),
           FilledButton(
             onPressed: _saving ? null : _save,
-            child: _saving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.journalSave),
+            child: _saving
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2))
+                : Text(l.journalSave),
           ),
           const SizedBox(height: Tokens.s8),
         ],
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Moon-glyph mood picker (journal-specific)
+// ---------------------------------------------------------------------------
+
+/// Five moon-phase mood options with labels, matching the mood check-in design.
+///
+/// Valences: -2 (new moon) to +2 (full moon). Labels use the same five strings
+/// as the mood check-in (moodVeryLow .. moodGreat via l10n).
+class _MoonMoodPicker extends StatelessWidget {
+  const _MoonMoodPicker({required this.onPick, this.selected});
+
+  final ValueChanged<int> onPick;
+  final int? selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        for (var v = -2; v <= 2; v++)
+          Expanded(
+            child: Semantics(
+              button: true,
+              selected: selected == v,
+              label: moodLabel(context, v),
+              child: InkWell(
+                onTap: () => onPick(v),
+                borderRadius: BorderRadius.circular(Tokens.rSmall),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: Tokens.s8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MoonGlyph(
+                        phase: _moodToPhase(v),
+                        size: 28,
+                        selected: selected == v,
+                      ),
+                      const SizedBox(height: Tokens.s4),
+                      Text(
+                        moodLabel(context, v),
+                        style: t.labelMedium?.copyWith(
+                          color: selected == v
+                              ? scheme.onSurface
+                              : scheme.onSurfaceVariant,
+                          fontWeight: selected == v
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
