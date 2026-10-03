@@ -1,74 +1,87 @@
+/// Patient shell — wraps the four tabs (Eve · Today · Journal · You).
+///
+/// On narrow screens: JugnuNavBar at the bottom over the ground gradient.
+/// On wide screens (≥840 dp): Material NavigationRail on the left.
+///
+/// The ground gradient is painted at this shell level via DecoratedBox so every
+/// tab screen (which uses a transparent Scaffold background) inherits it without
+/// each screen needing its own JugnuScaffold.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/tokens.dart';
-import '../shared/widgets.dart';
+import '../../ui/components/jugnu_nav_bar.dart';
 
-/// Bottom-navigation (or side-rail on wide screens) shell for patient users.
-///
-/// Tab order matches the v16 spec: Eve · Today · Journal · You.
 class PatientShell extends StatelessWidget {
   const PatientShell({super.key, required this.shell});
 
   final StatefulNavigationShell shell;
 
-  // The four tabs in display order.
-  static const _tabs = [
-    (Icons.chat_bubble_outline_rounded, Icons.chat_bubble_rounded, 'tabEve'),
-    (Icons.wb_sunny_outlined, Icons.wb_sunny_rounded, 'tabToday'),
-    (Icons.edit_note_outlined, Icons.edit_note_rounded, 'tabJournal'),
-    (Icons.person_outline_rounded, Icons.person_rounded, 'tabYou'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final l = context.l10n;
+    final colors = Theme.of(context).extension<JugnuColors>()!;
     final wide = MediaQuery.sizeOf(context).width >= 840;
-
-    // Map enum-key strings to localised labels.
-    final labels = [l.tabEve, l.tabToday, l.tabJournal, l.tabYou];
 
     void go(int i) =>
         shell.goBranch(i, initialLocation: i == shell.currentIndex);
 
     if (wide) {
-      return Scaffold(
-        body: Row(
-          children: [
-            NavigationRail(
-              selectedIndex: shell.currentIndex,
-              onDestinationSelected: go,
-              labelType: NavigationRailLabelType.all,
-              leading: const SizedBox(height: Tokens.s16),
-              destinations: [
-                for (var i = 0; i < _tabs.length; i++)
+      // Wide layout: side rail, no bottom bar.
+      return DecoratedBox(
+        decoration: BoxDecoration(gradient: colors.ground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Row(
+            children: [
+              NavigationRail(
+                selectedIndex: shell.currentIndex,
+                onDestinationSelected: go,
+                labelType: NavigationRailLabelType.all,
+                backgroundColor: Colors.transparent,
+                leading: const SizedBox(height: Jugnu.s16),
+                destinations: const [
                   NavigationRailDestination(
-                    icon: Icon(_tabs[i].$1),
-                    selectedIcon: Icon(_tabs[i].$2),
-                    label: Text(labels[i]),
+                    icon: Icon(Icons.chat_bubble_outline_rounded),
+                    selectedIcon: Icon(Icons.chat_bubble_rounded),
+                    label: Text('Eve'),
                   ),
-              ],
-            ),
-            const VerticalDivider(width: 1),
-            Expanded(child: shell),
-          ],
+                  NavigationRailDestination(
+                    icon: Icon(Icons.wb_sunny_outlined),
+                    selectedIcon: Icon(Icons.wb_sunny_rounded),
+                    label: Text('Today'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.menu_book_outlined),
+                    selectedIcon: Icon(Icons.menu_book_rounded),
+                    label: Text('Journal'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.person_outline_rounded),
+                    selectedIcon: Icon(Icons.person_rounded),
+                    label: Text('You'),
+                  ),
+                ],
+              ),
+              const VerticalDivider(width: 1),
+              Expanded(child: shell),
+            ],
+          ),
         ),
       );
     }
 
-    return Scaffold(
-      body: shell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: shell.currentIndex,
-        onDestinationSelected: go,
-        destinations: [
-          for (var i = 0; i < _tabs.length; i++)
-            NavigationDestination(
-              icon: Icon(_tabs[i].$1),
-              selectedIcon: Icon(_tabs[i].$2),
-              label: labels[i],
-            ),
-        ],
+    // Narrow layout: JugnuNavBar + ground gradient.
+    return DecoratedBox(
+      decoration: BoxDecoration(gradient: colors.ground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: shell,
+        bottomNavigationBar: JugnuNavBar(
+          currentIndex: shell.currentIndex,
+          onTap: go,
+        ),
       ),
     );
   }
