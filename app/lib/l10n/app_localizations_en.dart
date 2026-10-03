@@ -960,6 +960,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get consentTitle => 'Before you start';
 
   @override
+  String get consentBarTitle => 'Consent';
+
+  @override
   String get consentAiTitle => 'Eve is an AI, not a therapist';
 
   @override
@@ -978,7 +981,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentDataBody =>
-      'Your conversations with Eve are kept on this phone. Check-in scores, mood points, journal entries and your account details are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on. In cloud mode, your messages are sent to the TherapyLink server to be answered.';
+      'Your conversations with Eve are kept on this phone. To answer each message, it is sent to our server; it is not stored there. Check-in scores, mood points, journal entries and your account are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on.';
 
   @override
   String get consentAge => 'I am 18 or older';

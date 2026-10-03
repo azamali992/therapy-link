@@ -1826,6 +1826,12 @@ abstract class AppLocalizations {
   /// **'Before you start'**
   String get consentTitle;
 
+  /// Short app bar title for the consent screen. Keeps the bar uncluttered; full title appears as a heading in the scroll body.
+  ///
+  /// In en, this message translates to:
+  /// **'Consent'**
+  String get consentBarTitle;
+
   /// PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved.
   ///
   /// In en, this message translates to:
@@ -1856,10 +1862,10 @@ abstract class AppLocalizations {
   /// **'What is stored where'**
   String get consentDataTitle;
 
-  /// PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved.
+  /// PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved. API fact-checked 2026-10-03: no chat-messages table exists on the server (see api/therapylink_api/models.py); messages are processed in-memory only.
   ///
   /// In en, this message translates to:
-  /// **'Your conversations with Eve are kept on this phone. Check-in scores, mood points, journal entries and your account details are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on. In cloud mode, your messages are sent to the TherapyLink server to be answered.'**
+  /// **'Your conversations with Eve are kept on this phone. To answer each message, it is sent to our server; it is not stored there. Check-in scores, mood points, journal entries and your account are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on.'**
   String get consentDataBody;
 
   /// PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved.
