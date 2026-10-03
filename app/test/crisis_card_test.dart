@@ -31,8 +31,9 @@ void main() {
     expect(find.text(CrisisCopy.romanUrdu.title(CrisisKind.suicide)), findsOneWidget);
     expect(find.text('0311 7786264'), findsOneWidget);
     expect(find.text('1122'), findsOneWidget);
-    // No human has verified these yet, and debug builds say so.
-    expect(find.text('unverified'), findsNWidgets(2));
+    // Both lines carry a public-source check (docs/clinical/helplines.md), so debug builds no longer
+    // label them; the phone confirmation with each service is still owed before the pilot.
+    expect(find.text('unverified'), findsNothing);
 
     await tester.tap(find.byTooltip(CrisisCopy.romanUrdu.call('Umang')));
     await tester.pump();

@@ -10,7 +10,7 @@
   "tabJournal": "Journal",
   "tabYou": "You",
   "welcomeTitle": "Someone to talk to, any hour",
-  "welcomeBody": "Eve listens in English or Roman Urdu. By default she runs on this phone, so your conversations with her are kept here.",
+  "welcomeBody": "Eve listens in English or Roman Urdu. Your conversations with her are saved on this phone. Each message is sent to the TherapyLink server so she can answer, and it isn't stored there.",
   "welcomeLanguage": "Which do you type in most?",
   "welcomeEnglish": "English",
   "welcomeRomanUrdu": "Roman Urdu",
@@ -29,7 +29,7 @@
   "eveGreeting": "I'm Eve. What's going on?",
   "eveComposerHint": "Say anything…",
   "eveListening": "Eve is listening",
-  "evePrivacy": "Runs on this device. Your words stay here.",
+  "evePrivacy": "Saved on this phone. Each message goes to the TherapyLink server to be answered.",
   "evePrivacyCloud": "Cloud mode: messages are sent to your TherapyLink server.",
   "modelMissingTitle": "Eve isn't on this device yet",
   "modelMissingBody": "One-time download of about {gb} GB. Wi-Fi recommended. After that, Eve works fully offline.",
@@ -51,7 +51,7 @@
   },
   "modelFailed": "The download didn't finish. Check your connection and try again.",
   "guardianTitle": "Safety check",
-  "guardianHeuristic": "Using the built-in keyword check. Download the trained model for better detection in English and Roman Urdu.",
+  "guardianHeuristic": "Using the built-in keyword check.",
   "guardianReady": "Trained model installed. Runs on this device before every message.",
   "guardianDownload": "Download safety model",
   "guardianDownloading": "Downloading safety model · {percent}%",
@@ -201,7 +201,7 @@
   "journalTitle": "Journal",
   "journalNew": "New entry",
   "journalEmptyTitle": "Nothing here yet",
-  "journalEmptyBody": "A few honest lines are enough. Entries stay private unless you choose to share them with a clinician.",
+  "journalEmptyBody": "A few honest lines are enough. Entries are saved to your account, and a clinician sees them only if you choose to share them.",
   "journalTitleHint": "Title (optional)",
   "journalBodyHint": "What's going on?",
   "journalSave": "Save",
@@ -212,7 +212,7 @@
   "youCareSub": "Who can see what",
   "youSettings": "Settings",
   "youDataTitle": "Where your data lives",
-  "youDataBody": "Conversations with Eve and her memory notes are kept on this phone; in cloud mode, messages are sent to the TherapyLink server to be answered. Check-in scores, your mood trend and journal entries are stored on your account so they follow you, and a clinician sees them only if you link one and switch that on.",
+  "youDataBody": "Conversations with Eve and her memory notes are saved on this phone. To answer you, each message and the notes that relate to it are sent to the TherapyLink server, which doesn't store them. Check-in scores, your mood trend and journal entries are stored on your account so they follow you, and a clinician sees them only if you link one and switch that on.",
   "settingsLanguage": "Language",
   "settingsLanguageSystem": "System",
   "settingsTextSize": "Text size",
@@ -267,8 +267,8 @@
   "clinicianAttentionWorsened": "Worsening",
   "clinicianAttentionSevere": "Severe range",
   "careInviteNotFound": "No approved clinician has that code. Check it with them.",
-  "eveGreetingSub": "I'll listen first. Everything here stays private, and you can start with something small.",
-  "eveSubtitleDevice": "On this device · private",
+  "eveGreetingSub": "I'll listen first. You can start with something small.",
+  "eveSubtitleDevice": "Saved on this phone",
   "eveSubtitleCloud": "Cloud mode · via your TherapyLink server",
   "eveNewConversation": "New conversation",
   "eveExercises": "Exercises",
@@ -347,12 +347,12 @@
   "journalPrompt1": "What drained me today",
   "journalPrompt2": "One thing that went okay",
   "journalPrompt3": "What I'd tell a friend in my place",
-  "welcomePointPrivate": "Your conversations with Eve are kept on this phone. Journal entries and check-ins are saved to your account.",
+  "welcomePointPrivate": "Your conversations with Eve are saved on this phone, and each message is sent to the TherapyLink server to be answered. Journal entries and check-ins are saved to your account.",
   "welcomePointLanguage": "English, Roman Urdu, or both, the way you actually type.",
   "welcomePointHelp": "When something is serious, real help is one tap away.",
   "memoryTitle": "What Eve remembers",
   "memoryRowSub": "See, delete, or switch off",
-  "memoryIntro": "Eve keeps a few short notes from your conversations, like who matters to you and what you agreed to try, so you don't have to start from zero each time. They're kept on this phone; in cloud mode, the notes that relate to a message are sent along with it.",
+  "memoryIntro": "Eve keeps a few short notes from your conversations, like who matters to you and what you agreed to try, so you don't have to start from zero each time. They're saved on this phone, and the notes that relate to a message are sent with it to the TherapyLink server.",
   "memoryToggle": "Remember between conversations",
   "memoryToggleOn": "Eve uses these notes and adds new ones",
   "memoryToggleOff": "Nothing is kept or used",
@@ -423,7 +423,7 @@
   "deleteAccountAction": "Delete account",
   "deleteAccountFailed": "Your account couldn't be deleted just now, and nothing was removed. Check your connection and try again.",
   "getHelpNow": "Get help now",
-  "youHelpSub": "Helplines you can call right away",
+  "youHelpSub": "Helplines and their numbers",
   "consentTitle": "Before you start",
   "@consentTitle": {
     "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
@@ -444,7 +444,7 @@
   "@consentEmergencyTitle": {
     "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
   },
-  "consentEmergencyBody": "If you might hurt yourself or someone else, or you're in danger, call 1122 or a helpline now. Eve can't call anyone for you.",
+  "consentEmergencyBody": "Nobody watches your chats with Eve, and telling Eve you're in danger doesn't alert anyone. If you might hurt yourself or someone else, or you're in danger, call 1122 or a helpline from Get help now. Eve can't call anyone for you.",
   "@consentEmergencyBody": {
     "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
   },
@@ -452,7 +452,7 @@
   "@consentDataTitle": {
     "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved."
   },
-  "consentDataBody": "Your conversations with Eve are kept on this phone. To answer each message, it is sent to our server; it is not stored there. Check-in scores, mood points, journal entries and your account are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on.",
+  "consentDataBody": "Your conversations with Eve are saved only on this phone. To answer each message, it is sent to the TherapyLink server with the memory notes that relate to it, and it is not stored there. Check-in scores, mood points, journal entries and your account details are stored on your TherapyLink account so they follow you to a new phone. A clinician sees only what you link them to and switch on.",
   "@consentDataBody": {
     "description": "PENDING LEGAL AND CLINICIAN REVIEW: placeholder consent wording, not yet approved. API fact-checked 2026-10-03: no chat-messages table exists on the server (see api/therapylink_api/models.py); messages are processed in-memory only."
   },
@@ -475,7 +475,7 @@
   "@under18Title": {
     "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
   },
-  "under18Body": "This app is made for people 18 and over. If something is hard right now, you deserve real support. Talk to an adult you trust, or call one of these:",
+  "under18Body": "This app is made for people 18 and over, so Eve can't chat with you here. If something is hard right now, you deserve real support. Talk to an adult you trust, like a teacher, a relative or a neighbour, or call one of these:",
   "@under18Body": {
     "description": "PENDING CLINICIAN REVIEW: clinical/safety wording drafted by engineering, not yet approved."
   },
@@ -543,7 +543,7 @@
   "@clinicianUnvalidatedTranslation": {
     "description": "PENDING CLINICIAN REVIEW: shown beside a PHQ-9/GAD-7 score answered in Roman Urdu. Wording drafted by engineering, not yet approved."
   },
-  "clinicianUnvalidatedTranslationHelp": "Answered in the app's Roman Urdu wording, which has not been validated against the original questionnaire. Read the score and its band with care.",
+  "clinicianUnvalidatedTranslationHelp": "Answered in the app's Roman Urdu wording. It follows the published Urdu versions where it can, but Roman Urdu wording has not itself been validated against the original questionnaire. Read the score and its band with care.",
   "@clinicianUnvalidatedTranslationHelp": {
     "description": "PENDING CLINICIAN REVIEW: tooltip for the unvalidated translation notice. Wording drafted by engineering, not yet approved."
   },
