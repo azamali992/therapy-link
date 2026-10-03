@@ -1,30 +1,90 @@
-# Secret scanning for the whole history. CI runs `gitleaks git` with this file on every push and PR.
-# Local run: gitleaks git --config .gitleaks.toml --redact .
+# Secret scanning for TherapyLink v3. CI runs `gitleaks git` with this file over the whole history
+# on every push and PR, and any finding fails the build.
+#
+# Local runs:
+#   gitleaks git --config .gitleaks.toml --redact .      # every commit
+#   gitleaks dir --config .gitleaks.toml --redact .      # the working tree, untracked files too
+#
+# v3 started from a fresh history, so there is no allowlist for old commits. If a secret ever lands
+# in a commit, revoke it first. An allowlist entry hides the finding but leaves the key live.
 
-title = "TherapyLink"
+title = "TherapyLink v3"
 
 [extend]
 useDefault = true
 
-# The v1 app committed a GCP service-account key, Gemini and Maps keys and Firebase config in
-# these five commits (2025-03 to 2025-07). They are listed so CI can scan everything that came
-# after them. Listing them here does NOT make them safe: the keys stay live until someone revokes
-# them in GCP, and the commits stay public until the history is rewritten (ship plan blocker B1).
-# Once the company remote holds a history without these commits, delete this block.
-[[allowlists]]
-description = "Known v1 leaks, pending revocation and history rewrite (B1)"
-commits = [
-  "b561cf9cafdb4d8a95eb5367c177efee045c14d0",
-  "48fd1cc552262b4b7512587889112f0205aa4d85",
-  "fd56966f9b5dd964d376803d2c34646b3218345d",
-  "964855767bb71d7f5cd6540cae9504703e7282c9",
-  "a3162bffaa96d46e0e49aecb670f5ce8c0b86318",
-]
-
 # Firebase client config is an identifier, not a secret: it ships inside every build of the app.
-# The real control is restricting these keys by package name, SHA-1 and referrer in the GCP
-# console and turning on App Check. Only the two API-key rules are silenced, only for this file.
+# The real control is restricting the keys by package name, SHA-1 and API in the GCP console and
+# enforcing App Check. All three conditions must hold: one of the two API-key rules, the generated
+# options file, and a value shaped like a Google API key.
 [[allowlists]]
-description = "Firebase client options (public by design; restrict in the GCP console)"
+description = "Firebase client API keys in the generated options file (public by design)"
+condition = "AND"
 targetRules = ["gcp-api-key", "generic-api-key"]
 paths = ['''^app/lib/firebase_options\.dart$''']
+regexTarget = "match"
+regexes = ['''AIza[0-9A-Za-z_\-]{35}''']
+
+# Build outputs, caches and venvs only matter to `gitleaks dir` (they're gitignored, so history never
+# has them). Compiled kernel files and wheels are full of random strings that look like keys. A key
+# that got compiled into a build is still caught in the source it came from.
+[[allowlists]]
+description = "Gitignored build outputs, tool caches and virtual environments"
+paths = [
+  '''(^|/)app/build/''',
+  '''(^|/)\.dart_tool/''',
+  '''(^|/)\.gradle/''',
+  '''(^|/)\.venv[^/]*/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)(\.ruff_cache|\.pytest_cache|__pycache__)/''',
+]
+
+# --- Credentials by content ---------------------------------------------------------------------
+
+[[rules]]
+id = "gcp-service-account-json"
+description = "Google service-account key (JSON with type service_account)"
+regex = '''"type"\s*:\s*"service_account"'''
+keywords = ["service_account"]
+
+# Signing passwords typed in as values. Gradle code that reads them (keyProps.getProperty(...),
+# System.getenv(...)) has no string literal right after the name, so it doesn't match.
+[[rules]]
+id = "signing-password-literal"
+description = "Keystore password as a string literal in Gradle or other build code"
+regex = '''(?i)\b(storePassword|keyPassword)\b\s*[=:]?\s*["'][^"'$\s]{4,}["']'''
+keywords = ["storepassword", "keypassword"]
+
+[[rules]]
+id = "signing-password-properties"
+description = "Keystore password in a .properties file (gradle.properties, local.properties, ...)"
+path = '''(?i)\.properties$'''
+regex = '''(?im)^\s*(storePassword|keyPassword)\s*[=:]\s*[^\s$]{4,}'''
+keywords = ["storepassword", "keypassword"]
+
+# --- Files that must never be committed, whatever they contain ----------------------------------
+# These rules fire on the file name alone, so an empty or placeholder copy is flagged too. That is
+# deliberate: the fix is to delete the file and keep it in .gitignore, not to allowlist it.
+
+[[rules]]
+id = "service-account-file"
+description = "Service-account or Firebase Admin credential file"
+path = '''(?i)(^|/)[^/]*(service[-_]?account|firebase[-_]adminsdk)[^/]*\.json$'''
+
+[[rules]]
+id = "dotenv-file"
+description = "Environment file (.env, .env.local, .env.prod, ...)"
+path = '''(^|/)\.env(\.[^/]+)?$'''
+[[rules.allowlists]]
+description = "Committed templates hold placeholder values only"
+paths = ['''(^|/)\.env\.(example|sample|template)$''']
+
+[[rules]]
+id = "keystore-file"
+description = "Keystore or certificate bundle (.jks, .keystore, .p12, .pfx)"
+path = '''(?i)\.(jks|keystore|p12|pfx)$'''
+
+[[rules]]
+id = "android-key-properties"
+description = "Android release signing config (key.properties)"
+path = '''(^|/)key\.properties$'''

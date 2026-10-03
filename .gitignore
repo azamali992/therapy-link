@@ -1,83 +1,122 @@
+# Root ignores for TherapyLink v3. app/ and app/android/ keep Flutter's own .gitignore files too;
+# the signing and secret rules are repeated here so they hold even if those files change.
+# gitleaks (.gitleaks.toml) flags the same file types in CI, as a backstop for `git add -f`.
+
 # --- OS / editors ---
 .DS_Store
 Thumbs.db
+desktop.ini
 *.swp
+*~
 .idea/
 *.iml
+*.ipr
+*.iws
 .vscode/*
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.history/
 
 # --- secrets (never commit) ---
 .env
 .env.*
 !.env.example
+!.env.sample
+!.env.template
 *.pem
+*.key
+*.p8
+*.p12
+*.pfx
 *service-account*.json
+*service_account*.json
+*firebase-adminsdk*.json
 google_speech.json
+.secrets/
 
-# --- python / ml ---
-ml/.venv/
+# --- Android signing ---
+key.properties
+*.jks
+*.keystore
+local.properties
+
+# --- Flutter / Dart ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+app/build/
+app/coverage/
+app/**/doc/api/
+app/ios/Flutter/.last_build_id
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/ephemeral/
+app/android/.gradle/
+app/android/app/debug
+app/android/app/profile
+app/android/app/release
+app/android/captures/
+app/app.*.symbols
+app/app.*.map.json
+app/*.log
+.widget_preview/
+# Release outputs
+*.apk
+*.aab
+*.ipa
+
+# --- Python ---
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.ipynb_checkpoints/
+# Local virtual environments, wherever they are created
+.venv/
+venv/
+.venv-*/
+
+# --- API ---
+api/*.db
+api/*.db-journal
+api/*.sqlite3
+*.db-wal
+*.db-shm
+
+# --- ML data, runs and weights ---
 ml/data/raw/
 ml/data/processed/
 ml/data/cache/
 ml/models/
 ml/runs/
 ml/outputs/
-*.safetensors
+wandb/
+mlruns/
 *.gguf
+*.safetensors
 *.bin
 *.pt
+*.pth
 *.ckpt
-wandb/
+*.onnx
+*.onnx.data
+*.tflite
+*.litertlm
+*.task
+*.npz
 
-# --- api ---
-api/.venv/
-api/__pycache__/
-api/*.db
-api/*.db-journal
-
-# --- flutter / dart ---
-app/.dart_tool/
-app/.flutter-plugins
-app/.flutter-plugins-dependencies
-app/.packages
-app/build/
-app/.pub-cache/
-app/.pub/
-app/**/doc/api/
-app/ios/Flutter/.last_build_id
-app/android/app/debug
-app/android/app/profile
-app/android/app/release
-app/android/local.properties
-app/android/key.properties
-app/android/**/*.keystore
-app/android/**/*.jks
-app/app.*.symbols
-app/app.*.map.json
-app/*.log
-
-# --- node ---
+# --- Node (tooling only) ---
 node_modules/
 *.log
-
-# --- legacy (kept for reference until the rebuild replaces it) ---
-legacy/build/
-legacy/.dart_tool/
-legacy/android/local.properties
-legacy/functions/node_modules/
-
-# v3 app
-app/.dart_tool/
-app/build/
-app/.flutter-plugins-dependencies
-app/*.iml
-*.egg-info/

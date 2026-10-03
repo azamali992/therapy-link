@@ -1,0 +1,53 @@
+# Optional local hooks. CI runs the same checks, so nothing here is required, but it is faster to
+# hear about a formatting slip or a leaked key before the push than after.
+#
+#   pip install pre-commit
+#   pre-commit install                 # run on every commit
+#   pre-commit run --all-files         # run once over the whole repo
+#
+# The gitleaks and dart hooks call tools already on your PATH: gitleaks 8.30+ (see README.md for a
+# D: install) and the Flutter SDK's dart. Ruff is fetched by pre-commit itself.
+
+default_install_hook_types: [pre-commit]
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.10
+    hooks:
+      - id: ruff-check
+        files: ^(api|ml)/
+      - id: ruff-format
+        files: ^(api|ml)/
+        types_or: [python, pyi]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks-system
+        # Scans the staged diff once; file names are not passed to it.
+        pass_filenames: false
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: [--maxkb=2048]
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: dart-format
+        name: dart format (check)
+        entry: dart format --output=none --set-exit-if-changed
+        language: system
+        files: ^app/.*\.dart$
+        # Generated code is formatted by its generator and rewritten on every build.
+        exclude: (\.g\.dart|\.freezed\.dart|\.mocks\.dart)$|^app/lib/l10n/app_localizations.*\.dart$
+      # gitleaks does not read binary files, so keystores are caught by name here (and in CI).
+      - id: no-credential-files
+        name: no credential files
+        entry: These files hold credentials and must never be committed. Unstage them and keep them in .gitignore.
+        language: fail
+        files: (^|/)(\.env(\.[^/]+)?|key\.properties)$|\.(jks|keystore|p12|pfx)$|(^|/)[^/]*(service[-_]?account|firebase[-_]adminsdk)[^/]*\.json$
+        exclude: (^|/)\.env\.(example|sample|template)$

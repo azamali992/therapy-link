@@ -1,7 +1,17 @@
-# Keeps the digest-pinned base image in api/Dockerfile current, so it picks up upstream security fixes.
 version: 2
 updates:
+  # Keeps the digest-pinned base image in api/Dockerfile current, so it picks up upstream security
+  # fixes. api/tests/test_deploy.py checks this entry exists.
   - package-ecosystem: docker
     directory: /api
     schedule:
       interval: weekly
+
+  # Moves the SHA-pinned actions in .github/workflows forward, one grouped PR a week.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
