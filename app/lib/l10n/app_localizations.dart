@@ -2371,6 +2371,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The connection timed out. Eve may be slow to respond right now. Try again in a moment.'**
   String get eveSlowBody;
+
+  /// No description provided for @eveTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get eveTryAgain;
+
+  /// No description provided for @evePrivacyInline.
+  ///
+  /// In en, this message translates to:
+  /// **'This chat is saved only on this phone. Eve\'s replies come from our server, which doesn\'t keep them.'**
+  String get evePrivacyInline;
 }
 
 class _AppLocalizationsDelegate

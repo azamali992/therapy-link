@@ -487,5 +487,7 @@
   "eveBusyTitle": "Eve abhi kisi aur se baat kar rahi hai",
   "eveBusyBody": "Server masroof hai. Thori dair ruk kar dobara koshish karein.",
   "eveSlowTitle": "Eve araam kar rahi hai",
-  "eveSlowBody": "Connection time out ho gaya. Eve abhi dheere jawab de sakti hai. Thori dair baad dobara koshish karein."
+  "eveSlowBody": "Connection time out ho gaya. Eve abhi dheere jawab de sakti hai. Thori dair baad dobara koshish karein.",
+  "eveTryAgain": "Dobara koshish karein",
+  "evePrivacyInline": "Yeh chat sirf is phone par save hai. Eve ke jawab hamare server se aate hain, jo unhein nahi rakhta."
 }

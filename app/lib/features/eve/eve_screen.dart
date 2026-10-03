@@ -80,9 +80,13 @@ class _EveScreenState extends ConsumerState<EveScreen> {
     final showQuickExit = ref.watch(privacySettingsProvider.select((s) => s.quickExit));
 
     // EvePresence animation state (enum from presence_assets.dart).
-    final presenceState = state.generating
-        ? EvePresenceState.thinking
-        : (_hasText ? EvePresenceState.listening : EvePresenceState.idle);
+    // Hold idle when the server is busy or slow — animated states during an
+    // error would be misleading (Eve isn't actually thinking or listening).
+    final presenceState = (state.eveBusy || state.eveSlow)
+        ? EvePresenceState.idle
+        : state.generating
+            ? EvePresenceState.thinking
+            : (_hasText ? EvePresenceState.listening : EvePresenceState.idle);
 
     // Status line copy (Roman Urdu, third-person).
     final statusLine = state.generating
@@ -102,11 +106,12 @@ class _EveScreenState extends ConsumerState<EveScreen> {
       ),
       body: Column(
         children: [
-          // Storage notice: tells the person where their data lives.
+          // Storage notice: honest inline copy — chat stays on this phone,
+          // replies come from the server and are not retained there.
           Padding(
             padding: const EdgeInsets.fromLTRB(Jugnu.s16, Jugnu.s8, Jugnu.s16, 0),
             child: InlineNote(
-              text: context.l10n.evePrivacyCloud,
+              text: context.l10n.evePrivacyInline,
               isProtected: false,
             ),
           ),
@@ -149,6 +154,24 @@ class _EveScreenState extends ConsumerState<EveScreen> {
               label: copy.helpBar,
               onGetHelp: () =>
                   showCrisisSheet(context, kind: crisis.kind, copy: copy),
+            ),
+
+          // Calm inline notice when the server is busy or slow.
+          // No animation, no red. Help is still reachable via the app bar.
+          if (state.eveBusy || state.eveSlow)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(Jugnu.s16, Jugnu.s8, Jugnu.s16, 0),
+              child: _EveStatusBanner(
+                title: state.eveBusy
+                    ? context.l10n.eveBusyTitle
+                    : context.l10n.eveSlowTitle,
+                body: state.eveBusy
+                    ? context.l10n.eveBusyBody
+                    : context.l10n.eveSlowBody,
+                onRetry: () =>
+                    ref.read(ctrl.eveControllerProvider.notifier).retry(),
+                retryLabel: context.l10n.eveTryAgain,
+              ),
             ),
 
           // Composer with grounding quick-replies when relevant.
@@ -223,7 +246,9 @@ class _EveChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 2, 0, 8),
+        // Reduced left padding (8 instead of 14) so the name/status column
+        // has enough room to show fully at 360 dp without truncation.
+        padding: const EdgeInsets.fromLTRB(8, 2, 0, 8),
         child: Row(
           children: [
             // Eve presence 52 dp. No halo on the small chatHeader size.
@@ -232,7 +257,7 @@ class _EveChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               size: EvePresentSize.chatHeader,
               showHalo: false,
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 6),
             // Name + live status.
             Expanded(
               child: Column(
@@ -425,6 +450,79 @@ class _StarterChip extends StatelessWidget {
             style: t.labelMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Eve status banner (busy / slow server)
+// ---------------------------------------------------------------------------
+
+/// Calm inline notice shown above the composer when Eve's server is busy or
+/// slow. Uses the `surface` / `ink2` tokens so it blends into the UI without
+/// drawing attention. No red, no animation; help is still in the app bar.
+class _EveStatusBanner extends StatelessWidget {
+  const _EveStatusBanner({
+    required this.title,
+    required this.body,
+    required this.onRetry,
+    required this.retryLabel,
+  });
+
+  final String title;
+  final String body;
+  final VoidCallback onRetry;
+  final String retryLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<JugnuColors>()!;
+    final t = Theme.of(context).textTheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(Jugnu.s16, 12, Jugnu.s12, 4),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(Jugnu.rNested),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: t.labelMedium?.copyWith(
+              color: colors.ink2,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            body,
+            style: t.bodyMedium?.copyWith(color: colors.ink2),
+          ),
+          // "Try again" action — TextButton so it has a proper touch target
+          // but stays low-key (no filled background, no outline).
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: onRetry,
+              style: TextButton.styleFrom(
+                foregroundColor: colors.ink2,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Jugnu.s8, vertical: Jugnu.s4),
+                minimumSize: const Size(Jugnu.minTarget, Jugnu.minTarget),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                retryLabel,
+                style: t.labelMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

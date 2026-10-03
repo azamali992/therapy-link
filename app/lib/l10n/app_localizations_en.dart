@@ -1272,4 +1272,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get eveSlowBody =>
       'The connection timed out. Eve may be slow to respond right now. Try again in a moment.';
+
+  @override
+  String get eveTryAgain => 'Try again';
+
+  @override
+  String get evePrivacyInline =>
+      'This chat is saved only on this phone. Eve\'s replies come from our server, which doesn\'t keep them.';
 }

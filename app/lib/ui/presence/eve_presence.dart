@@ -14,6 +14,7 @@
 library;
 
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -363,37 +364,52 @@ class _EveSilhouette extends StatelessWidget {
 }
 
 class _BudPainter extends CustomPainter {
+  // Presence palette — same violet and pink as EveHalo so the silhouette
+  // reads as clearly Eve even when the video / poster assets aren't loaded.
+  static const _violet = Color(0xFF8A4FFF);
+  static const _pink = Color(0xFFF23598);
+  static const _pinkLight = Color(0xFFFFD3EA);
+
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final r = size.width * 0.38;
 
-    // Outer aura glow.
+    // Soft violet halo — stronger than before so it is visible on dark bg.
     final aura = Paint()
       ..shader = RadialGradient(
         colors: [
-          const Color(0x668A4FFF),
+          _violet.withValues(alpha: 0.55),
+          _violet.withValues(alpha: 0.18),
           const Color(0x00000000),
         ],
-      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r * 1.6));
-    canvas.drawCircle(Offset(cx, cy), r * 1.6, aura);
+        stops: const [0.0, 0.55, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r * 1.65));
+    canvas.drawCircle(Offset(cx, cy), r * 1.65, aura);
 
-    // Five outer petals.
+    // Five petals: pink→violet gradient fill from tip to base so the shape
+    // reads clearly on both dark (#1D1E2C) and light backgrounds.
     const petalCount = 5;
-    final petalPaint = Paint()
-      ..color = const Color(0xFF34063F)
-      ..style = PaintingStyle.fill;
-    final petalEdgePaint = Paint()
-      ..color = const Color(0xFFF23598)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.012;
-
     for (var i = 0; i < petalCount; i++) {
       final angle = (i / petalCount) * 2 * 3.14159265 - 3.14159265 / 2;
       canvas.save();
       canvas.translate(cx, cy);
       canvas.rotate(angle);
+
+      // Gradient: pink at the tip (0, -r*0.95) → violet at the base (0, 0).
+      final petalFill = Paint()
+        ..style = PaintingStyle.fill
+        ..shader = ui.Gradient.linear(
+          Offset(0, -r * 0.95),
+          const Offset(0, 0),
+          const [_pink, _violet],
+        );
+      final petalEdge = Paint()
+        ..style = PaintingStyle.stroke
+        ..color = _pinkLight.withValues(alpha: 0.55)
+        ..strokeWidth = size.width * 0.013;
+
       final petalPath = Path()
         ..moveTo(0, 0)
         ..cubicTo(
@@ -406,23 +422,18 @@ class _BudPainter extends CustomPainter {
           r * 0.22, -r * 0.15,
           0, 0,
         );
-      canvas.drawPath(petalPath, petalPaint);
-      canvas.drawPath(petalPath, petalEdgePaint);
+      canvas.drawPath(petalPath, petalFill);
+      canvas.drawPath(petalPath, petalEdge);
       canvas.restore();
     }
 
-    // Core glow.
+    // Core glow — brighter centre for depth.
     final core = Paint()
       ..shader = RadialGradient(
-        colors: [
-          const Color(0xFFFFD3EA),
-          const Color(0xFFF23598),
-          const Color(0xFF34063F),
-        ],
-        stops: [0.0, 0.4, 1.0],
-      ).createShader(
-          Rect.fromCircle(center: Offset(cx, cy), radius: r * 0.28));
-    canvas.drawCircle(Offset(cx, cy), r * 0.28, core);
+        colors: [_pinkLight, _pink, _violet],
+        stops: const [0.0, 0.42, 1.0],
+      ).createShader(Rect.fromCircle(center: Offset(cx, cy), radius: r * 0.30));
+    canvas.drawCircle(Offset(cx, cy), r * 0.30, core);
   }
 
   @override

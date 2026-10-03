@@ -632,5 +632,7 @@
   "eveBusyTitle": "Eve is with someone else right now",
   "eveBusyBody": "The server is busy. Wait a moment and try again.",
   "eveSlowTitle": "Eve is resting",
-  "eveSlowBody": "The connection timed out. Eve may be slow to respond right now. Try again in a moment."
+  "eveSlowBody": "The connection timed out. Eve may be slow to respond right now. Try again in a moment.",
+  "eveTryAgain": "Try again",
+  "evePrivacyInline": "This chat is saved only on this phone. Eve's replies come from our server, which doesn't keep them."
 }

@@ -171,6 +171,10 @@ class EveController extends Notifier<EveState> {
   /// start a second one in the gap before [EveState.generating] is seen.
   bool _busy = false;
 
+  /// The text from the last send that ended in [eveBusy] or [eveSlow]. Used by [retry] to
+  /// re-attempt generation without re-saving the user message (which is already in the DB).
+  String? _pendingText;
+
   /// The crisis reading of the message being sent, taken before anything is saved.
   ({CrisisKind kind, CrisisLanguage language})? _earlyCrisis;
 
@@ -267,15 +271,18 @@ class EveController extends Notifier<EveState> {
     if (trimmed.isEmpty || _busy) return;
     _busy = true;
     _earlyCrisis = null;
+    _pendingText = null;
     // Clear any previous busy/slow banners as a new attempt starts.
     state = state.copyWith(generating: true, partial: '', eveBusy: false, eveSlow: false);
     try {
       await _turn(trimmed);
     } on EveBusyException {
       // Server inference queue was full: show a calm "Eve is with someone else" banner.
+      _pendingText = trimmed;
       if (ref.mounted) state = state.copyWith(eveBusy: true);
     } on EveTimedOutException {
       // Stream timed out: show a calm "Eve is slow / resting" banner.
+      _pendingText = trimmed;
       if (ref.mounted) state = state.copyWith(eveSlow: true);
     } catch (e) {
       debugPrint('eve turn failed: $e');
@@ -289,6 +296,68 @@ class EveController extends Notifier<EveState> {
       _busy = false;
       if (ref.mounted) state = state.copyWith(generating: false, partial: '');
     }
+  }
+
+  /// Retries generating a reply for the message that last got a [eveBusy] or [eveSlow] error.
+  ///
+  /// The user's message is already in the database from the first attempt; this method runs only
+  /// the generation step so no duplicate message row is created. The busy/slow banner is cleared
+  /// at the start and re-set if the generation fails again.
+  Future<void> retry() async {
+    final text = _pendingText;
+    if (text == null || _busy) return;
+    _busy = true;
+    _pendingText = null;
+    state = state.copyWith(generating: true, partial: '', eveBusy: false, eveSlow: false);
+    try {
+      await _retryGeneration(text);
+    } on EveBusyException {
+      _pendingText = text;
+      if (ref.mounted) state = state.copyWith(eveBusy: true);
+    } on EveTimedOutException {
+      _pendingText = text;
+      if (ref.mounted) state = state.copyWith(eveSlow: true);
+    } catch (e) {
+      debugPrint('eve retry failed: $e');
+    } finally {
+      _busy = false;
+      if (ref.mounted) state = state.copyWith(generating: false, partial: '');
+    }
+  }
+
+  /// Generation-only path used by [retry]. The user message is already in the DB; this reads it
+  /// back, builds context, generates Eve's reply, and saves it — exactly what the tail of [_turn]
+  /// does after the crisis/guardian pass.
+  Future<void> _retryGeneration(String userText) async {
+    final db = ref.read(databaseProvider);
+    final conversation = _conversation;
+    final engine = ref.read(eveEngineProvider);
+    final sticky = ref.read(crisisModeProvider.notifier).active;
+    final recent = await db.recentMessages(conversation, limit: 120);
+    final language = crisisLanguageOf(userText);
+    final removedNote = CrisisCopy.of(language).numberRemoved;
+
+    final context = await _context(conversation, recent, query: userText, severe: sticky);
+    var reply = await _serial(() => _generate(engine, context.history, context.notes, removedNote));
+    if (reply != eveFailureReply && repeatsOpener(reply, context.recentReplies)) {
+      final second = await _serial(() => _generate(engine, context.history, context.notes, removedNote));
+      if (second != eveFailureReply) reply = second;
+    }
+    final guarded = guardReplyNumbers(reply, replacement: removedNote);
+    if (guarded.text.isNotEmpty) {
+      await db.addMessage(MessagesCompanion.insert(
+        id: _uuid.v4(),
+        conversationId: conversation,
+        role: 'assistant',
+        content: guarded.text,
+        createdAt: _stamp(),
+      ));
+    }
+    if (sticky || guarded.removed > 0) {
+      await _addCrisisCard(conversation, sticky ? ref.read(crisisModeProvider).kind : CrisisKind.suicide, language);
+    }
+    state = const EveState(generating: true);
+    _schedule(() => _maintain(conversation));
   }
 
   Future<void> _turn(String trimmed) async {

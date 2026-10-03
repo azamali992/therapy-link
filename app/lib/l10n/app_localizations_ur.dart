@@ -1281,4 +1281,11 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get eveSlowBody =>
       'Connection time out ho gaya. Eve abhi dheere jawab de sakti hai. Thori dair baad dobara koshish karein.';
+
+  @override
+  String get eveTryAgain => 'Dobara koshish karein';
+
+  @override
+  String get evePrivacyInline =>
+      'Yeh chat sirf is phone par save hai. Eve ke jawab hamare server se aate hain, jo unhein nahi rakhta.';
 }

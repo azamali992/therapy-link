@@ -149,6 +149,40 @@ List<Override> _eveOverrides(SharedPreferences prefs) => [
   ctrl.eveMessagesProvider.overrideWith((ref) => Stream.value(_sampleMessages)),
 ];
 
+// ---------------------------------------------------------------------------
+// Fake EveController for status-banner golden PNGs
+// ---------------------------------------------------------------------------
+
+class _BannerFakeController extends ctrl.EveController {
+  _BannerFakeController(this._state);
+  final ctrl.EveState _state;
+
+  @override
+  ctrl.EveState build() => _state;
+
+  @override
+  Future<void> retry() async {}
+
+  @override
+  Future<void> send(String text) async {}
+}
+
+List<Override> _eveBusyOverrides(SharedPreferences prefs) => [
+  ..._baseOverrides(prefs),
+  ctrl.eveMessagesProvider.overrideWith((ref) => Stream.value(_sampleMessages)),
+  ctrl.eveControllerProvider.overrideWith(
+    () => _BannerFakeController(const ctrl.EveState(eveBusy: true)),
+  ),
+];
+
+List<Override> _eveSlowOverrides(SharedPreferences prefs) => [
+  ..._baseOverrides(prefs),
+  ctrl.eveMessagesProvider.overrideWith((ref) => Stream.value(_sampleMessages)),
+  ctrl.eveControllerProvider.overrideWith(
+    () => _BannerFakeController(const ctrl.EveState(eveSlow: true)),
+  ),
+];
+
 /// Provider overrides specific to ConversationsScreen.
 List<Override> _conversationsOverrides(SharedPreferences prefs) => [
   ..._baseOverrides(prefs),
@@ -225,6 +259,26 @@ void main() {
           brightness: brightness,
           overrides: _eveOverrides(prefs),
           goldenPath: '../../docs/design/screens/eve/eve_screen_$theme.png',
+        );
+      });
+
+      testWidgets('EveScreen — eveBusy banner', (tester) async {
+        await _pumpAndCompare(
+          tester,
+          screen: const EveScreen(),
+          brightness: brightness,
+          overrides: _eveBusyOverrides(prefs),
+          goldenPath: '../../docs/design/screens/eve/eve_busy_$theme.png',
+        );
+      });
+
+      testWidgets('EveScreen — eveSlow banner', (tester) async {
+        await _pumpAndCompare(
+          tester,
+          screen: const EveScreen(),
+          brightness: brightness,
+          overrides: _eveSlowOverrides(prefs),
+          goldenPath: '../../docs/design/screens/eve/eve_slow_$theme.png',
         );
       });
 
