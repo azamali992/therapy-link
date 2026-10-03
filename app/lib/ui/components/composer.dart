@@ -20,6 +20,7 @@ class Composer extends StatefulWidget {
     this.hint = 'Kuch bhi likho…',
     this.quickReplies = const [],
     this.onQuickReply,
+    this.onChanged,
   });
 
   final ValueChanged<String> onSend;
@@ -27,6 +28,10 @@ class Composer extends StatefulWidget {
   final String hint;
   final List<String> quickReplies;
   final ValueChanged<String>? onQuickReply;
+
+  /// Called whenever the text field content changes. Use this to track
+  /// whether the user is typing (for [EvePresence] listening state).
+  final ValueChanged<String>? onChanged;
 
   @override
   State<Composer> createState() => _ComposerState();
@@ -105,6 +110,7 @@ class _ComposerState extends State<Composer> {
                     style: textTheme.bodyLarge,
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _send(),
+                    onChanged: widget.onChanged,
                     decoration: InputDecoration(
                       hintText: widget.hint,
                       hintStyle: textTheme.bodyLarge

@@ -4,11 +4,27 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/theme/tokens.dart';
 import '../../core/db/database.dart';
-import '../../core/ml/guardian.dart';
+import '../../core/security/privacy_settings.dart';
+import '../../core/security/quick_exit.dart';
+import '../../ui/components/composer.dart';
+import '../../ui/components/help_bar.dart';
+import '../../ui/components/inline_note.dart';
+import '../../ui/components/jugnu_scaffold.dart';
+import '../../ui/components/messages.dart';
+import '../../ui/jugnu_icons.dart';
+// Import the presence barrel — EveState (enum) is in presence_assets.dart.
+// The controller also has a class called EveState; alias the controller import
+// to avoid ambiguity.
+import '../../ui/presence/presence.dart';
+import '../../core/ml/guardian.dart' show CrisisKind;
 import '../shared/crisis_copy.dart';
+import '../shared/helplines.dart';
 import '../shared/widgets.dart';
 import 'crisis_mode.dart';
-import 'eve_controller.dart';
+import 'eve_controller.dart' as ctrl;
+// Alias jugnu_app_bar components to differentiate from the shared wrappers.
+import '../../ui/components/jugnu_app_bar.dart' as jab;
+import '../../app/theme/theme.dart' show jugnuNumberLarge;
 
 /// /eve — AI companion chat screen.
 class EveScreen extends ConsumerStatefulWidget {
@@ -19,30 +35,25 @@ class EveScreen extends ConsumerStatefulWidget {
 }
 
 class _EveScreenState extends ConsumerState<EveScreen> {
-  final _input = TextEditingController();
   final _scroll = ScrollController();
-  final _focus = FocusNode();
+  bool _hasText = false;
 
   @override
   void dispose() {
-    _input.dispose();
     _scroll.dispose();
-    _focus.dispose();
     super.dispose();
   }
 
-  void _send() {
-    final text = _input.text;
-    if (text.trim().isEmpty || ref.read(eveControllerProvider).generating) return;
-    _input.clear();
-    ref.read(eveControllerProvider.notifier).send(text);
-    _focus.requestFocus();
+  void _send(String text) {
+    if (text.trim().isEmpty) return;
+    ref.read(ctrl.eveControllerProvider.notifier).send(text);
+    setState(() => _hasText = false);
     _scrollToEnd();
   }
 
   void _scrollToEnd() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scroll.hasClients || _scroll.offset == 0) return;
+      if (!_scroll.hasClients) return;
       _scroll.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
     });
   }
@@ -50,49 +61,80 @@ class _EveScreenState extends ConsumerState<EveScreen> {
   @override
   Widget build(BuildContext context) {
     // Open the crisis sheet whenever Eve flags a message.
-    ref.listen(eveControllerProvider.select((s) => s.crisisPending), (_, pending) async {
+    ref.listen(ctrl.eveControllerProvider.select((s) => s.crisisPending), (_, pending) async {
       if (!pending) return;
-      final s = ref.read(eveControllerProvider);
-      ref.read(eveControllerProvider.notifier).crisisShown();
+      final s = ref.read(ctrl.eveControllerProvider);
+      ref.read(ctrl.eveControllerProvider.notifier).crisisShown();
       await showCrisisSheet(context, kind: s.crisisKind, copy: CrisisCopy.of(s.crisisLanguage));
     });
 
-    final messages = ref.watch(eveMessagesProvider);
-    final state = ref.watch(eveControllerProvider);
+    // Keep Eve's 3D presence frozen at idle during crisis mode.
+    ref.listen(crisisModeProvider.select((s) => s.active), (_, active) {
+      ref.read(evePresenceCrisisHoldProvider.notifier).hold(active);
+    });
+
+    final messages = ref.watch(ctrl.eveMessagesProvider);
+    final state = ref.watch(ctrl.eveControllerProvider);
     final crisis = ref.watch(crisisModeProvider);
     final copy = CrisisCopy.forContext(context);
-    final l = context.l10n;
+    final showQuickExit = ref.watch(privacySettingsProvider.select((s) => s.quickExit));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l.tabEve),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.forum_outlined),
-            tooltip: l.eveNewConversation,
-            onPressed: () => context.go('/eve/conversations'),
-          ),
-          const QuickExitButton(),
-          const GetHelpButton(),
-        ],
+    // EvePresence animation state (enum from presence_assets.dart).
+    final presenceState = state.generating
+        ? EveState.thinking
+        : (_hasText ? EveState.listening : EveState.idle);
+
+    // Status line copy (Roman Urdu, third-person).
+    final statusLine = state.generating
+        ? 'soch rahi hai…'
+        : (_hasText ? 'sun rahi hai' : 'yahan hai');
+
+    return JugnuScaffold(
+      appBar: _EveChatAppBar(
+        presenceState: presenceState,
+        statusLine: statusLine,
+        showQuickExit: showQuickExit,
+        onGetHelp: () => showCrisisSheet(context, copy: copy),
+        onQuickExit: showQuickExit
+            ? () => ref.read(quickExitProvider.notifier).exit()
+            : null,
+        onConversations: () => context.go('/eve/conversations'),
       ),
       body: Column(
         children: [
+          // Storage notice: tells the person where their data lives.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(Jugnu.s16, Jugnu.s8, Jugnu.s16, 0),
+            child: InlineNote(
+              text: context.l10n.evePrivacyCloud,
+              isProtected: false,
+            ),
+          ),
+
+          // Message thread.
           Expanded(
             child: Align(
               alignment: Alignment.topCenter,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: Tokens.readingWidth),
+                constraints: const BoxConstraints(maxWidth: Jugnu.readingWidth),
                 child: messages.when(
-                  loading: () => const Padding(padding: EdgeInsets.all(Tokens.s20), child: SkeletonList(rows: 2)),
-                  error: (_, _) => Padding(padding: const EdgeInsets.all(Tokens.s20), child: ErrorState(onRetry: () => ref.invalidate(eveMessagesProvider))),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(Jugnu.s20),
+                    child: SkeletonList(rows: 2),
+                  ),
+                  error: (_, _) => Padding(
+                    padding: const EdgeInsets.all(Jugnu.s20),
+                    child: ErrorState(
+                      onRetry: () => ref.invalidate(ctrl.eveMessagesProvider),
+                    ),
+                  ),
                   data: (rows) => _MessageList(
                     controller: _scroll,
                     rows: rows,
                     partial: state.partial,
                     generating: state.generating,
                     onStarter: (text) {
-                      ref.read(eveControllerProvider.notifier).send(text);
+                      ref.read(ctrl.eveControllerProvider.notifier).send(text);
                       _scrollToEnd();
                     },
                   ),
@@ -100,20 +142,159 @@ class _EveScreenState extends ConsumerState<EveScreen> {
               ),
             ),
           ),
-          // Help bar stays up during a crisis session.
+
+          // Persistent help bar during a crisis session.
           if (crisis.active)
-            _HelpBar(copy: copy, kind: crisis.kind),
-          _Composer(
-            controller: _input,
-            focus: _focus,
-            canSend: !state.generating,
-            onSend: _send,
+            HelpBar(
+              label: copy.helpBar,
+              onGetHelp: () =>
+                  showCrisisSheet(context, kind: crisis.kind, copy: copy),
+            ),
+
+          // Composer with grounding quick-replies when relevant.
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: Jugnu.readingWidth),
+            child: Composer(
+              onSend: _send,
+              enabled: !state.generating,
+              hint: context.l10n.eveComposerHint,
+              quickReplies: _quickReplies(state, context),
+              onQuickReply: (chip) {
+                ref.read(ctrl.eveControllerProvider.notifier).send(chip);
+                setState(() => _hasText = false);
+                _scrollToEnd();
+              },
+              onChanged: (text) {
+                final has = text.trim().isNotEmpty;
+                if (has != _hasText) setState(() => _hasText = has);
+              },
+            ),
           ),
         ],
       ),
     );
   }
+
+  List<String> _quickReplies(ctrl.EveState state, BuildContext context) {
+    if (state.suggestGrounding) {
+      return ['Saans ki exercise', 'Bas baat karni hai'];
+    }
+    if (state.suggestBreak) {
+      return ['Theek hai', 'Aur baat karni hai'];
+    }
+    return const [];
+  }
 }
+
+// ---------------------------------------------------------------------------
+// Custom Eve chat app bar
+// ---------------------------------------------------------------------------
+
+/// Eve chat app bar: 52 dp presence bubble + name/live status + Madad + optional quick-exit.
+class _EveChatAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const _EveChatAppBar({
+    required this.presenceState,
+    required this.statusLine,
+    required this.showQuickExit,
+    required this.onGetHelp,
+    required this.onConversations,
+    this.onQuickExit,
+  });
+
+  final EveState presenceState;
+  final String statusLine;
+  final bool showQuickExit;
+  final VoidCallback onGetHelp;
+  final VoidCallback? onQuickExit;
+  final VoidCallback onConversations;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(60);
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<JugnuColors>()!;
+    final textTheme = Theme.of(context).textTheme;
+
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      automaticallyImplyLeading: false,
+      titleSpacing: 0,
+      title: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 2, 0, 8),
+        child: Row(
+          children: [
+            // Eve presence 52 dp. No halo on the small chatHeader size.
+            EvePresence(
+              state: presenceState,
+              size: EvePresentSize.chatHeader,
+              showHalo: false,
+            ),
+            const SizedBox(width: 10),
+            // Name + live status.
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Eve',
+                    style: textTheme.titleLarge,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      statusLine,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colors.evePresence,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        // Conversations history button.
+        Semantics(
+          button: true,
+          label: 'Conversations',
+          child: SizedBox(
+            width: Jugnu.minTarget,
+            height: Jugnu.minTarget,
+            child: IconButton(
+              icon: const Icon(JugnuIcons.journal, size: 22),
+              color: colors.ink2,
+              onPressed: onConversations,
+              tooltip: 'Conversations',
+              padding: EdgeInsets.zero,
+            ),
+          ),
+        ),
+        // Madad (Get help) pill — always visible.
+        jab.GetHelpButton(
+          label: 'Madad',
+          onPressed: onGetHelp,
+        ),
+        if (showQuickExit && onQuickExit != null) ...[
+          const SizedBox(width: 10),
+          jab.QuickExitButton(onPressed: onQuickExit!),
+        ],
+        const SizedBox(width: Jugnu.s16),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Message list
+// ---------------------------------------------------------------------------
 
 class _MessageList extends StatelessWidget {
   const _MessageList({
@@ -138,29 +319,48 @@ class _MessageList extends StatelessWidget {
       items.add(_Welcome(onStarter: onStarter));
     }
 
+    bool lastWasEve = false;
     for (final m in rows) {
       if (m.role == 'user') {
-        items.add(_UserBubble(text: m.content));
+        items.add(MyMessage(text: m.content));
+        lastWasEve = false;
       } else if (m.role == 'assistant') {
-        items.add(_EveBubble(text: m.content));
+        items.add(EveMessage(text: m.content, showHeader: !lastWasEve));
+        lastWasEve = true;
+      } else if (m.role == ctrl.crisisRole) {
+        final parsed = ctrl.parseCrisis(m.content);
+        items.add(
+          _InChatCrisisCard(kind: parsed.kind, language: parsed.language),
+        );
+        lastWasEve = true;
       }
-      // crisis and exercise roles are rendered by the controller into the sheet/card flow.
+      // exercise role rendered elsewhere
     }
 
     if (generating) {
-      items.add(partial.isEmpty ? const _Typing() : _EveBubble(text: partial, streaming: true));
+      if (partial.isEmpty) {
+        items.add(const ThinkingLine());
+      } else {
+        items.add(EveMessage(text: partial, showHeader: !lastWasEve));
+      }
     }
+
+    if (items.isEmpty) return const SizedBox.shrink();
 
     return ListView.separated(
       controller: controller,
       reverse: true,
-      padding: const EdgeInsets.fromLTRB(Tokens.s20, Tokens.s16, Tokens.s20, Tokens.s16),
+      padding: const EdgeInsets.fromLTRB(Jugnu.s20, Jugnu.s16, Jugnu.s20, Jugnu.s16),
       itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: Tokens.s12),
+      separatorBuilder: (_, _) => const SizedBox(height: 14),
       itemBuilder: (_, i) => items[items.length - 1 - i],
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Welcome / empty state
+// ---------------------------------------------------------------------------
 
 class _Welcome extends StatelessWidget {
   const _Welcome({required this.onStarter});
@@ -169,23 +369,29 @@ class _Welcome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
-    final starters = [l.eveStarterAnxious, l.eveStarterSleep, l.eveStarterVent, l.eveStarterCalm];
+    final colors = Theme.of(context).extension<JugnuColors>()!;
+    final l = context.l10n;
+    final starters = [
+      l.eveStarterAnxious,
+      l.eveStarterSleep,
+      l.eveStarterVent,
+      l.eveStarterCalm,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: Tokens.s24),
+        const SizedBox(height: Jugnu.s24),
         Text(l.eveGreeting, style: t.headlineSmall),
-        const SizedBox(height: Tokens.s8),
-        Text(l.eveGreetingSub, style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
-        const SizedBox(height: Tokens.s20),
+        const SizedBox(height: Jugnu.s8),
+        Text(l.eveGreetingSub, style: t.bodyMedium?.copyWith(color: colors.ink2)),
+        const SizedBox(height: Jugnu.s20),
         Wrap(
-          spacing: Tokens.s8,
-          runSpacing: Tokens.s8,
+          spacing: Jugnu.s8,
+          runSpacing: Jugnu.s8,
           children: [
-            for (final s in starters) ActionChip(label: Text(s), onPressed: () => onStarter(s)),
+            for (final s in starters)
+              _StarterChip(label: s, onTap: () => onStarter(s)),
           ],
         ),
       ],
@@ -193,212 +399,153 @@ class _Welcome extends StatelessWidget {
   }
 }
 
-class _UserBubble extends StatelessWidget {
-  const _UserBubble({required this.text});
+class _StarterChip extends StatelessWidget {
+  const _StarterChip({required this.label, required this.onTap});
 
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Align(
-      alignment: AlignmentDirectional.centerEnd,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: Tokens.s16, vertical: Tokens.s12),
-          decoration: BoxDecoration(
-            color: scheme.primary.withValues(alpha: 0.14),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(Tokens.rCard),
-              topRight: Radius.circular(Tokens.rCard),
-              bottomLeft: Radius.circular(Tokens.rCard),
-              bottomRight: Radius.circular(6),
-            ),
-          ),
-          child: SelectableText(text, style: Theme.of(context).textTheme.bodyLarge),
-        ),
-      ),
-    );
-  }
-}
-
-class _EveBubble extends StatelessWidget {
-  const _EveBubble({required this.text, this.streaming = false});
-
-  final String text;
-  final bool streaming;
+  final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<JugnuColors>()!;
     final t = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
-    return Align(
-      alignment: AlignmentDirectional.centerStart,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: Tokens.s16, vertical: Tokens.s12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardTheme.color,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(6),
-              topRight: Radius.circular(Tokens.rCard),
-              bottomLeft: Radius.circular(Tokens.rCard),
-              bottomRight: Radius.circular(Tokens.rCard),
-            ),
-            border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: Jugnu.minTarget),
+        padding: const EdgeInsets.symmetric(
+            horizontal: Jugnu.s16, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: colors.hairStrong, width: 1.5),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: t.labelMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
-          child: streaming ? Text(text, style: t.bodyLarge) : SelectableText(text, style: t.bodyLarge),
         ),
       ),
     );
   }
 }
 
-class _Typing extends StatefulWidget {
-  const _Typing();
+// ---------------------------------------------------------------------------
+// In-chat crisis card (help surface styling)
+// ---------------------------------------------------------------------------
 
-  @override
-  State<_Typing> createState() => _TypingState();
-}
+class _InChatCrisisCard extends StatelessWidget {
+  const _InChatCrisisCard({required this.kind, required this.language});
 
-class _TypingState extends State<_Typing> with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))..repeat();
-
-  @override
-  void dispose() {
-    _c.dispose();
-    super.dispose();
-  }
+  final CrisisKind kind;
+  final CrisisLanguage language;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final still = MediaQuery.disableAnimationsOf(context);
-    return Semantics(
-      label: context.l10n.eveListening,
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: Tokens.s16, vertical: Tokens.s16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardTheme.color,
-            borderRadius: BorderRadius.circular(Tokens.rCard),
-            border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+    final copy = CrisisCopy.of(language);
+    final colors = Theme.of(context).extension<JugnuColors>()!;
+    final t = Theme.of(context).textTheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Jugnu.s16),
+      decoration: BoxDecoration(
+        color: colors.helpSurface,
+        borderRadius: BorderRadius.circular(Jugnu.rSlab),
+        border: Border.all(
+            color: colors.onHelpSurface.withValues(alpha: 0.14)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            copy.title(kind),
+            style: t.titleMedium?.copyWith(color: colors.onHelpSurface),
           ),
-          child: AnimatedBuilder(
-            animation: _c,
-            builder: (_, _) => Row(
-              mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: Jugnu.s8),
+          Text(
+            copy.body(kind),
+            style: t.bodyMedium?.copyWith(color: colors.onHelpSurface),
+          ),
+          const SizedBox(height: Jugnu.s12),
+          for (final line in helplinesFor(kind))
+            _CrisisCardLine(
+              line: line,
+              copy: copy,
+              helpSurface: colors.helpSurface,
+              onHelpSurface: colors.onHelpSurface,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CrisisCardLine extends StatelessWidget {
+  const _CrisisCardLine({
+    required this.line,
+    required this.copy,
+    required this.helpSurface,
+    required this.onHelpSurface,
+  });
+
+  final Helpline line;
+  final CrisisCopy copy;
+  final Color helpSurface;
+  final Color onHelpSurface;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: Jugnu.s4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (var i = 0; i < 3; i++) ...[
-                  Opacity(
-                    opacity: still ? 0.6 : 0.3 + 0.7 * (1 - (((_c.value - i * 0.2) % 1.0) * 2 - 1).abs()),
-                    child: Container(width: 7, height: 7, decoration: BoxDecoration(color: scheme.primary, shape: BoxShape.circle)),
-                  ),
-                  if (i < 2) const SizedBox(width: 5),
-                ],
+                Text(
+                  line.name,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: onHelpSurface,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                SelectableText(
+                  line.display,
+                  style: jugnuNumberLarge(onHelpSurface),
+                ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Composer extends StatelessWidget {
-  const _Composer({required this.controller, required this.focus, required this.canSend, required this.onSend});
-
-  final TextEditingController controller;
-  final FocusNode focus;
-  final bool canSend;
-  final VoidCallback onSend;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    return Material(
-      color: Theme.of(context).cardTheme.color,
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(Tokens.s16, Tokens.s8, Tokens.s8, Tokens.s16),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: Tokens.readingWidth),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      focusNode: focus,
-                      minLines: 1,
-                      maxLines: 5,
-                      textCapitalization: TextCapitalization.sentences,
-                      onSubmitted: canSend ? (_) => onSend() : null,
-                      decoration: InputDecoration(hintText: l.eveComposerHint),
-                    ),
-                  ),
-                  const SizedBox(width: Tokens.s8),
-                  IconButton.filled(
-                    onPressed: canSend ? onSend : null,
-                    icon: const Icon(Icons.arrow_upward_rounded),
-                    tooltip: l.eveSend,
-                    style: IconButton.styleFrom(minimumSize: const Size(48, 48)),
-                  ),
-                ],
+          SizedBox(
+            width: Jugnu.minTarget,
+            height: Jugnu.minTarget,
+            child: IconButton(
+              icon: Icon(JugnuIcons.copy, size: 18, color: onHelpSurface),
+              tooltip: copy.copyNumber,
+              onPressed: () => copyHelpline(context, line, copy),
+              padding: EdgeInsets.zero,
+            ),
+          ),
+          const SizedBox(width: Jugnu.s4),
+          GestureDetector(
+            onTap: () => callHelpline(context, line, copy),
+            child: Semantics(
+              button: true,
+              label: copy.call(line.name),
+              child: Container(
+                width: Jugnu.minTarget,
+                height: Jugnu.minTarget,
+                decoration: BoxDecoration(
+                  color: onHelpSurface,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(JugnuIcons.phone, size: 18, color: helpSurface),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Stays up for the duration of a crisis session: one tap to the helplines.
-class _HelpBar extends StatelessWidget {
-  const _HelpBar({required this.copy, required this.kind});
-
-  final CrisisCopy copy;
-  final CrisisKind kind;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final t = Theme.of(context).textTheme;
-    return Material(
-      color: scheme.tertiary.withValues(alpha: 0.10),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Tokens.readingWidth),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(Tokens.s20, Tokens.s8, Tokens.s8, Tokens.s8),
-            child: Row(
-              children: [
-                Icon(Icons.favorite_rounded, color: scheme.tertiary, size: 20),
-                const SizedBox(width: Tokens.s12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(copy.helpBar, style: t.titleSmall),
-                      Text(copy.helpBarBody, style: t.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
-                    ],
-                  ),
-                ),
-                FilledButton(
-                  onPressed: () => showCrisisSheet(context, kind: kind, copy: copy),
-                  style: FilledButton.styleFrom(backgroundColor: scheme.tertiary, foregroundColor: scheme.surface, minimumSize: const Size(0, 44)),
-                  child: Text(copy.helpNow),
-                ),
-              ],
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }
