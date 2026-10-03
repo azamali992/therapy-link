@@ -8,7 +8,7 @@ param(
   [string]$Platform = "android-36",
   [string]$BuildTools = "36.0.0",
   [string]$Ndk = "",
-  [string]$Flutter = "C:\dev\flutter\bin\flutter.bat"
+  [string]$Flutter = "D:\dev\flutter\bin\flutter.bat"
 )
 
 $ErrorActionPreference = "Stop"
