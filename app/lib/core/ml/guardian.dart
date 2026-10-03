@@ -129,6 +129,55 @@ abstract class Guardian {
   Future<GuardianVerdict> classify(String text);
 }
 
+/// A person ruling a danger out: "I'm not suicidal", "I would never kill myself", "main suicidal
+/// nahi hun". Both the keyword check and the trained model key on the words, so on their own they
+/// raise the crisis sheet for exactly the answer a person gives to "are you thinking of ending your
+/// life?" (Guardian v1b scored "i am not suicidal" 0.94 suicidal).
+///
+/// Narrow on purpose: a negation, at most three filler words, then the thing denied. Anything else
+/// in the message is still read, so "I'm not suicidal but I want to die tonight" is still a crisis,
+/// and "I can't stop thinking about suicide", "I wasn't suicidal until last week" and "I don't want
+/// to die but I don't want to live like this" are too. A denial that only covers one kind of
+/// danger says nothing about the others.
+final _negatedRisk = RegExp(
+  // English. 'was not' / 'wasn't' is past tense, so it is not a denial of now.
+  r"(?:(?<!\bwas )(?<!\bwere )\bnot\b|(?<!\bwas)(?<!\bwere)n[’']t\b|\bnever\b|\bno longer\b|\bnowhere near\b)\s+"
+  r"(?:(?:been|going|planning|about|trying|thinking|really|actually|even|currently|feeling|that|so|to|of|at all|be)\s+){0,3}"
+  r"(?:suicidal|(?:thinking (?:of|about) )?suicide|(?:kill|hurt|harm|cut)(?:ing)? myself|end(?:ing)? (?:it all|it|my life)|take my (?:own )?life|(?:want|wanna) to (?:die|end it all|end my life|kill myself|hurt myself))"
+  r"(?!\s+(?:until|unless))"
+  // Roman Urdu.
+  r"|(?:suicidal|suicide|khud ?k(?:h)?(?:u|a)shi)\s+(?:(?:ka|ki|ke|koi)\s+){0,2}(?:(?:irada|iraada|khayal|mann|dil|soch)\s+)?(?:nahi|nahin|nai|nhi)\b"
+  r"|(?:marna|mar jana|jaan dena)\s+(?:nahi|nahin|nai|nhi)\s+chaht[aie]"
+  r"|(?:khud|apne aap) ko (?:hurt|nuqsaan|nuksan|nuksaan) (?:nahi|nahin|nai|nhi) (?:kar|pohanch)\w*"
+  // Urdu script.
+  r"|(?:خودکشی|خود کشی)\s+(?:کا\s+)?(?:کوئی\s+)?(?:ارادہ\s+|خیال\s+)?نہیں",
+  caseSensitive: false,
+);
+
+final _hasWords = RegExp(r'\p{L}{2,}', unicode: true);
+
+/// Whether [text] says the person is not in the danger it names.
+bool saysNotAtRisk(String text) => _negatedRisk.hasMatch(text);
+
+/// [text] without the statements that rule a danger out, or [text] itself when it has none.
+String withoutNegatedRisk(String text) => saysNotAtRisk(text) ? text.replaceAll(_negatedRisk, ' ') : text;
+
+/// Reads a message the way a person means it: what they rule out is not scored, everything else is.
+/// A message that is only a denial raises nothing.
+class NegationAwareGuardian implements Guardian {
+  const NegationAwareGuardian(this._inner);
+
+  final Guardian _inner;
+
+  @override
+  Future<GuardianVerdict> classify(String text) {
+    final rest = withoutNegatedRisk(text);
+    if (identical(rest, text)) return _inner.classify(text);
+    if (!_hasWords.hasMatch(rest)) return Future.value(GuardianVerdict.none);
+    return _inner.classify(rest);
+  }
+}
+
 /// Keyword recall only, deliberately over-sensitive. It is the floor under the trained Guardian and
 /// the whole check until that model is installed.
 ///

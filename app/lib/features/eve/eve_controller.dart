@@ -153,6 +153,9 @@ const _breakAfter = 40;
 /// ("I lost my job" … "which bridges are tallest"), which single-message checks miss.
 const _crisisWindow = Duration(minutes: 20);
 
+/// The kinds "I'm not suicidal" is an answer to.
+const _selfDirected = {CrisisKind.suicide, CrisisKind.selfHarm};
+
 /// Longest passage the cross-turn check builds. The trained Guardian reads long text in windows
 /// (onnx_guardian.dart), so this only bounds the work, and the current message always comes first.
 const _crossTurnChars = 2000;
@@ -385,9 +388,17 @@ class EveController extends Notifier<EveState> {
     _sentThisSession++;
     if (guardianError != null) throw guardianError;
 
-    final sticky = crisisMode.active;
+    var sticky = crisisMode.active;
     final recent = await db.recentMessages(conversation, limit: 120);
-    final kind = verdict.kind ?? await _crisisAcrossTurns(recent, userId, now, includeFlagged: sticky);
+    // The person answered the safety question: they are not suicidal, and nothing in the message
+    // itself raised a flag. The crisis cards and the sheet stop; Eve carries on, and a new flag starts
+    // it again. Only for the kinds that denial speaks to; "I'm not suicidal" says nothing about an
+    // overdose, or about someone hurting them.
+    if (sticky && verdict.kind == null && saysNotAtRisk(trimmed) && _selfDirected.contains(crisisMode.state.kind)) {
+      await crisisMode.clear();
+      sticky = false;
+    }
+    final kind = verdict.kind ?? await _crisisAcrossTurns(recent, userId, now, includeFlagged: sticky && _followsFreshFlag(recent, userId));
     // Valence and emotion stay on the message, on the phone. Chat-derived mood is not uploaded:
     // only check-ins the person makes themselves reach the server.
     await db.setMessageAnalysis(userId, valence: verdict.valence, emotion: verdict.emotion, flagged: kind != null);
@@ -536,9 +547,20 @@ class EveController extends Notifier<EveState> {
 
   // -------------------------------------------------------------------------------------------
 
+  /// Whether the message just sent comes straight after one that was flagged on its own words, with
+  /// no flagged message before that one. "I already took them" has no crisis words, and the turn after
+  /// a crisis is still a crisis, so that one turn reads the flagged message back in. The turn after
+  /// it does not: it used to, so each flagged message flagged the next, for as long as the person kept
+  /// talking, and Eve was never asked a thing.
+  bool _followsFreshFlag(List<Message> recent, String currentId) {
+    final users = recent.where((m) => m.role == 'user' && m.id != currentId).toList();
+    if (users.isEmpty || !users.last.flagged) return false;
+    return users.length < 2 || !users[users.length - 2].flagged;
+  }
+
   /// Re-reads the last few minutes of what the person said as one passage, so risk spread across
   /// messages is caught. Messages already flagged are left out, or one crisis would re-trigger on
-  /// every message after it, except in crisis mode, where that is the point.
+  /// every message after it, except for the one turn [_followsFreshFlag] allows.
   ///
   /// The current message goes first: the trained Guardian reads the head of a long passage, and
   /// the old order put what was just said at the tail, where a long earlier message pushed it out.

@@ -63,3 +63,21 @@ All `ai-clinical-review`. **Licensed clinician sign-off: PENDING** on every item
 | Crisis, consent and privacy copy | `crisis_copy.dart`, ARB files, `docs/l10n/REVIEW.md` | Every REVIEW.md item decided; storage wording now matches v3; consent says nobody watches the chat; under-18 text rewritten |
 | PHQ-9 / GAD-7 | `assessments-urdu.md`, `assessment_items.dart` | Roman Urdu follows the validated Urdu versions (Ahmad et al. 2017, 2018); unvalidated-translation notice kept |
 | Model | `MODEL_REVIEW.md` | v16c-e2 accepted for internal testing only; 0/8 smoke crisis replies free of red-line violations under R1/R11; keyword floor misses the smoke crisis prompts; v17 must-fix list and release gate |
+
+## 2026-10-03: "I'm not suicidal" and crisis mode that wouldn't end
+
+`ai-clinical-review`. **Licensed clinician sign-off: PENDING.** Found on the owner's phone test: after a crisis message, every chat message brought the help sheet back, even after the person wrote that they were not suicidal.
+
+Two causes, both in the app (`guardian.dart`, `eve_controller.dart`, `crisis_mode.dart`):
+
+1. **A denial scored as a crisis.** The keyword floor matches "suicid", and Guardian v1b scored "i am not suicidal" 0.94 suicidal, "main suicidal nahi hun" 0.98. That is the answer a person gives to "are you thinking of ending your life?".
+2. **Crisis mode fed itself.** In crisis mode the last few messages were re-read together with the flagged ones, so the flagged message flagged the next, which flagged the one after, for as long as the person kept talking within 20 minutes. Eve was never asked.
+
+Decisions:
+
+- **Denials are not scored.** `NegationAwareGuardian` removes a negation plus the danger it denies ("not suicidal", "would never kill myself", "I don't want to die", "suicidal nahi hun", the Urdu-script form) and reads the rest, so "I'm not suicidal but I want to die tonight" is still a crisis. Past tense ("wasn't suicidal until last week"), "can't stop thinking about suicide" and "I don't want to die but I don't want to live like this" are still crises. Tests pin both lists.
+- **One carried turn, not a chain.** The turn straight after a crisis message still counts as part of it ("I already took them" has no crisis words). The turn after that is read on its own.
+- **A denial ends crisis mode** when it answers a suicide or self-harm flag and nothing else in the message raised one. It does not end crisis mode raised for an overdose, abuse or a child: "I'm not suicidal" says nothing about those.
+- **Crisis mode still lasts an hour otherwise**, with the lines after each Eve reply. Whether an hour and a card on every reply is right is for the clinical lead.
+
+Not fixed, for the clinical lead and ML: Guardian v1b is noisy on ordinary messages at its recall-first thresholds. "my boss is stressing me out" scores 0.91 sexual_violence and "mujhe neend nahi aa rahi" fires medical. Guardian v1c has more false alarms on hard negatives, not fewer. The denial reading removes one cause; the rest is the recall-versus-noise decision (MG-11).

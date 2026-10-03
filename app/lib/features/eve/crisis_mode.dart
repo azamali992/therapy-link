@@ -47,6 +47,13 @@ class CrisisMode extends Notifier<CrisisModeState> {
     await p.setInt(_kUntil, until.millisecondsSinceEpoch);
     await p.setString(_kKind, kind.label);
   }
+
+  /// Ends crisis mode early, for a person who has said the danger it was raised for isn't there.
+  Future<void> clear() async {
+    state = CrisisModeState(kind: state.kind);
+    final p = ref.read(sharedPreferencesProvider);
+    await p.remove(_kUntil);
+  }
 }
 
 final crisisModeProvider = NotifierProvider<CrisisMode, CrisisModeState>(CrisisMode.new);

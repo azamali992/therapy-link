@@ -708,9 +708,9 @@ GuardianVerdict union(GuardianVerdict keyword, GuardianVerdict model, {double co
 final guardianProvider = Provider<Guardian>((ref) {
   final status = ref.watch(guardianModelManagerProvider);
   final keywords = HeuristicGuardian();
-  if (status is! GuardianReady) return keywords;
+  if (status is! GuardianReady) return NegationAwareGuardian(keywords);
   final manager = ref.read(guardianModelManagerProvider.notifier);
   final union = UnionGuardian(OnnxGuardian.loadChecked(), keywords, onFailure: manager.fail);
   ref.onDispose(union.close);
-  return union;
+  return NegationAwareGuardian(union);
 });
