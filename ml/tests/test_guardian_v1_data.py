@@ -7,7 +7,7 @@ import torch
 
 from therapylink_ml.data import guardian_v1 as g
 from therapylink_ml.schema import LabeledText
-from therapylink_ml.train.guardian import CRISIS_LABELS, calibrate_by_lang, class_lang_report, pos_weights
+from therapylink_ml.train.guardian import CRISIS_LABELS, calibrate_by_lang, calibrate_routing, class_lang_report, pos_weights
 
 
 def _write(path, rows):
@@ -249,3 +249,26 @@ def test_heldout_rows_follow_the_guide():
         pytest.skip("no held-out batches here")
     for r in rows:
         assert not ("child" in r["labels"] and not set(r["labels"]) & {"abuse", "sexual_violence", "harm_to_others"}), r["text"]
+
+
+def test_routing_calibration_routes_the_target_share_of_every_language():
+    rng = np.random.default_rng(1)
+    labels = list(CRISIS_LABELS)
+    n = 600
+    langs = (["en", "ur", "mixed"] * 200)[:n]
+    y = np.zeros((n, len(labels)))
+    crisis = rng.random(n) < 0.5
+    cls = rng.integers(1, len(labels), n)
+    y[np.arange(n)[crisis], cls[crisis]] = 1
+    y[~crisis, 0] = 1
+    probs = rng.random((n, len(labels))) * 0.2
+    lang_shift = {"en": 0.6, "ur": 0.3, "mixed": 0.45}
+    for i in np.where(crisis)[0]:
+        probs[i, cls[i]] = min(1.0, lang_shift[langs[i]] + rng.random() * 0.4)
+    thr = calibrate_routing(probs, y, langs, labels, 0.97)
+    assert thr[0] == 0.5 and len(set(thr[1:])) == 1
+    t = thr[1]
+    for lang in ("en", "ur", "mixed"):
+        m = crisis & (np.asarray(langs) == lang)
+        assert (probs[m, 1:].max(1) >= t).mean() >= 0.97
+    assert t > 0.2  # set by the weakest language, not dragged to the floor

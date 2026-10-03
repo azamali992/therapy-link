@@ -14,7 +14,7 @@ Writes runs/<run>/bundle/ in the layout app/lib/core/ml/onnx_guardian.dart reads
     report.json          held-out recall/precision per class and language (int8, keywords, union),
                          int8-vs-fp32 agreement, size and CPU latency
 
-Thresholds are re-derived on the validation split from the int8 model's own scores: quantisation
+Thresholds are re-derived on the validation split (written and authored rows) from the int8 model's own scores, one routing threshold for every crisis label (train/guardian.py calibrate_routing): quantisation
 moves scores a little, and a threshold tuned on fp32 can sit just above an int8 positive. The
 held-out split is only ever scored, never tuned on.
 """
@@ -33,7 +33,7 @@ import typer
 
 from therapylink_ml.train.guardian import (
     CRISIS_LABELS,
-    calibrate_by_lang,
+    calibrate_routing,
     class_lang_report,
     keyword_kind,
     predicted_labels,
@@ -124,7 +124,7 @@ def _rows(path: Path) -> list[dict]:
 def make(
     run: Path = typer.Argument(..., help="A guardian.py run with model.pt (or guardian.int8.onnx) and config.json"),
     data: Path = typer.Option(Path("data/guardian/build"), help="Built splits: labeled.crisis.val.jsonl and heldout.jsonl"),
-    target: float = typer.Option(0.98, help="Per-language recall target on validation for the int8 thresholds"),
+    target: float = typer.Option(0.97, help="Routing recall every language must reach on validation (guide: any risk vs none >= 97%)"),
     threads: int = 4,
 ) -> None:
     from therapylink_ml.export import tokenizer_json
@@ -148,10 +148,12 @@ def make(
     model = OnnxCrisis(out / "guardian.int8.onnx", run, cfg["max_len"], threads)
 
     # 1. Thresholds on validation, from the int8 scores.
-    val = _rows(data / "labeled.crisis.val.jsonl")
+    # mh_text rows are left out: their labels come from the subreddit, and a r/SuicideWatch post about
+    # a job interview would set the routing threshold for everyone.
+    val = [r for r in _rows(data / "labeled.crisis.val.jsonl") if r["source"] != "mh_text"]
     pv = model.probs([r["text"] for r in val])
     yv = np.array([[1.0 if lab in r["labels"] else 0.0 for lab in labels] for r in val])
-    thresholds = calibrate_by_lang(pv, yv, [r["lang"] for r in val], labels, target)
+    thresholds = calibrate_routing(pv, yv, [r["lang"] for r in val], labels, target)
     (out / "thresholds.json").write_text(json.dumps({"crisis": thresholds}, indent=2), encoding="utf-8")
 
     # 2. int8 against the fp32 checkpoint's own thresholds on validation: how much quantisation moved.

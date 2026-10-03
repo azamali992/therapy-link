@@ -529,6 +529,30 @@ def calibrate_by_lang(
     return out
 
 
+def calibrate_routing(
+    probs: np.ndarray, y: np.ndarray, langs: list[str], labels: list[str], target_recall: float = 0.97,
+) -> list[float]:
+    """One threshold for every crisis label: the highest that still routes `target_recall` of each
+    language's crisis rows (any crisis label set) on validation, so the lowest across languages.
+
+    The app routes to help when any crisis label clears its threshold, so routing is the unit worth
+    calibrating. Per-label, per-language quantiles on validation sets of 10-40 positives just pick
+    each set's single worst example (Guardian v1a: every threshold landed on the 0.02 floor and the
+    model flagged a third of calm messages). 'none' keeps 0.5.
+    """
+    crisis_cols = [i for i, lab in enumerate(labels) if lab != "none"]
+    score = probs[:, crisis_cols].max(1)
+    is_crisis = y[:, crisis_cols].max(1) == 1
+    langs_arr = np.asarray(langs)
+    points = []
+    for lang in sorted(set(langs)):
+        pos = score[is_crisis & (langs_arr == lang)]
+        if len(pos):
+            points.append(float(np.quantile(pos, 1 - target_recall, method="lower")))
+    t = float(np.clip(min(points), 0.02, 0.98)) if points else 0.5
+    return [0.5 if lab == "none" else t for lab in labels]
+
+
 def pos_weights(items: list[LabeledText], labels: list[str], cap: float = 10.0) -> torch.Tensor:
     """BCE pos_weight per label: sqrt(negatives / positives), between 1 and `cap`.
 
