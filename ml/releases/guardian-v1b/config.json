@@ -1,0 +1,19 @@
+{
+  "base": "FacebookAI/xlm-roberta-base",
+  "max_len": 128,
+  "tasks": {
+    "crisis": [
+      "none",
+      "suicidal",
+      "self_harm",
+      "abuse",
+      "child",
+      "sexual_violence",
+      "harm_to_others",
+      "medical"
+    ]
+  },
+  "multi_label": [
+    "crisis"
+  ]
+}
