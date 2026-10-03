@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launcher icon adaptive background. Matches the night palette token (#1D1E2C). -->
+    <color name="ic_launcher_background">#1D1E2C</color>
+</resources>
