@@ -16,8 +16,9 @@ class Helpline {
   /// The kinds of crisis this line is shown for.
   final Set<CrisisKind> kinds;
 
-  /// When a named person last confirmed the number, hours and scope with the service. Null until
-  /// someone has, and debug builds label such a line 'unverified' wherever it is shown.
+  /// When the number and scope were last confirmed. See the verification basis above [helplines]:
+  /// today that is a public-source check, not a call to the service. Null until then, and debug
+  /// builds label such a line 'unverified' wherever it is shown.
   final DateTime? verifiedOn;
 
   bool get verified => verifiedOn != null;
@@ -25,18 +26,50 @@ class Helpline {
 
 const _all = {CrisisKind.suicide, CrisisKind.abuse, CrisisKind.child, CrisisKind.sexualViolence};
 
-/// PENDING HUMAN VERIFICATION: none of these has been confirmed with the service yet (see
-/// docs/ship-review/crisis-safety.md, "What needs a human"). Hours and cost are left out on
-/// purpose until they are; the app must not promise "free" or "24/7" on a guess.
-const helplines = [
+// Verification basis (docs/clinical/helplines.md has the sources and what each service offers):
+// `verifiedOn` is the date a current public source (the operator's own site, WHO, UN Women, Child
+// Helpline International or 2026 reporting) was checked and confirmed the number and who the line is
+// for: "verified-by-public-source", ai-clinical-review 2026-10-03. Nobody has called these services
+// yet; a licensed clinician or the owner still has to confirm each one with the service itself
+// before the pilot (helplines.md "Still to do by phone"). Hours and cost stay out of the app until
+// then: no "free", no "24/7".
+//
+// Order matters for ties in [helplinesFor]: the specific abuse and child lines come before Umang.
+final _publicSourceCheck = DateTime(2026, 10, 3);
+
+final helplines = [
+  Helpline(
+    name: 'Madadgaar',
+    number: '1098',
+    display: '1098',
+    kinds: {CrisisKind.abuse, CrisisKind.child, CrisisKind.sexualViolence},
+    verifiedOn: _publicSourceCheck,
+  ),
+  // Punjab only: the name says so, because the sheet has no province field.
+  Helpline(
+    name: 'Punjab Women Helpline',
+    number: '1043',
+    display: '1043',
+    kinds: {CrisisKind.abuse, CrisisKind.sexualViolence},
+    verifiedOn: _publicSourceCheck,
+  ),
+  Helpline(
+    name: 'Punjab Child Protection',
+    number: '1121',
+    display: '1121',
+    kinds: {CrisisKind.child},
+    verifiedOn: _publicSourceCheck,
+  ),
+  // Number confirmed by WHO EMRO's 2026 listing. Umang's own website was suspended by its host when
+  // checked on 2026-10-03, so this line is the first to confirm by phone.
   Helpline(
     name: 'Umang',
     number: '03117786264',
     display: '0311 7786264',
     kinds: {CrisisKind.suicide, CrisisKind.abuse, CrisisKind.sexualViolence},
+    verifiedOn: _publicSourceCheck,
   ),
-  Helpline(name: 'Madadgaar', number: '1098', display: '1098', kinds: {CrisisKind.abuse, CrisisKind.child, CrisisKind.sexualViolence}),
-  Helpline(name: 'Rescue', number: '1122', display: '1122', kinds: _all),
+  Helpline(name: 'Rescue', number: '1122', display: '1122', kinds: _all, verifiedOn: _publicSourceCheck),
 ];
 
 /// The lines for [kind], most specific first. Rescue fits every kind, so it always comes last; for
