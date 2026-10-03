@@ -88,5 +88,5 @@ def test_the_adapter_records_the_prompt_it_was_trained_with():
     from therapylink_ml.prompts import EVE_SYSTEM_PROMPT
 
     manifest = trained_prompt_manifest()
-    assert manifest["prompt"] in {"v1", "v2"}
+    assert manifest["prompt"] in {"v1", "v2", "v3"}
     assert manifest["sha256"] == hashlib.sha256(EVE_SYSTEM_PROMPT.encode("utf-8")).hexdigest()

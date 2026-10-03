@@ -557,6 +557,25 @@ def _accuracy_callback(watch: AccuracyWatch):
     return Callback()
 
 
+def check_pair_prompts(rows: list[dict], sft_adapter: Path) -> None:
+    """Refuse pairs folded with a different system prompt than the SFT adapter was trained on.
+
+    v17 trains on V3 while its pairs were sampled from v16c-e2 under V2; pairs-from-log refolds them
+    with the current prompt, and this makes sure that happened.
+    """
+    from therapylink_ml.prompts import PROMPTS
+
+    manifest = sft_adapter / "training_prompt.json"
+    if not manifest.exists():
+        return
+    system = PROMPTS.get(json.loads(manifest.read_text(encoding="utf-8")).get("prompt"))
+    if system is None:
+        return
+    wrong = [r.get("prompt_id") for r in rows if not r["prompt"][0]["content"].startswith(system)]
+    if wrong:
+        raise RuntimeError(f"{len(wrong)} pairs are not folded with the adapter's prompt (e.g. {wrong[:3]}); rebuild them with pairs-from-log")
+
+
 def split_pairs(rows: list[dict], eval_frac: float) -> tuple[list[dict], list[dict]]:
     """Deterministic held-out split by prompt id, so DPO reports an eval accuracy."""
     if eval_frac <= 0:
@@ -615,6 +634,7 @@ def train(
     print(f"policy '{POLICY}': {trainable:,} trainable parameters; reference '{REFERENCE}' frozen", flush=True)
 
     rows = [json.loads(line) for line in _read_jsonl(pairs)]
+    check_pair_prompts(rows, sft_adapter)
     train_rows, eval_rows = split_pairs(rows, eval_frac)
 
     def to_ds(items: list[dict]):

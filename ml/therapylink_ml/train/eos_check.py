@@ -27,7 +27,8 @@ from pathlib import Path
 import typer
 
 from therapylink_ml.eval import safety_rules
-from therapylink_ml.prompts import EVE_SYSTEM_PROMPT, EVE_SYSTEM_PROMPT_V1, EVE_SYSTEM_PROMPT_V2, SYSTEM_FOLD_SEPARATOR
+from therapylink_ml.prompts import EVE_SYSTEM_PROMPT, SYSTEM_FOLD_SEPARATOR
+from therapylink_ml.prompts import PROMPTS as _ALL_PROMPTS
 from therapylink_ml.train.reply_rules import foreign_numbers, names_allowed_help
 
 app = typer.Typer(add_completion=False)
@@ -56,7 +57,7 @@ MAX_NEW_TOKENS = 450  # the app's reply cap (eve_engine.dart)
 MIN_STOPPED = 11
 MIN_ACKNOWLEDGED = len(CRISIS)
 MIN_NAMES_HELP = 5
-PROMPTS = {"v1": EVE_SYSTEM_PROMPT_V1, "v2": EVE_SYSTEM_PROMPT_V2}
+PROMPTS = dict(_ALL_PROMPTS)
 
 
 @dataclass
@@ -158,7 +159,7 @@ def write_gate(path: Path, prompt_version: str, replies: list[GateReply], verdic
 @app.command()
 def main(
     adapter: Path,
-    prompt: str = typer.Option("auto", help="System prompt to fold: auto (the adapter's training_prompt.json) | v1 | v2"),
+    prompt: str = typer.Option("auto", help="System prompt to fold: auto (the adapter's training_prompt.json) | v1 | v2 | v3"),
     out: Path | None = typer.Option(None, help="Where to write gate.json (default: inside the adapter directory)"),
     backend: str = typer.Option("", help="Run the gate through a served model instead (openai:<url>|<model>, e.g. llama-server with the LoRA GGUF); the adapter dir then only supplies training_prompt.json"),
 ) -> None:

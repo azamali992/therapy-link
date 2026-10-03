@@ -10,10 +10,15 @@
     "llama_cpp_build": "b10955"
   },
   "prompts": {
+    "eve-v3": {
+      "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V3",
+      "sha256": "b9ed8266ee0ce9c475384b3a26bc95832ec0973b36b59f91918c609b1e351357",
+      "notes": "V2 without \"(free, 24/7)\" after Umang's number (red line R11: Umang's hours and cost are unverified). No other change. Training prompt from v17 on. The app keeps sending V2 (eve_engine.dart) until a V3-trained adapter is served; a V3 adapter must never be served with V2."
+    },
     "eve-v2": {
       "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V2",
       "sha256": "4ddd5346276cb9afd3d537ba7595353f7807c40f67011de53e7a3b34c135202c",
-      "notes": "Training prompt from v15 on (v15 used a trimmed copy), served since 2026-09-25. Folded into the first user turn with \\n\\n, memory notes between the prompt and the message. Matches training_prompt.json of the v16 adapters."
+      "notes": "Training prompt from v15 to v16 (v15 used a trimmed copy), served since 2026-09-25. Folded into the first user turn with \\n\\n, memory notes between the prompt and the message. Matches training_prompt.json of the v16 adapters."
     },
     "eve-v1": {
       "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V1",

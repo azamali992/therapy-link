@@ -18,8 +18,7 @@ import typer
 from therapylink_ml.data import registry
 from therapylink_ml.prompts import (
     EVE_SYSTEM_PROMPT,
-    EVE_SYSTEM_PROMPT_V1,
-    EVE_SYSTEM_PROMPT_V2,
+    PROMPTS,
     fold_system_into_first_user,
 )
 from therapylink_ml.schema import Conversation, normalise_messages
@@ -264,7 +263,7 @@ PROMPT_MANIFEST = "training_prompt.json"
 
 def trained_prompt_manifest() -> dict:
     """Which system prompt an adapter was trained with, so eos_check (and later the app) serve it."""
-    version = {EVE_SYSTEM_PROMPT_V1: "v1", EVE_SYSTEM_PROMPT_V2: "v2"}.get(EVE_SYSTEM_PROMPT, "custom")
+    version = next((k for k, v in PROMPTS.items() if v == EVE_SYSTEM_PROMPT), "custom")
     return {"prompt": version, "sha256": hashlib.sha256(EVE_SYSTEM_PROMPT.encode("utf-8")).hexdigest()}
 
 

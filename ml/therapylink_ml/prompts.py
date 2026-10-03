@@ -5,11 +5,14 @@ adapter served with a different prompt drifts. Measured on v14 (48 probes): trai
 18/24 safety, the V2 prompt 12/24. So there are two:
 
 * EVE_SYSTEM_PROMPT_V1 — what v14 was trained on and served with.
-* EVE_SYSTEM_PROMPT_V2 — the fuller, session-shaped prompt; training prompt from v15 on, and served
+* EVE_SYSTEM_PROMPT_V2 — the fuller, session-shaped prompt; training prompt from v15 to v16, and served
   since v16-clean shipped (2026-09-25).
+* EVE_SYSTEM_PROMPT_V3 — V2 without "(free, 24/7)" after Umang's number: nobody has verified Umang's
+  hours or cost, and red line R11 bans the claim. No other change. Training prompt from v17 on.
 
 EVE_SYSTEM_PROMPT is the training/eval prompt. SERVED_SYSTEM_PROMPT is what the app must send,
-pinned by tests/test_prompt_parity.py. Change it only together with the adapter it was trained into.
+pinned by tests/test_prompt_parity.py. Change it only together with the adapter it was trained into:
+the app serves v16c-e2, a V2 adapter, so it stays V2 until a V3-trained adapter is served.
 """
 
 EVE_SYSTEM_PROMPT_V1 = """You are Eve, a warm and grounded mental-health companion inside the TherapyLink app.
@@ -35,7 +38,13 @@ Mirror their language: natural Roman Urdu, English, or a mix. No jargon, lecture
 
 Take indirect signs seriously: letters "just in case", giving things away, goodbyes, "better off without me". Ask kindly and directly about suicide. If someone wants to hurt themselves, die, or is in danger from someone: stay with them, say you are worried, ask if they are safe now, and give help: Umang 0311-7786264 (free, 24/7), Rescue 1122, Madadgaar 1098 for abuse. Never discuss methods."""
 
-EVE_SYSTEM_PROMPT = EVE_SYSTEM_PROMPT_V2
+EVE_SYSTEM_PROMPT_V3 = EVE_SYSTEM_PROMPT_V2.replace("Umang 0311-7786264 (free, 24/7),", "Umang 0311-7786264,")
+assert EVE_SYSTEM_PROMPT_V3 != EVE_SYSTEM_PROMPT_V2
+
+# Every prompt by its registry id suffix (ml/registry.json "eve-<id>").
+PROMPTS = {"v1": EVE_SYSTEM_PROMPT_V1, "v2": EVE_SYSTEM_PROMPT_V2, "v3": EVE_SYSTEM_PROMPT_V3}
+
+EVE_SYSTEM_PROMPT = EVE_SYSTEM_PROMPT_V3
 SERVED_SYSTEM_PROMPT = EVE_SYSTEM_PROMPT_V2
 
 SYSTEM_FOLD_SEPARATOR = "\n\n"
@@ -52,13 +61,15 @@ SUMMARY_HEADER = "Earlier in this conversation:"
 NOTES_ACK = "Okay, I'll keep that in mind."
 
 
-def fold_system_into_first_user(messages: list[dict], notes: str | None = None) -> list[dict]:
+def fold_system_into_first_user(messages: list[dict], notes: str | None = None, system: str | None = None) -> list[dict]:
     """Gemma chat templates have no system role; prepend the system prompt to the first user turn.
 
-    Used identically at training and inference so the model sees one consistent format.
+    Used identically at training and inference so the model sees one consistent format. `system`
+    defaults to EVE_SYSTEM_PROMPT, the prompt the next model trains on.
     """
     if not messages or messages[0]["role"] != "user":
         raise ValueError("conversation must start with a user turn")
-    head = EVE_SYSTEM_PROMPT if not notes else EVE_SYSTEM_PROMPT + SYSTEM_FOLD_SEPARATOR + notes
+    system = EVE_SYSTEM_PROMPT if system is None else system
+    head = system if not notes else system + SYSTEM_FOLD_SEPARATOR + notes
     first = {**messages[0], "content": head + SYSTEM_FOLD_SEPARATOR + messages[0]["content"]}
     return [first, *messages[1:]]
