@@ -102,6 +102,8 @@ ml/data/cache/
 # Guardian v1: the built splits and machine translations are rebuilt from written/ and heldout/.
 ml/data/guardian/build/
 ml/data/guardian/mt/
+# Tokenizer parity fixtures written by ml/ export commands (8 MB vocab); see app/test/tokenizer_reference_test.dart.
+app/test/fixtures/
 ml/models/
 ml/runs/
 ml/outputs/

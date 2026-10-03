@@ -14,6 +14,43 @@ import typer
 
 app = typer.Typer(add_completion=False)
 
+# Bases and combining marks whose pairs NFKC composes into one letter (Urdu آ, ئ, ۂ; Latin é). The
+# single-character table misses these because each half on its own maps to itself.
+_PAIR_BASES = [*range(0x41, 0x5B), *range(0x61, 0x7B), *range(0xC0, 0x250), *range(0x600, 0x700), *range(0x750, 0x780)]
+_PAIR_MARKS = [*range(0x300, 0x370), *range(0x610, 0x61B), *range(0x64B, 0x660), 0x670, *range(0x6D6, 0x6EE)]
+
+
+def normalizer_table(sp) -> dict[str, dict[str, str]]:
+    """SentencePiece's own normaliser (nmt_nfkc for XLM-R) as lookup tables for the Dart tokenizer.
+
+    `single` maps every code point the normaliser changes to what it becomes ("…" → "...",
+    "ﻻ" → "لا", NBSP and ZWNJ → " "); `pairs` maps base + combining mark sequences it composes.
+    Measured by normalising each character between two #s, so the dummy-prefix space and
+    whitespace collapsing are not part of the table: the Dart side applies those itself.
+    """
+
+    def norm(t: str) -> str:
+        # '#' neither composes with a following mark nor folds, so it brackets t cleanly.
+        out = sp.normalize("#" + t + "#")
+        assert out.startswith("▁#") and out.endswith("#"), repr(t)
+        return out[2:-1].replace("▁", " ")
+
+    single = {}
+    for cp in range(0x110000):
+        if 0xD800 <= cp <= 0xDFFF:
+            continue
+        c = chr(cp)
+        if (n := norm(c)) != c:
+            single[c] = n
+    pairs = {}
+    for b in _PAIR_BASES:
+        for m in _PAIR_MARKS:
+            t = chr(b) + chr(m)
+            n = norm(t)
+            if n != single.get(chr(b), chr(b)) + single.get(chr(m), chr(m)):
+                pairs[t] = n
+    return {"single": single, "pairs": pairs}
+
 
 @app.command()
 def dump(
@@ -36,6 +73,7 @@ def dump(
         "pieces": [sp.id_to_piece(i) for i in range(n)],
         "scores": [sp.get_score(i) for i in range(n)],
         "max_len": 128,
+        "normalizer": normalizer_table(sp),
     }
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")

@@ -18,6 +18,15 @@ EXTRA = [
     "میں بہت اداس ہوں",
     "   spaces   everywhere   ",
     "emoji 😔 and punctuation!!! ...",
+    # Guardian v1 reads Roman Urdu in every spelling and Urdu script with Arabic-keyboard letters.
+    "mai khudkushi ka soch rahi hun, zndgi khtm krna chahti hu",
+    "khud kushi nhi karunga bas thak gya hun yr 😞😞",
+    "میں اب زندہ نہیں رہنا چاہتا، سب کے لیے بہتر ہوگا",
+    "خود کشی کا خیال آتا ھے، کوئی فائدہ نہیں",
+    "يہ كتاب ميری ہے",  # Arabic yeh and kaf, as an Arabic keyboard types them
+    "ammi ne maara 😭 jk bas daanta",
+    "Shohar roz MAARTA hai… kya karun???",
+    "۱۲ سال کی ہوں، class 7 mein",
 ]
 
 app = typer.Typer(add_completion=False)
