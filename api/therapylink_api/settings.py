@@ -46,9 +46,22 @@ class Settings(BaseSettings):
     # Number of leading characters from the first message to hash against TL_PROMPT_SHA256.
     # Must be set alongside TL_PROMPT_SHA256.
     prompt_chars: int | None = None
+    # Allowlist of additional registered prompts, comma-separated as "sha256hex:chars" pairs.
+    # Use this to register the Eve system prompt AND the summary/memory instruction prompts so
+    # all /inference/chat calls pass the hash check.  Example:
+    #   TL_PROMPT_SHA256S=<eve-hash>:732,<summary-hash>:200,<memory-hash>:180
+    # If set, each entry must be a 64-character hex SHA-256 and a positive integer chars count.
+    # Compatible with TL_PROMPT_SHA256 / TL_PROMPT_CHARS: both contribute to the same allowlist.
+    prompt_sha256s: str | None = None
     # Secret salt mixed into uid hashes in structured logs (never the raw uid).
     # Change this in every non-dev environment; a known salt defeats the hash.
     log_uid_salt: str = "dev-salt-change-me"
+    # Max concurrent upstream inference requests (per process).  Requests beyond this wait in the
+    # queue up to TL_INFERENCE_MAX_QUEUE total; beyond that, /inference/chat returns 503 immediately
+    # and the rate-limit token is NOT spent.  Set TL_INFERENCE_MAX_INFLIGHT=2 for a 2-slot CPU server.
+    inference_max_inflight: int = 2
+    # Max total inflight + queued inference requests before returning 503 eve_busy.
+    inference_max_queue: int = 4
 
 
 def config_problems(s: Settings) -> list[str]:
@@ -75,6 +88,20 @@ def config_problems(s: Settings) -> list[str]:
             "TL_PROMPT_SHA256 and TL_PROMPT_CHARS must be set together or not at all; "
             "set both to enable the prompt integrity check"
         )
+    if s.prompt_sha256s:
+        for entry in s.prompt_sha256s.split(","):
+            entry = entry.strip()
+            if not entry:
+                continue
+            parts = entry.split(":")
+            if len(parts) != 2:
+                problems.append(f"TL_PROMPT_SHA256S entry {entry!r} must be 'sha256hex:chars'")
+                continue
+            sha, chars_str = parts[0].strip(), parts[1].strip()
+            if len(sha) != 64 or not all(c in "0123456789abcdefABCDEF" for c in sha):
+                problems.append(f"TL_PROMPT_SHA256S entry {entry!r}: first part must be a 64-char hex SHA-256")
+            if not chars_str.isdigit() or int(chars_str) <= 0:
+                problems.append(f"TL_PROMPT_SHA256S entry {entry!r}: second part must be a positive integer")
     # Guard against a common mistake of deploying with the placeholder salt.
     if s.env == "prod" and s.log_uid_salt == "dev-salt-change-me":
         problems.append("TL_LOG_UID_SALT is still the default; set a secret value before deploying to prod")

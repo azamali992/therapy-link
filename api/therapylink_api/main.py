@@ -13,6 +13,7 @@ from therapylink_api import db, requestid
 from therapylink_api.ratelimit import DualTokenBucket, RedisDualLimiter, RedisRateLimiter, TokenBucket
 from therapylink_api.routers import account_page, assessments, care, clinician, inference, journal, me, mood
 from therapylink_api.routers import admin as admin_router
+from therapylink_api.routers.inference import _InferenceTracker
 from therapylink_api.settings import check_config, get_settings
 
 log = logging.getLogger(__name__)
@@ -113,6 +114,10 @@ def create_app() -> FastAPI:
     app.state.ip_limiter = ip_limiter
     if redis_client is not None:
         app.state._redis_client = redis_client
+    app.state.inference_tracker = _InferenceTracker(
+        settings.inference_max_inflight,
+        settings.inference_max_queue,
+    )
 
     app.add_middleware(
         CORSMiddleware,
