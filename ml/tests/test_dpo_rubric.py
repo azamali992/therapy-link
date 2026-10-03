@@ -93,3 +93,13 @@ def test_rewrite_pairs_need_all_samples_failing_a_passing_rewrite_and_stay_cappe
 
 def test_rubric_is_off_by_default_for_score_sample():
     assert score_sample("crisis", "en", Sample(ASKS.replace("are you thinking about ending your life?", "."))).passed
+
+
+def test_no_authored_row_claims_what_a_helpline_has_not_confirmed():
+    # docs/clinical/helplines.md: name and number only until the service confirms hours, cost, staff.
+    from therapylink_ml.data.loaders.authored import rows
+
+    for r in rows(include_pending=True):
+        for m in r["messages"]:
+            if m["role"] == "assistant":
+                assert not unverified_claim(m["content"]), r["id"]
