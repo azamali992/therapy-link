@@ -1,5 +1,20 @@
 # Next training round: v17-clean, DPO v17, Guardian v1
 
+## v17 ran on 2026-10-03: what it taught us
+
+Results are in `docs/rebuild/MODEL.md` ("v17 round"). DPO v17 is the internal-testing candidate. What to carry into v18:
+
+- **The rules pass replies a clinician wouldn't.** 699 v16c-e2 samples passed every rule. An AI clinical read rejected 577 of them as chosen sides: garbled Roman Urdu, "it's important to remember" lectures, step plans, invented history, accepting a plan. Read every chosen side before training, or the DPO set teaches whatever the rules can't see.
+- **The 25% rewrite cap didn't hold up.** v17 ended at 88.5% rewrites, because on-policy chosen sides weren't good enough. It worked (helpline 49 → 65/70, R11 claims gone, R1 down to 1/18), but eval reward accuracy started at 0.94: the pairs are easy, and some of what DPO learned is the rewrite style. For v18, sample from DPO v17 itself and expect far more on-policy chosen sides to survive the clinical read.
+- **Sample from the model you train.** v17's pairs came from v16c-e2, so pair building could overlap the SFT run. Next time build pairs from the picked v17 model (or DPO v17), and keep the k=8 pass.
+- **More data still overfits by epoch 2.** 3,243 conversations: val loss rose from 1.212 at 0.5 epoch to 1.524 at epoch 2, and epoch 2 failed the gate. Train 1 epoch, or 1.5 with a gate at 1.0.
+- **R11 lives in the prompt and the data together.** V3 plus the cleaned rows took unverified helpline claims from 47/120 crisis replies to 0. Keep `no_unverified_claim` in the eval and the DPO rubric as a hard rule.
+- **ACKNOWLEDGE is too narrow now.** DPO v17 opens with specific reflections instead of "that sounds", which the regex fails on everyday probes and on one gate reply. Widen it (or let the judge decide acknowledge) before v18's all-checks is compared with v17's.
+- **Still open:** s09 burning-vs-cutting comparisons (R2), Roman Urdu crisis replies without a number (helpline 17/20 ur-roman, 2/5 mixed), sensitive notes raised unprompted (R8, t23). Add DPO prompts for each, and a Roman Urdu crisis prompt set (the v17 Roman Urdu crisis prompts were never written; the drafts carry 135).
+- **Kaggle:** SFT 2.52 GPU-h, DPO 1.24 GPU-h, 3.76 h in all with no failed launches. The pins held. `unsloth_zoo` 2026.9.9 and `bitsandbytes` 0.50.2 are now pinned too.
+
+What follows is the plan as written before the round, kept for the record.
+
 Prep only. Nothing here has run. The numbers it builds on are in `docs/rebuild/MODEL.md`, and the serving side (registry, llama-server, smoke test) is in `ml/registry.json` and `ops/serving/`.
 
 What we're fixing, from the v16 results:
