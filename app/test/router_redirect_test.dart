@@ -8,10 +8,8 @@ import 'package:therapylink/core/api/models.dart';
 
 /// Shortcuts so each test stays readable.
 const _signingIn = AsyncLoading<Object?>();
-const _noUser = AsyncData<Object?>(null);
 final _user = AsyncData<Object?>(_FakeUser());
 const _loading = AsyncLoading<Me?>();
-const _noMe = AsyncData<Me?>(null);
 Me _me({bool clinician = false}) => Me(
   uid: 'u1',
   displayName: 'Test',

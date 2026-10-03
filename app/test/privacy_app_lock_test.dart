@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:therapylink/core/security/app_lock.dart';
 import 'package:therapylink/core/security/privacy_settings.dart';
 import 'package:therapylink/core/settings/settings.dart';
-import 'package:therapylink/features/shared/crisis_sheet.dart';
 import 'package:therapylink/features/shared/widgets.dart';
 import 'package:therapylink/features/you/settings_screen.dart';
 
