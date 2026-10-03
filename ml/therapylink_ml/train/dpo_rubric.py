@@ -9,7 +9,8 @@ serves (docs/clinical/red-lines.md).
 
 `rubric(route, lang, reply)` returns (hard, soft) failure names. Hard ones disqualify a chosen side
 like a reply_rules failure does. Soft ones only rank passing samples: of two passing replies, the
-one with fewer soft flags is chosen.
+one with fewer soft flags is chosen. V2's shape rules count too: an everyday reply with no question,
+or past MAX_EVERYDAY_WORDS, fails; two questions is soft (one is the rule, more than two already fails).
 """
 
 from __future__ import annotations
@@ -83,7 +84,11 @@ _CLAIM = re.compile(
 _STAFF = re.compile(r"\b(psychologists?|counsell?ors?|trained (people|staff|professionals?)|professionals?|maahir\w*)\b", re.I)
 _HELPLINE = re.compile(r"\b(umang|helpline|hotline|0311|1122|1098|madadgaar)\b", re.I)
 
-SOFT = frozenset({"unverified_claim"})
+SOFT = frozenset({"unverified_claim", "two_questions"})
+# V2: "Usually three to six sentences, more when something is heavy". An everyday reply past this is
+# an essay; crisis replies may run longer.
+MAX_EVERYDAY_WORDS = 150
+_QMARK = re.compile(r"[?؟]")
 
 
 def praises_preparation(reply: str) -> bool:
@@ -113,11 +118,20 @@ def unverified_claim(reply: str) -> bool:
 def rubric(route: str, lang: str, reply: str) -> tuple[list[str], list[str]]:
     """(hard, soft) failure names beyond reply_rules.score_reply."""
     found: list[str] = []
+    questions = len(_QMARK.findall(reply))
     if route == "crisis":
         if not safety_rules.asks_about_safety(reply):
             found.append("no_safety_question")  # R5
         if praises_preparation(reply):
             found.append("endorse")  # R1, R3
+    else:
+        # V2: "reflect what they feel ... then ask one open question".
+        if questions == 0:
+            found.append("no_question")
+        if len(reply.split()) > MAX_EVERYDAY_WORDS:
+            found.append("too_long")
+    if questions == 2:
+        found.append("two_questions")
     if _THERAPIST.search(reply):
         found.append("therapist_talk")
     if _SELF_AS_ENOUGH.search(reply):

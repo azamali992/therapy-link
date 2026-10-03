@@ -299,6 +299,82 @@ def build_pairs(
     typer.echo(f"{sum(written.values())} new pairs from {len(rows)} prompts → {out}: {dict(written)}")
 
 
+def pairs_from_logged(prompts: list[dict], logged: list[dict], *, rubric: bool = True) -> Iterator[dict]:
+    """Policy pairs from samples logs, re-scored with the current rules.
+
+    Every logged sample of a prompt (the k=4 pass and a k=8 pass alike) is pooled, so a prompt
+    whose first four samples all failed can still pair from its second pass. Prompts not in
+    `prompts` are skipped: the prompt files decide what is in the set.
+    """
+    by_id = {p["id"]: p for p in prompts}
+    pooled: dict[str, list[dict]] = {}
+    for entry in logged:
+        pooled.setdefault(entry["prompt_id"], []).extend(entry["samples"])
+    for pid, drawn in pooled.items():
+        p = by_id.get(pid)
+        if p is None:
+            continue
+        samples = [Sample(s["text"], s.get("truncated", False)) for s in drawn]
+        scores = [score_sample(p["route"], p["lang"], s, rubric=rubric) for s in samples]
+        picked = pick_pair([s.text for s in samples], scores)
+        if picked is None:
+            continue
+        chosen, rejected = picked
+        yield {
+            "prompt_id": pid,
+            "bucket": p.get("bucket", ""),
+            "route": p["route"],
+            "lang": p["lang"],
+            "chosen_source": "policy",
+            "prompt": fold_system_into_first_user(p["messages"], notes=p.get("notes")),
+            "chosen": [{"role": "assistant", "content": samples[chosen].text}],
+            "rejected": [{"role": "assistant", "content": samples[rejected].text}],
+            "chosen_failures": scores[chosen].failures,
+            "chosen_soft": scores[chosen].soft,
+            "rejected_failures": scores[rejected].failures,
+        }
+
+
+def all_failing(prompts: list[dict], logged: list[dict], *, rubric: bool = True) -> list[str]:
+    """Ids of prompts where every logged sample fails the current rules (the k=8 pass, then rewrites)."""
+    by_id = {p["id"]: p for p in prompts}
+    pooled: dict[str, list[dict]] = {}
+    for entry in logged:
+        pooled.setdefault(entry["prompt_id"], []).extend(entry["samples"])
+    out = []
+    for pid, drawn in pooled.items():
+        p = by_id.get(pid)
+        if p and not any(score_sample(p["route"], p["lang"], Sample(s["text"], s.get("truncated", False)), rubric=rubric).passed for s in drawn):
+            out.append(pid)
+    return out
+
+
+@app.command("pairs-from-log")
+def pairs_from_log(
+    prompts: list[str] = typer.Option(..., "--prompts", help="Prompt JSONL files the samples came from"),
+    samples_log: list[Path] = typer.Option(..., "--samples-log", help="Samples logs written by build-pairs"),
+    out: Path = DATA / "dpo_pairs.jsonl",
+    failing_out: Path | None = typer.Option(None, help="Also write the prompts where every sample failed (for a k=8 pass)"),
+    rubric: bool = True,
+) -> None:
+    """Rebuild policy pairs offline from samples logs, with the current rules. Overwrites --out."""
+    rows = [r for spec in prompts for r in load_prompts(spec)]
+    logged = [json.loads(line) for path in samples_log for line in _read_jsonl(path)]
+    made = list(pairs_from_logged(rows, logged, rubric=rubric))
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as f:
+        for row in made:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    typer.echo(f"{len(made)} policy pairs from {len({e['prompt_id'] for e in logged})} sampled prompts → {out}: {dict(Counter(r['route'] for r in made))}")
+    if failing_out:
+        ids = set(all_failing(rows, logged, rubric=rubric))
+        with failing_out.open("w", encoding="utf-8") as f:
+            for r in rows:
+                if r["id"] in ids:
+                    f.write(json.dumps({k: v for k, v in r.items() if k != "rewrite"}, ensure_ascii=False) + "\n")
+        typer.echo(f"{len(ids)} prompts where every sample failed → {failing_out}")
+
+
 def rewrite_pairs(
     prompts: list[dict],
     logged: list[dict],

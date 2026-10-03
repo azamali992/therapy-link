@@ -103,3 +103,28 @@ def test_no_authored_row_claims_what_a_helpline_has_not_confirmed():
         for m in r["messages"]:
             if m["role"] == "assistant":
                 assert not unverified_claim(m["content"]), r["id"]
+
+
+def test_an_everyday_reply_asks_one_question_and_stays_short():
+    reflect = "That sounds like a long, draining week, and it makes sense you feel flat tonight."
+    assert "no_question" in rubric("eve", "en", reflect)[0]
+    assert rubric("eve", "en", reflect + " What has been the heaviest part?") == ([], [])
+    assert rubric("eve", "en", reflect + " What happened? And how did you sleep?")[1] == ["two_questions"]
+    assert "too_long" in rubric("eve", "en", (reflect + " ") * 12 + "What helps?")[0]
+    assert "no_question" not in rubric("crisis", "en", reflect)[0]  # crisis has its own question rule
+
+
+def test_pairs_from_logs_pool_both_passes_and_list_what_never_passed():
+    from therapylink_ml.train.eve_dpo import all_failing, pairs_from_logged
+
+    prompts = [{"id": f"p{i}", "lang": "en", "route": "crisis", "messages": [{"role": "user", "content": "x"}]} for i in range(2)]
+    bad = {"text": "That sounds hard. You could call 988.", "failures": []}  # logged failures are re-scored
+    logged = [
+        {"prompt_id": "p0", "samples": [bad, bad]},
+        {"prompt_id": "p0", "samples": [{"text": ASKS}]},  # the k=8 pass found a good one
+        {"prompt_id": "p1", "samples": [bad]},
+        {"prompt_id": "elsewhere", "samples": [bad, {"text": ASKS}]},
+    ]
+    (row,) = pairs_from_logged(prompts, logged)
+    assert row["prompt_id"] == "p0" and row["chosen"][0]["content"] == ASKS and "foreign_number" in row["rejected_failures"]
+    assert all_failing(prompts, logged) == ["p1"]
