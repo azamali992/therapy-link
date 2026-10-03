@@ -104,5 +104,6 @@ Prod is the same command with `TL_ENV=prod` and without `TL_LLM_ALLOW_UNAPPROVED
 ## Not done yet
 
 - `Dockerfile.gpu` hasn't been built or run here (no Docker daemon on this box, and the CUDA image is several GB). `run-llama-server.sh` and `fetch-models.sh` were run under Git Bash with stand-in files and a stand-in server; the `gs://` download path hasn't run against a real bucket.
-- The base image is pinned by tag (`server-cuda-b10955`). Pin it by digest after the first pull.
+- The base image is pinned by tag (`server-cuda-b10955`), but ghcr.io has no image for b10955 (checked 2026-10-03: the nearest are `server-cuda-b10951` and `server-cuda-b10964`), so the build fails at `FROM`. Switch to b10964 and re-run the smoke test, or build llama.cpp from the b10955 tag the way `ops/free/Dockerfile.eve-cpu` does. Pin by digest after the first pull.
+- The free CPU setup (one Oracle Always Free VM) is in `ops/free/` and `docs/deploy/FREE_DEPLOY.md`.
 - Nothing is clinician-approved, so every start today needs `TL_LLM_ALLOW_UNAPPROVED=1`.
