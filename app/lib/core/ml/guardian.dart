@@ -78,7 +78,37 @@ class HeuristicGuardian implements Guardian {
     // each needs the words that make it about a life or about swallowing something.
     r'\b(apni|meri|khud ki) jaan (de|le)\b|\bjaan (de|le) (d|l)(u|oo|un|oon|unga|ungi|enge)\b|'
     r'zeh[ae]r (kha|pi|pee|le|la|de|mang|kharid)|goliyan|'
-    r'خودکشی|خود کشی|مرنا|جان دے|زہر (کھا|پی|لے|دے))',
+    r'خودکشی|خود کشی|مرنا|جان دے|زہر (کھا|پی|لے|دے)'
+    // Wishing not to wake up or to vanish for good (passive ideation, guide S1, S2, S8).
+    r'|\bdisappear (for good|forever|permanently)|(never|not) wake up|(don.?t|do not|didn.?t) want to wake up(?! (early|at|for|so|before|on time))|(wish|hope|pray) i (didn.?t|don.?t|wouldn.?t|won.?t|never) wake|sleep (forever|and never wake)'
+    r'|better off (without me|if i (was|were)n.?t|if i (was|were) (gone|dead)|if i die)|(if|when|once) i.?m (gone|dead|not around|no longer around)|after i.?m gone|if i (wasn.?t|weren.?t|was not|were not) (around|here|alive|in the picture)|relieved if i died'
+    r'|(reason|point) (to|in|of) (keep )?(living|live|going on|go on|being alive|be alive|existing)|tired of (living|being alive)|don.?t want to (be here|keep living|keep going)|i (don.?t want to|won.?t) be (here|around|alive) (anymore|much longer|for long|tomorrow)|to not be here|not to be here'
+    // A time, a decision or a goodbye (acuity plan_or_intent / imminent).
+    r'|end (it|things|everything|my life)( all)? (tonight|today|tomorrow|soon|this week)|tonight.?s the night|tonight is the night|(this is|it was|it.?s been) nice knowing (you|everyone|y.?all)|goodbye (everyone|forever|world)|(my )?(last|final) (salaam|goodbye|words)|forgive me for everything'
+    // Preparation for death with no death word (red line R1, guide rule 4): letters just in case, giving
+    // things or pets away, passwords and bank details handed over, nothing left to sort.
+    r'|(letters?|notes?|khat)\b.{0,60}\bjust in case|just in case\b.{0,30}\b(letters?|notes?)|(letters?|notes?) for (after|when i|if anything)|who (gets|will get|should get) my|(gave|give|giving|given) away (all my|all of my|everything|my (things|stuff|belongings|savings|books|laptop|phone|cat|dog|pets?))|(gave|giving|given) my (dog|cat|pets?|birds?|parrot|rabbit|fish)\b|(passwords?|logins?|pins?|bank details) (to|for) my|wrote down (all )?my passwords|nothing left to (do|sort|live for|say)|won.?t (need|be needing) (it|them|this|these|those|anything|my \w+) (much longer|where i.?m going|after)'
+    // Self-harm in general words, and hiding the marks (guide H3, H8, H10).
+    r'|(burn|burned|burnt|burning|harm|harming|harmed|starve|starving) myself|(hurting|harming|cutting) (herself|himself|themselves|yourself)|(hide|hiding|cover|covering) (the |my |these |those )?(marks|cuts|scars)|(fresh|new) (marks|cuts)'
+    // Roman Urdu: every spelling of khudkushi, ending everything, not wanting to live (MODEL_REVIEW item 5).
+    r'|khud[ -]?k(h)?(u|a)shi|sab (kuch )?(khatam|khtm) (kar|kr) ?(d|l)(u|oo|un|oon|unga|ungi|enge)\b|(sab|zindagi|khud ko|apne aap ko) (kuch )?(khatam|khtm) (karna|krna|karne|krne) (hai|h|ka|ki|chah)|jee?n(a|e) (hi )?(nahi|nahin|nai|nhi|ni)\b|jeene (ka|ki|ko) (koi )?(faida|fayda|maqsad|wajah|dil nahi|dil nai|dil nhi|mann nahi|man nahi)|zindagi (nahi|nahin|nai|nhi) chahiye|zinda (nahi|nahin|nai|nhi|na) (rehna|rehena|rahna)'
+    // Roman Urdu passive wishes, timing and goodbyes. A bare 'aakhri dafa' is also "I'm telling you for the last
+    // time", so it needs a goodbye after it.
+    r'|mar(ne|ny|nay) (ka|ki|ko) (dil|man|mann|jee|soch|khayal|khwahish|irada|faisla)|(allah|khuda|rab) (mujhe |mjhe |muje )?(utha|bula) le|(kabhi|phir|dobara) na uth|na uth(ti|ta) to (acha|behtar)|kash (main |mai )?na uth|(subah|kal) (na|nahi|nai|nhi) dekhn|(main|mai|mein) na (rahun|rahoon|rahu|hun|hoon|hoti|hota) to|jab (main|mai) na (rahun|rahoon|rahu|rahi|raha)|mere (jaane|jane|marne) (ke )?baad|hamesha (ke liye|k liye) (so |chala ja|chali ja|alvida)|aakhri (khat|salaam|alvida)|aakhri (dafa|baar|bar) (baat|mil|dekh)|sab ko alvida'
+    // Roman Urdu self-harm. 'khud ko takleef' is left out: it is also the polite "don't trouble yourself".
+    r'|(khud|apne aap) ko (hurt|nuqsaan|nuksan|nuksaan|nukhsan|zakhmi|dard de|saza de|kaat|jala)|(nishaan|nishan|nishanat|zakhm|zakham) (chhupa|chupa|chhup|chup)'
+    // Urdu script: the same, written as people type it.
+    r'|جینا نہیں|جینے کا (کوئی )?(فائدہ|مقصد)|زندہ نہیں رہنا|مر جاؤں|مرجاؤں|مر جانا|(اللہ|خدا) (مجھے )?(اٹھا|بلا) لے|سب ختم کر (دوں|لوں)|(خود|اپنے آپ) کو (ختم|نقصان|مار|زخمی|تکلیف دے|سزا دے)|نہ رہوں|میرے (جانے|مرنے) (کے )?بعد|آخری (خط|سلام)|آخری (بار|دفعہ) بات|(نشان|زخم) (چھپا|چھپ)|کبھی نہ اٹھ|صبح نہ دیکھ'
+    // Ending or killing in other tenses (QA CR-001), method and dose questions (guide rule 3), and a dose
+    // already taken, which is also a medical emergency (guide M1, M6, M10, M12).
+    r'|ending (it all|my life|my own life|everything)|killing myself|taking my (own )?life|my (own )?funeral|for if anything happens to me|(painless|easiest|quickest|fastest|surest) way to (die|go|do it|end)|(lethal|fatal) (dose|amount)|\boverdos|how many .{0,30}(pills|tablets) .{0,30}(take|kill|die|enough|would it)|(took|swallowed|taken|have taken) (all|about|like|\d+|twenty|ten|fifty|a lot of|a bunch of|a handful of|the whole|half) .{0,25}(pills|tablets)|(count(ed|ing)|saving|saved|stockpil\w*) .{0,15}(pills|tablets)|(pills|tablets)\b.{0,30}\bcounted|(bleach|phenyl|poison|tezaab|acid|keeray maar \w+) (pee|pi|pii|kha|khaa|drank|swallowed)'
+    // Self-harm said plainly (guide H1, H2, H6, H7, H9, H10). 'khud ko takleef' counts only in the first
+    // person, because "aap khud ko takleef na dein" is a courtesy.
+    r'|\bi (cut|burned|burnt) (again|last night|today|myself|my (arm|wrist|thigh|leg)s?)|(until|till) (it|they|i|my \w+) bleeds?|blade (utha|uthaya|liya|li)|(khud|apne aap) ko (maar(ti|ta|te)|takleef dene (ka|ki)|takleef de(ti|ta|te) (hun|hoon|hu))|(nishaan|nishan|nishanat|zakhm|zakham|marks?)\b.{0,40}(chhupa|chupa|chhup|chup|dikh)|na (hoti|hota|hote) to (acha|behtar)|maafi (ka|ke) (message|msg|messages)'
+    // Urdu script: not wanting to live on (QA CR-003), self-harm, pills taken.
+    r'|نہیں رہنا چاہت|کٹ لگا|خود کو تکلیف دینے|(نشان|زخم).{0,40}چھپا|گولیاں (کھا لی|جمع)|زہر (پی|کھا) لیا'
+    // Urdu script: more ways people say it, from the written training batches.
+    r'|نہیں جی (سکت|سکو|پا)|مزید نہیں جی|مرنے کا (طریقہ|سوچ|دل|خیال|ارادہ)|جان خود لے|اپنی جان (لے|دے)|آخری (ملاقات|کال)|آخری بار سب|الوداع|خود کو تکلیف دی(تا|تی|نا)|مر ہی جاؤں|جانے کا وقت|ختم کر (لوں|دوں) گ|ختم کر لوں گ|ہمیشہ کا (سکون|نیند)|اٹھا (کیوں )?نہیں لیتا|ایسی زندگی کا|کر بیٹھوں|(بازو|کلائی) (کے|پر|پہ) (نشان|کٹ)|کوشش کی تھی)',
     caseSensitive: false,
   );
 
@@ -96,7 +126,14 @@ class HeuristicGuardian implements Guardian {
     r'\b' '$_someone' r'\b( \w+)? touch(ed|es|ing)? me\b|'
     r'touch(ed|es|ing)? me (there|inappropriately|without)|inappropriately touch|'
     // A bare 'chhuta' or 'chhuti' is also a missed train or a lost job, so the touch needs a 'mujhe'.
-    r'\b(mujhe|mujhko|muje) (\w+ )?chhu(a|aa|ya|ta|te|ne)\b|galat (tareeqe|tarah|jagah) (se )?chhu|زیادتی)',
+    r'\b(mujhe|mujhko|muje) (\w+ )?chhu(a|aa|ya|ta|te|ne)\b|galat (tareeqe|tarah|jagah) (se )?chhu|زیادتی'
+    // Force, groping, sextortion and "I said no" as people describe them; 'forcing me' alone is also
+    // "forcing me to study medicine", so force needs a reflexive or 'kiya'.
+    r'|forc(ed|es|ing) (himself|herself)|force (kiya|kia|karta|krta)|\bgrop(e|ed|es|ing)\b|assault(ed|s|ing)? me\b|harass(es|ed|ing)? me\b|\bharassment\b|\bnudes\b|(asking|asked|asks) (me )?for (pics|pictures|photos)|(pics|pictures|photos|videos|tasveer\w*|tasvir\w*)\b.{0,40}\b(unless|viral|leak\w*|send (them )?to (everyone|my))|(viral|leak) (kar|kr) (de|du|dun|dega|denge|doon|dungi)|even (though|after|when) i said (no|stop)|i said (no|stop)\W+(and|but) (he|she|they) (didn.?t|did not|wouldn.?t|kept|still|forced|carried|did it)|(ghalat|galat) (harkat\w*|kaam)|zabrdasti|zbrdsti|ziadti|ziyadti|زبردستی|غلط (حرکت|طریقے|جگہ)|ہراساں|ہراسانی'
+    // Grooming, image-based abuse and unwanted touch as they are described (guide C3, C10, C13, V2, V3, V16).
+    r'|(comes?|came) (in)?to my room (at night|when)|(it.?s|its) our (little )?secret|(post|share|send|leak|upload)\w* my (private |intimate |nude )?(photos|pics|pictures|videos)|(photos|pics|pictures|videos)\b.{0,40}\bif i (don.?t|do not|won.?t)|touch(es|ing|ed)? my (waist|body|chest|breasts?|thighs?|legs?|bum|butt)|spiked my drink|تصویریں مانگ'
+    // Urdu script: rape, abuse in a madrasa or at home, image threats.
+    r'|ریپ|غلط کام کر|چھیڑ|ویڈیوز بنا|تصویریں.{0,30}(بھیج|دکھا|ڈال)|انٹرنیٹ (پہ|پر) ڈال)',
     caseSensitive: false,
   );
 
@@ -109,14 +146,33 @@ class HeuristicGuardian implements Guardian {
     r'abusive (husband|wife|partner|boyfriend|girlfriend|father|dad|mother|mom|parents|relationship|marriage|home)|'
     r'\b(husband|wife|partner|boyfriend|girlfriend|father|dad|mother|mom|parents|in-?laws) (is|are|was|were|has been|gets) (\w+ )?abusive|'
     r'maar(ta|ti|te) (hai|hain|hy)|mujhe maar(a|ta|ti|te)|mujhe peet|pit(a|aa)i|thappar|'
-    r'ghar (mein|me) band|تشدد|مارتا)',
+    r'ghar (mein|me) band|تشدد|مارتا'
+    // More of what a person does to the user, threats to kill or 'make me disappear', honour threats. A
+    // parent who "will kill me" over a result is an idiom (guide N3), so a threat needs 'says' or 'threatened'.
+    r'|(threaten\w*|swore|swears|says|said|told me)( that)? (he|she|they)?(.?ll| will| would| is going to| are going to)? ?(kill|finish|bury|burn) (me|us|her|him|my)\b|(kill|murder|bury) (me|her|him|us|my \w+) (for|over) (honou?r|izzat|ghairat)|honou?r (killing|threat)|make me disappear|(no one|nobody) will (ever )?find my body'
+    // Roman Urdu: a raised hand, beating with a belt or stick, death threats, being locked in.
+    r'|(haath|hath) (uthata|uthaata|uthati|uthate|uthaya|uthaaya|utha chuka)|(belt|danda|dande|dando|chhari|chappal|joot\w*) (se|say) (maar|mara|maara|peet|pita)|(mujhe|mjhe|muje|mujhko|humein|hume|ammi ko|amma ko) (bohat |roz |phir |bht |bohot |bura )?(maara|mara|maarta|marta|maarti|marti|maarte|peeta|peet(a|e|i|ta|te|ti)|pitai)\b|jaan se (maar|mar) (de|da|dal|daal)|(zinda|jeeta|jeeti) (nahi|nahin|nai|nhi) (chho?r|chor)|(kamre|kamray|ghar) (mein|me|main|mai) band (kar|kr|rakh)|ghairat (ke|ki|k) (naam|khatir|wajah)|(jaan|maarne|qatal|tezaab|jalane|jala) (se maarne )?ki (dhamki|dhamkiyan|dhamky)|(maar|mar) (ke|kar|kr) (ghar se )?nikal'
+    // Urdu script.
+    r'|مار(تی|تے) (ہے|ہیں)|مار پیٹ|تھپڑ|ہاتھ اٹھا|جان سے مار|(کمرے|گھر) میں بند|غیرت کے نام|پیٹتا|پیٹتے|پٹائی|مارنے کی دھمکی'
+    // A person close to the user doing more than hitting: pushing, strangling, locking in (guide A1, A2, A10).
+    r'|\b' '$_someone' r'\b( \w+)? (pushed|pushes|shoved|shoves|punched|punches|strangled|strangles|dragged|drags|burned|burns|locked|locks|lock|threw|throws) me\b'
+    r'|\b(slaps|slapped|punched|punches|shoved|shoves|strangled|choked|chokes) me\b|(brother|husband|father|abbu|bhai|uncle|chacha|ex|in-?laws)\b.{0,40}\b(kill|finish|bury) (me|us|her)\b|gala (dabaya|dabata|dabati|dabate|daba diya)|jala (dein|denge|dega|degi|dalenge|daalenge|dein ge|den ge|de ga|de gi)|maar kha(ta|ti|te|ya|yi)\b|peet.?te (hain|hai)|گلا دبا|جلا (دیں|دے) گ'
+    // Risk to someone other than the user (harm_to_others, guide O1-O15). The floor has no kind of its own for
+    // it, and this route shows Rescue 1122 as well as Madadgaar.
+    r'|make (him|her|them) pay|i.?m going to (kill|hurt|stab|shoot) (him|her|them)|jaan se maar (doon|dun|dunga|dungi|dalunga|daalunga)|(chaaku|chaku|churi|chhuri|knife|pistol|gun|bandook|bandooq)\b.{0,40}(rakha|rakh li|intezam|mil gay|mil gai|ready|in my bag)|(hurt|shake|harm) (my|the) baby|(bachon|bachay|bache|bachey) ko .{0,20}maar (deti|deta)|بچے کو نقصان|پستول'
+    // Urdu script: threats to kill or bury, breaking bones, a push.
+    r'|(مار|قتل|جان).{0,30}دھمکی|دھمکی.{0,30}(مار|قتل|جان)|لاش بن|قبر یہیں|دفنا دوں|کام تمام کر|ہڈیاں توڑ (دوں|دے گا|دیں گے)|ہاتھ پاؤں توڑ|بازو توڑ|دھکا دیا|بہت مارا|مار دوں گا|سبق سکھاؤں)',
     caseSensitive: false,
   );
 
   /// A sign the person is a child: an age under 18, school, or a step-parent with an abuse hit.
   static final _minor = RegExp(
     r"(\b(i am|i'm|im|main|meri umar) ([5-9]|1[0-7])\b|\b([5-9]|1[0-7]) (years? old|saal)\b|\bschool\b|class \d|"
-    r'\bstep ?(dad|father|mom|mother)\b|sautel[aie])',
+    r'\bstep ?(dad|father|mom|mother)\b|sautel[aie]'
+    // "14 ki hun", "class 7", "9th", madrasa, and Urdu-script school words.
+    r'|\b([5-9]|1[0-7]) (ki|ka) (hun|hoon|hu|hn)\b|\b(class|grade) ?([1-9]|1[0-2])\b|\b([5-9]|1[0-2])(th|st|nd|rd)\b|\bmatric\b|madrass?a|madrasse|سکول|اسکول|مدرس|کلاس'
+    // An age written in Urdu script, in either digits or words.
+    r'|(^|[^0-9۰-۹])([5-9]|1[0-7]|[۵-۹]|۱[۰-۷]) (سال|کا ہوں|کی ہوں|کا ہے|کی ہے)|(پانچ|چھ|سات|آٹھ|نو|دس|گیارہ|بارہ|تیرہ|چودہ|پندرہ|سولہ|سترہ) سال)',
     caseSensitive: false,
   );
 
