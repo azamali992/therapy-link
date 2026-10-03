@@ -94,7 +94,8 @@ $llamaArgs = @(
   "--no-webui",
   "--no-slots",
   "--cors-origins", "localhost",
-  "--no-cors-credentials"
+  "--no-cors-credentials",
+  "--swa-full"
 )
 if ($env:TL_LLM_LOG_FILE) { $llamaArgs += @("--log-file", $env:TL_LLM_LOG_FILE) }
 

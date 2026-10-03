@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/api/api_client.dart';
 import '../../core/db/database.dart';
 import '../../core/ml/eve_engine.dart';
 import '../../core/ml/guardian.dart';
@@ -53,6 +54,8 @@ class EveState {
     this.crisisLanguage = CrisisLanguage.en,
     this.suggestGrounding = false,
     this.suggestBreak = false,
+    this.eveBusy = false,
+    this.eveSlow = false,
   });
 
   final bool generating;
@@ -70,6 +73,14 @@ class EveState {
   /// A once-per-session nudge toward a break or a real person after a long stretch of talking.
   final bool suggestBreak;
 
+  /// The server's inference queue was full when the last message was sent ([EveBusyException]).
+  /// Shows the "Eve is with someone else right now" banner. Cleared at the next send.
+  final bool eveBusy;
+
+  /// The streaming connection idle-timed out before or mid-reply ([EveTimedOutException]).
+  /// Shows the "Eve is resting / slow on this connection" banner. Cleared at the next send.
+  final bool eveSlow;
+
   EveState copyWith({
     bool? generating,
     String? partial,
@@ -78,6 +89,8 @@ class EveState {
     CrisisLanguage? crisisLanguage,
     bool? suggestGrounding,
     bool? suggestBreak,
+    bool? eveBusy,
+    bool? eveSlow,
   }) => EveState(
     generating: generating ?? this.generating,
     partial: partial ?? this.partial,
@@ -86,6 +99,8 @@ class EveState {
     crisisLanguage: crisisLanguage ?? this.crisisLanguage,
     suggestGrounding: suggestGrounding ?? this.suggestGrounding,
     suggestBreak: suggestBreak ?? this.suggestBreak,
+    eveBusy: eveBusy ?? this.eveBusy,
+    eveSlow: eveSlow ?? this.eveSlow,
   );
 }
 
@@ -159,9 +174,14 @@ class EveController extends Notifier<EveState> {
   /// The crisis reading of the message being sent, taken before anything is saved.
   ({CrisisKind kind, CrisisLanguage language})? _earlyCrisis;
 
-  /// Every engine call, replies, summaries, memory notes and wrap-ups, runs through this queue one
-  /// at a time: on the phone there is a single model, and two calls into it at once is a crash.
+  /// Every engine call for the live conversation (replies, wrap-ups) runs through this queue one at
+  /// a time: on the phone there is a single model, and two calls into it at once is a crash.
   Future<void> _queue = Future.value();
+
+  /// Background maintenance tasks (summaries, memory notes) run on a separate queue so they never
+  /// block the user's next message. Tasks on [_bgQueue] may run concurrently with [_queue] on the
+  /// server engine (which calls the API, not a local model), but only one background task at a time.
+  Future<void> _bgQueue = Future.value();
 
   /// Conversations deleted this session. Upkeep for one may already be queued or halfway through a
   /// model call when it goes; it checks here before writing anything, so nothing new is remembered
@@ -247,9 +267,16 @@ class EveController extends Notifier<EveState> {
     if (trimmed.isEmpty || _busy) return;
     _busy = true;
     _earlyCrisis = null;
-    state = state.copyWith(generating: true, partial: '');
+    // Clear any previous busy/slow banners as a new attempt starts.
+    state = state.copyWith(generating: true, partial: '', eveBusy: false, eveSlow: false);
     try {
       await _turn(trimmed);
+    } on EveBusyException {
+      // Server inference queue was full: show a calm "Eve is with someone else" banner.
+      if (ref.mounted) state = state.copyWith(eveBusy: true);
+    } on EveTimedOutException {
+      // Stream timed out: show a calm "Eve is slow / resting" banner.
+      if (ref.mounted) state = state.copyWith(eveSlow: true);
     } catch (e) {
       debugPrint('eve turn failed: $e');
       // The message was classified before anything was saved. If saving failed afterwards (a locked
@@ -490,6 +517,9 @@ class EveController extends Notifier<EveState> {
 
   /// Streams a reply into [EveState.partial]. What is shown is guarded as it arrives, so a foreign
   /// number is never on screen, not even before the finished reply is guarded and saved.
+  ///
+  /// [EveBusyException] and [EveTimedOutException] are re-thrown so [send] can surface them as
+  /// typed state flags rather than writing a failure message to the conversation.
   Future<String> _generate(EveEngine engine, List<Map<String, String>> history, String? notes, String removedNote) async {
     final buffer = StringBuffer();
     state = state.copyWith(partial: '');
@@ -498,6 +528,10 @@ class EveController extends Notifier<EveState> {
         buffer.write(token);
         state = state.copyWith(partial: guardStreamingText(buffer.toString(), replacement: removedNote));
       }
+    } on EveBusyException {
+      rethrow; // propagate to send() → eveBusy state, no failure message saved
+    } on EveTimedOutException {
+      rethrow; // propagate to send() → eveSlow state, no failure message saved
     } catch (e) {
       debugPrint('eve reply failed: $e');
       if (buffer.isEmpty) return eveFailureReply;
@@ -513,7 +547,11 @@ class EveController extends Notifier<EveState> {
   }
 
   void _schedule(Future<void> Function() task) {
-    _serial(task).onError((Object e, StackTrace _) => debugPrint('eve upkeep deferred: $e'));
+    // Background tasks run on _bgQueue, not _queue, so a running summary or memory pass never
+    // blocks the user from sending their next message.
+    final result = _bgQueue.then((_) => task());
+    _bgQueue = result.then<void>((_) {}, onError: (Object _, StackTrace st) {});
+    result.onError((Object e, StackTrace _) => debugPrint('eve upkeep deferred: $e'));
   }
 
   /// Keeps a conversation within reach of a small model: condenses what has scrolled out of the
