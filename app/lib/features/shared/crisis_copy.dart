@@ -10,10 +10,10 @@ import '../../core/ml/guardian.dart';
 // Wording that follows the app's locale, such as the notices shown while Eve's chat is paused,
 // lives in the ARB files instead (eveSafetyNotReady*, eveUnavailable*), still pending review.
 //
-// The selfHarm, harmToOthers and medical titles and bodies came later (2026-10-03, with Guardian v1)
-// and have NOT had the AI clinical review yet. Engineering wrote them to red-lines.md R5, R7 and R11:
-// worry, one or two direct safety questions, the right line by name, no medical advice, no claims
-// about the services. They need the same review before the pilot.
+// The selfHarm, harmToOthers and medical titles and bodies came later (2026-10-03, with Guardian v1).
+// ai-clinical-review 2026-10-03: approved against red-lines.md R5, R7 and R11 (worry, a direct safety
+// question, the right line by name, no medical advice, no claims about the services); medical now
+// covers someone else being hurt too. Licensed clinician sign-off: PENDING.
 //
 // Numbers never appear in these strings: they come from helplines.dart, the one table a human
 // verifies. Nothing here says "free" or "24/7"; those claims wait for that verification.
@@ -120,7 +120,7 @@ class CrisisCopy {
       CrisisKind.sexualViolence: 'What happened is not your fault',
       CrisisKind.selfHarm: "I'm glad you told me, and I'm worried about you",
       CrisisKind.harmToOthers: 'Thank you for telling me. Safety comes first',
-      CrisisKind.medical: "I'm worried about you. Please call Rescue now",
+      CrisisKind.medical: 'Please call Rescue now',
     },
     bodies: {
       CrisisKind.suicide: "You don't have to carry this alone. Are you safe right now? You can talk to someone at one of these numbers.",
@@ -132,7 +132,7 @@ class CrisisCopy {
       CrisisKind.harmToOthers:
           'Is anyone in danger right now, you or someone else? If someone could get hurt, call Rescue or the Police now. If you feel you might hurt someone, move away from them now and talk to someone at one of these numbers.',
       CrisisKind.medical:
-          "If you have taken something or you are hurt, call Rescue now. Don't wait to see if it passes. Is someone near you who can stay with you?",
+          "If you or someone with you has taken something or is hurt, call Rescue now. Don't wait to see if it passes. Is someone near you who can stay with you?",
     },
   );
 
@@ -155,7 +155,7 @@ class CrisisCopy {
       CrisisKind.sexualViolence: 'Jo hua, us mein aap ka koi qasoor nahi',
       CrisisKind.selfHarm: 'Acha kiya aap ne bataya, mujhe aap ki fikar hai',
       CrisisKind.harmToOthers: 'Bataane ka shukriya. Sab se pehle hifazat',
-      CrisisKind.medical: 'Mujhe aap ki fikar hai. Abhi Rescue ko call karein',
+      CrisisKind.medical: 'Abhi Rescue ko call karein',
     },
     bodies: {
       CrisisKind.suicide: 'Yeh bojh akele nahi uthana. Kya aap abhi mehfooz hain? In numbers par kisi se baat ho sakti hai.',
@@ -167,7 +167,7 @@ class CrisisCopy {
       CrisisKind.harmToOthers:
           'Kya abhi kisi ki jaan ko khatra hai, aap ki ya kisi aur ki? Agar kisi ko nuqsan pohanch sakta hai to abhi Rescue ya Police ko call karein. Agar aap ko lagta hai ke aap kisi ko nuqsan pohancha sakte hain, to abhi un se door ho jayein aur in numbers par kisi se baat karein.',
       CrisisKind.medical:
-          'Agar aap ne kuch kha ya pi liya hai, ya aap ko chot lagi hai, to abhi Rescue ko call karein. Intezar na karein ke khud theek ho jayega. Kya aap ke paas koi hai jo aap ke saath reh sake?',
+          'Agar aap ne ya aap ke paas kisi ne kuch kha ya pi liya hai, ya kisi ko chot lagi hai, to abhi Rescue ko call karein. Intezar na karein ke khud theek ho jayega. Kya aap ke paas koi hai jo aap ke saath reh sake?',
     },
   );
 }

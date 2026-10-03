@@ -41,6 +41,11 @@
 | abuse | Madadgaar 1098, Punjab Women Helpline 1043, Umang, Rescue 1122 |
 | sexual violence | Madadgaar 1098, Punjab Women Helpline 1043, Umang, Rescue 1122 |
 | child | Madadgaar 1098, Punjab Child Protection 1121, Rescue 1122 |
+| self-harm | Umang, Rescue 1122 |
+| harm to others | Rescue 1122, Police 15 (this sheet only) |
+| medical | Rescue 1122 |
+
+When Guardian flags several kinds at once, the most urgent routes first: medical, suicide, harm to others, child, sexual violence, abuse, self-harm (`crisisPriority` in `app/lib/core/ml/guardian.dart`). AI clinical review 2026-10-03 agrees with this order: an emergency in progress needs 1122 before anything else.
 
 The model (Eve) may name only Umang, 1122, 1098, 15 in context, and 1099 while `ALLOW_MOHR_1099` is true (`ml/therapylink_ml/eval/safety_rules.py`). Provincial lines stay on the sheet, not in the model's mouth: the model doesn't know where the person is.
 
