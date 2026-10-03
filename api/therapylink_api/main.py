@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from therapylink_api import db, requestid
 from therapylink_api.ratelimit import DualTokenBucket, RedisDualLimiter, RedisRateLimiter, TokenBucket
-from therapylink_api.routers import account_page, assessments, care, clinician, inference, journal, me, mood
+from therapylink_api.routers import account_page, assessments, care, clinician, guardian, inference, journal, me, mood
 from therapylink_api.routers import admin as admin_router
 from therapylink_api.routers.inference import _InferenceTracker
 from therapylink_api.settings import check_config, get_settings
@@ -130,7 +130,7 @@ def create_app() -> FastAPI:
     app.middleware("http")(_ip_rate_limit_middleware)
     app.middleware("http")(_logging_middleware)
 
-    for r in (me, assessments, mood, journal, care, clinician, inference, account_page, admin_router):
+    for r in (me, assessments, mood, journal, care, clinician, inference, account_page, guardian, admin_router):
         app.include_router(r.router)
 
     @app.get("/health", tags=["ops"])

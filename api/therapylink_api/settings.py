@@ -62,6 +62,9 @@ class Settings(BaseSettings):
     inference_max_inflight: int = 2
     # Max total inflight + queued inference requests before returning 503 eve_busy.
     inference_max_queue: int = 4
+    # Directory holding the trained Guardian's four bundle files, served publicly at
+    # GET /guardian/<file> for the app to download (routers/guardian.py). Unset: that route is 404.
+    guardian_dir: str | None = None
 
 
 def config_problems(s: Settings) -> list[str]:
