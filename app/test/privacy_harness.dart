@@ -70,6 +70,7 @@ Future<ProviderContainer> pumpGated(
       container: container,
       child: MaterialApp(
         locale: const Locale('en'),
+        theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         theme: buildTheme(Brightness.dark),

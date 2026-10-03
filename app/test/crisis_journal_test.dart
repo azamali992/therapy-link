@@ -51,6 +51,7 @@ Future<_Api> _pump(WidgetTester tester, {bool offline = false}) async {
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         theme: buildTheme(Brightness.dark),

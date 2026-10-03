@@ -45,6 +45,8 @@ class CrisisSheetView extends StatelessWidget {
     this.body = 'You can talk to someone right now.',
     this.backLabel = 'Wapas chat par',
     this.onBack,
+    this.onCall,
+    this.onCopy,
   });
 
   final List<HelplineViewModel> helplines;
@@ -52,6 +54,12 @@ class CrisisSheetView extends StatelessWidget {
   final String body;
   final String backLabel;
   final VoidCallback? onBack;
+
+  /// Called when the person taps the Call button for a helpline.
+  final void Function(HelplineViewModel)? onCall;
+
+  /// Called when the person taps the Copy button for a helpline.
+  final void Function(HelplineViewModel)? onCopy;
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +138,7 @@ class CrisisSheetView extends StatelessWidget {
                 children: [
                   Icon(JugnuIcons.heartFill, size: 24, color: helpInk),
                   const SizedBox(width: 10),
-                  Text(heading, style: headingStyle),
+                  Flexible(child: Text(heading, style: headingStyle)),
                 ],
               ),
               const SizedBox(height: Jugnu.s8),
@@ -146,6 +154,8 @@ class CrisisSheetView extends StatelessWidget {
                   nameStyle: nameStyle,
                   numberStyle: numberStyle,
                   scopeStyle: scopeStyle,
+                  onCall: onCall,
+                  onCopy: onCopy,
                 ),
 
               // Back / dismiss
@@ -174,6 +184,8 @@ class _HelplineRow extends StatelessWidget {
     required this.nameStyle,
     required this.numberStyle,
     required this.scopeStyle,
+    this.onCall,
+    this.onCopy,
   });
 
   final HelplineViewModel vm;
@@ -183,6 +195,8 @@ class _HelplineRow extends StatelessWidget {
   final TextStyle nameStyle;
   final TextStyle numberStyle;
   final TextStyle scopeStyle;
+  final void Function(HelplineViewModel)? onCall;
+  final void Function(HelplineViewModel)? onCopy;
 
   @override
   Widget build(BuildContext context) {
@@ -202,9 +216,9 @@ class _HelplineRow extends StatelessWidget {
         const SizedBox(height: Jugnu.s8),
         Row(
           children: [
-            _CallButton(number: vm.number, helpBg: helpBg, helpInk: helpInk),
+            _CallButton(number: vm.number, helpBg: helpBg, helpInk: helpInk, onCall: onCall == null ? null : () => onCall!(vm)),
             const SizedBox(width: Jugnu.s8),
-            _CopyButton(number: vm.number, helpBg: helpBg, helpInk: helpInk),
+            _CopyButton(number: vm.number, helpBg: helpBg, helpInk: helpInk, onCopy: onCopy == null ? null : () => onCopy!(vm)),
           ],
         ),
         const SizedBox(height: Jugnu.s12),
@@ -218,10 +232,12 @@ class _CallButton extends StatelessWidget {
     required this.number,
     required this.helpBg,
     required this.helpInk,
+    this.onCall,
   });
   final String number;
   final Color helpBg;
   final Color helpInk;
+  final VoidCallback? onCall;
 
   @override
   Widget build(BuildContext context) {
@@ -229,10 +245,7 @@ class _CallButton extends StatelessWidget {
       button: true,
       label: 'Call $number',
       child: GestureDetector(
-        onTap: () {
-          // Caller handles url_launcher; we just emit the intent here.
-          // In production: launchUrl(Uri.parse('tel:${number.replaceAll('-', '')}'))
-        },
+        onTap: onCall,
         child: Container(
           height: Jugnu.minTarget,
           padding: const EdgeInsets.symmetric(horizontal: Jugnu.s20),
@@ -264,10 +277,12 @@ class _CopyButton extends StatelessWidget {
     required this.number,
     required this.helpBg,
     required this.helpInk,
+    this.onCopy,
   });
   final String number;
   final Color helpBg;
   final Color helpInk;
+  final VoidCallback? onCopy;
 
   @override
   Widget build(BuildContext context) {
@@ -275,7 +290,7 @@ class _CopyButton extends StatelessWidget {
       button: true,
       label: 'Copy $number',
       child: GestureDetector(
-        onTap: () => Clipboard.setData(ClipboardData(text: number)),
+        onTap: onCopy ?? () => Clipboard.setData(ClipboardData(text: number)),
         child: Container(
           height: Jugnu.minTarget,
           padding: const EdgeInsets.symmetric(horizontal: Jugnu.s20),

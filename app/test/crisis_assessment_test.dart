@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/api/api_client.dart';
 import 'package:therapylink/core/api/models.dart';
 import 'package:therapylink/core/settings/settings.dart';
@@ -60,6 +61,7 @@ Future<SharedPreferences> _pump(WidgetTester tester, ApiClient api) async {
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
       ),

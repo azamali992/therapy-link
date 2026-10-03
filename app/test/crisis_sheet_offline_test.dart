@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/ml/guardian.dart';
 import 'package:therapylink/features/shared/crisis_copy.dart';
 import 'package:therapylink/features/shared/widgets.dart';
@@ -13,6 +14,7 @@ import 'package:therapylink/l10n/app_localizations.dart';
 /// Pumps without SharedPreferences or auth — replicates the before-sign-in state.
 Widget _bare(Widget home) => ProviderScope(
   child: MaterialApp(
+    theme: buildTheme(Brightness.dark),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     home: home,
@@ -45,7 +47,8 @@ void main() {
   testWidgets('the sheet opens from the GetHelpButton without any auth providers', (tester) async {
     await tester.pumpWidget(_bare(const Screen(title: 'Welcome', child: Text('body'))));
 
-    await tester.tap(find.byTooltip(CrisisCopy.en.helpNow));
+    // GetHelpButton is a pill widget — find by type.
+    await tester.tap(find.byType(GetHelpButton));
     await tester.pumpAndSettle();
 
     expect(find.byType(BottomSheet), findsOneWidget);
@@ -111,10 +114,9 @@ void main() {
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
 
-    // The sheet uses FilledButton.icon with label "Call Umang · 0311 7786264".
-    // It must be findable and tappable.
-    expect(find.textContaining('Call Umang'), findsOneWidget);
-    await tester.tap(find.textContaining('Call Umang'));
+    // CrisisSheetView renders a separate "Call" pill button per helpline.
+    expect(find.text('Call'), findsWidgets);
+    await tester.tap(find.text('Call').first);
     await tester.pump();
     // helplineDialer returns true, so no dialog should appear.
     expect(find.byType(AlertDialog), findsNothing);
