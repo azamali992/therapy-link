@@ -86,7 +86,7 @@ def run(
     rows = english_sources(n_mh_suicidal, n_mh_none, max_chars, seed)
     typer.echo(f"{len(rows)} English rows to translate")
     out.parent.mkdir(parents=True, exist_ok=True)
-    translate = Translator(device="cpu")
+    translate = Translator()
 
     def fn(r: dict) -> dict:
         ur = " ".join(translate(_sentences(r["text"]), batch=batch))
