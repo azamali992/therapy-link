@@ -151,11 +151,14 @@ def test_dual_token_bucket_synergy():
 
 
 async def test_inference_prompt_hash_validation(client, monkeypatch):
-    """When TL_PROMPT_SHA256 is set, a mismatched system prompt returns 422."""
-    expected = hashlib.sha256(b"correct prompt").hexdigest()
+    """When TL_PROMPT_SHA256 + TL_PROMPT_CHARS are set, a mismatched prompt returns 422."""
+    prompt = "correct prompt"
+    prompt_chars = len(prompt)
+    expected = hashlib.sha256(prompt.encode()).hexdigest()
     monkeypatch.setenv("TL_INFERENCE_BASE_URL", "http://unused")
     monkeypatch.setenv("TL_INFERENCE_API_KEY", "k")
     monkeypatch.setenv("TL_PROMPT_SHA256", expected)
+    monkeypatch.setenv("TL_PROMPT_CHARS", str(prompt_chars))
     get_settings.cache_clear()
 
     wrong = {"messages": [{"role": "system", "content": "wrong prompt"}, {"role": "user", "content": "hi"}]}

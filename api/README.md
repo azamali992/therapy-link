@@ -45,12 +45,35 @@ inference hardening, and structured logging.
 | summaries | `POST/GET /summaries` |
 | care | `GET/POST /care/links`, `PATCH /care/links/{id}/consent`, `DELETE /care/links/{id}` |
 | clinician | `GET /clinician/requests`, `POST /clinician/requests/{id}/accept\|decline`, `GET /clinician/patients`, `GET /clinician/patients/{uid}` |
-| inference | `POST /inference/chat` → llama-server; streaming with `stream: true`; 503 if not configured; 429 past per-uid limits |
+| inference | `POST /inference/chat` → llama-server; streaming with `stream: true` (Eve-wire SSE contract, see below); 503 if not configured; 429 past per-uid limits |
 | admin | `POST /admin/clinicians/{uid}/verify`, `POST /admin/clinicians/{uid}/revoke` — requires Firebase token with `admin: true` custom claim |
 | ops | `GET /health` (liveness), `GET /ready` (runs `SELECT 1`) |
 
 Every response carries `X-Request-ID`. Logs are structured JSON; bodies are never logged; uids
 are hashed in logs with `TL_LOG_UID_SALT`.
+
+## Eve-wire SSE contract (`stream: true`)
+
+`POST /inference/chat` with `"stream": true` returns `text/event-stream`. The server normalises
+the upstream OpenAI SSE format into these events:
+
+| Event | Meaning |
+|---|---|
+| `data: {"delta":"<text>"}` | One text piece from Eve's reply. Yield to the UI. |
+| `data: {"done":true,"finish_reason":"<r>"}` | Normal end; `finish_reason` is `"stop"` or the upstream value. |
+| `data: [DONE]` | Legacy normal-end marker; treated identically to `done:true`. |
+| `data: {"error":"eve_resting"}` | Upstream failure. Show the calm error; do **not** retry automatically. |
+
+Guarantees:
+- SSE lines split across byte chunks are reassembled before parsing.
+- Keep-alive lines (empty or `:`) are silently dropped.
+- Message content is never logged.
+
+The Dart client (`app/lib/core/api/api_client.dart` `cloudChatStream`) decodes bytes with
+`utf8.decoder` + `LineSplitter` before JSON-parsing, so multi-byte characters (Urdu, emoji,
+smart quotes) are never corrupted. An `{"error":"eve_resting"}` event throws
+`EveRestingException`, which `EveController._generate` catches and converts to the calm
+"I'm having trouble replying" placeholder.
 
 ## Clinician verification
 
@@ -93,7 +116,8 @@ All variables are prefixed `TL_`. See `.env.example` for defaults.
 | `TL_WRITE_RATE_CAPACITY` | — | Mutating requests (POST/PUT/PATCH/DELETE) per uid per minute. Default: `60`. |
 | `TL_REDIS_URL` | — | Redis URL for shared rate-limit state across workers. In-memory (per-worker) if unset. |
 | `TL_APP_CHECK_REQUIRED` | — | `true` to require a valid Firebase App Check token on mutating and inference routes. |
-| `TL_PROMPT_SHA256` | — | SHA-256 hex of the expected system prompt. Set to reject requests with the wrong prompt. |
+| `TL_PROMPT_SHA256` | paired with CHARS | SHA-256 hex of the first `TL_PROMPT_CHARS` characters of the expected prompt. Must be set with `TL_PROMPT_CHARS`. |
+| `TL_PROMPT_CHARS` | paired with SHA256 | Number of leading characters from the first message to hash against `TL_PROMPT_SHA256`. Must be set with `TL_PROMPT_SHA256`. |
 | `TL_CORS_ORIGINS` | — | JSON array of allowed CORS origins. |
 | `TL_LOG_UID_SALT` | prod | Secret salt for uid hashing in logs. **Must be changed from the default in prod/staging.** |
 | `TL_DEV_AUTH_BYPASS` | dev only | Accept `X-Dev-Uid` header instead of a Firebase token. Blocked in staging/prod. |

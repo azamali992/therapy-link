@@ -43,6 +43,10 @@ class MePatch(BaseModel):
 
 class ConsentIn(BaseModel):
     consent_version: str = Field(min_length=1, max_length=32)
+    # Client-reported acceptance time. Accepted and ignored: the server's own timestamp is
+    # always authoritative for consent_accepted_at. Present so the request is not rejected
+    # when the app sends it.
+    accepted_at: datetime | None = None
 
 
 class BecomeClinician(BaseModel):

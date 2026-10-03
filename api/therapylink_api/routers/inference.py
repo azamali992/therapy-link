@@ -1,7 +1,36 @@
 """Cloud inference proxy for the Eve model.
 
-Forwards to an OpenAI-compatible llama-server.  Supports both streaming (SSE pass-through)
-and non-streaming responses.  Never logs message bodies or the system prompt.
+Forwards to an OpenAI-compatible llama-server.  Supports both streaming (SSE) and
+non-streaming responses.  Never logs message bodies or the system prompt.
+
+## Eve-wire SSE contract (stream=true)
+
+The upstream llama-server speaks the OpenAI SSE format
+(``data: {"choices":[{"delta":{"content":"..."}}]}`` … ``data: [DONE]``).
+This proxy normalises that into the TherapyLink wire format so clients need not
+depend on the upstream shape:
+
+  ``data: {"delta":"<text>"}``
+      One text piece from Eve's reply.
+
+  ``data: {"done":true,"finish_reason":"<reason>"}``
+      Normal end of stream. ``finish_reason`` is ``"stop"`` or the value the
+      upstream reported.
+
+  ``data: [DONE]``
+      Alternative normal-end marker accepted by the client but never emitted
+      here; reserved for future use.
+
+  ``data: {"error":"eve_resting"}``
+      Upstream connect failure, timeout, non-200 status, or stream that ended
+      without a terminal event. The client must NOT retry automatically; show
+      the calm "Eve is resting" message instead.
+
+Handling guarantees:
+- Upstream byte chunks split across line boundaries are assembled before
+  parsing (byte-level line buffer).
+- SSE keep-alive lines (empty or starting with ``:``) are silently dropped.
+- Message content is never logged, even on error.
 
 Rate limits are enforced per uid before the upstream call.
 """
@@ -9,6 +38,7 @@ Rate limits are enforced per uid before the upstream call.
 from __future__ import annotations
 
 import hashlib
+import json as _json
 import logging
 import math
 
@@ -27,7 +57,7 @@ router = APIRouter(prefix="/inference", tags=["inference"])
 # Tests swap in an httpx.MockTransport; None is the real network.
 upstream_transport: httpx.AsyncBaseTransport | None = None
 
-_EVE_DOWN_DETAIL = "Eve is resting right now — please try again in a moment"
+_EVE_DOWN_DETAIL = "Eve is resting right now. Please try again in a moment."
 
 
 async def chat_rate_limit(request: Request, p: Principal = Depends(current_principal)) -> Principal:
@@ -41,16 +71,25 @@ async def chat_rate_limit(request: Request, p: Principal = Depends(current_princ
     return p
 
 
-def _validate_prompt_hash(body: ChatIn, expected_sha256: str | None) -> None:
-    """If TL_PROMPT_SHA256 is set, the first message must be role=system and its content must hash
-    to that value.  This prevents the server from serving arbitrary prompts; the app ships its own.
+def _validate_prompt_hash(body: ChatIn, expected_sha256: str | None, prompt_chars: int | None) -> None:
+    """Check the prompt integrity when TL_PROMPT_SHA256 and TL_PROMPT_CHARS are both set.
+
+    The app folds the system prompt into the first user turn
+    (``foldSystemIntoFirstUser`` in eve_engine.dart / ``prompts.py``), so there
+    is normally no ``role=system`` message in a real conversation.  This check
+    accepts both the folded form (first ``role=user`` message) and an explicit
+    ``role=system`` message by looking at whichever comes first.
+
+    The first ``prompt_chars`` characters of that message must hash to
+    ``expected_sha256`` (SHA-256 hex).  If the message is shorter than
+    ``prompt_chars`` the check fails: the registered prompt is not present.
     """
-    if not expected_sha256:
+    if not expected_sha256 or not prompt_chars:
         return
-    system_msgs = [m for m in body.messages if m.role == "system"]
-    if not system_msgs:
-        raise HTTPException(422, "system prompt required when TL_PROMPT_SHA256 is configured")
-    actual = hashlib.sha256(system_msgs[0].content.encode()).hexdigest()
+    first = next((m for m in body.messages if m.role in ("system", "user")), None)
+    if first is None or len(first.content) < prompt_chars:
+        raise HTTPException(422, "prompt check failed: first message shorter than expected prompt")
+    actual = hashlib.sha256(first.content[:prompt_chars].encode()).hexdigest()
     if actual != expected_sha256.lower():
         raise HTTPException(422, "system prompt does not match the configured hash")
 
@@ -62,7 +101,7 @@ async def chat(body: ChatIn, request: Request, _: Principal = Depends(chat_rate_
     if not s.inference_base_url:
         raise HTTPException(503, _EVE_DOWN_DETAIL)
 
-    _validate_prompt_hash(body, s.prompt_sha256)
+    _validate_prompt_hash(body, s.prompt_sha256, s.prompt_chars)
 
     headers = {"Authorization": f"Bearer {s.inference_api_key}"} if s.inference_api_key else {}
     # Cap max_tokens to the server's configured limit regardless of what the client requests.
@@ -121,9 +160,13 @@ async def _non_stream_response(s, payload: dict, headers: dict, rid: str) -> Cha
 
 
 async def _stream_response(base_url: str, payload: dict, headers: dict, rid: str) -> StreamingResponse:
-    """Pass the llama-server SSE stream straight through to the client."""
+    """Normalise the upstream OpenAI SSE stream into the TherapyLink wire format.
+
+    See module docstring for the full contract.
+    """
 
     async def _generate():
+        done = False
         try:
             async with (
                 httpx.AsyncClient(base_url=base_url, timeout=120, transport=upstream_transport) as client,
@@ -131,18 +174,62 @@ async def _stream_response(base_url: str, payload: dict, headers: dict, rid: str
             ):
                 if r.status_code != 200:
                     log.warning("inference stream returned HTTP %s [request %s]", r.status_code, rid)
-                    yield b'data: {"error":"Eve is resting"}\n\n'
+                    yield b'data: {"error":"eve_resting"}\n\n'
                     return
+
+                buf = b""
                 async for chunk in r.aiter_bytes():
-                    yield chunk
+                    buf += chunk
+                    # Process complete lines from the buffer.  Splitting on b"\n" is safe for
+                    # UTF-8: the byte 0x0a never appears inside a multi-byte sequence.
+                    while b"\n" in buf:
+                        line, buf = buf.split(b"\n", 1)
+                        line = line.rstrip(b"\r")
+                        if not line or line.startswith(b":"):
+                            continue  # SSE keep-alive / comment
+                        if not line.startswith(b"data: "):
+                            continue  # other SSE fields (event:, id:, retry:) — ignore
+                        data = line[6:]
+                        if data == b"[DONE]":
+                            yield b'data: {"done":true,"finish_reason":"stop"}\n\n'
+                            done = True
+                            return
+                        try:
+                            obj = _json.loads(data)
+                            choices = obj.get("choices") or []
+                            if not choices:
+                                continue
+                            delta_obj = choices[0].get("delta") or {}
+                            content = delta_obj.get("content")
+                            finish = choices[0].get("finish_reason")
+                            if content:
+                                # Never log the content.
+                                yield ("data: " + _json.dumps({"delta": content}) + "\n\n").encode()
+                            elif finish:
+                                yield (
+                                    "data: " + _json.dumps({"done": True, "finish_reason": finish}) + "\n\n"
+                                ).encode()
+                                done = True
+                                return
+                        except (_json.JSONDecodeError, IndexError, KeyError, TypeError):
+                            pass  # skip malformed upstream events
+
         except httpx.ConnectError:
             log.warning("inference upstream unreachable (stream) [request %s]", rid)
-            yield b'data: {"error":"Eve is resting"}\n\n'
+            yield b'data: {"error":"eve_resting"}\n\n'
+            return
         except httpx.ReadTimeout:
             log.warning("inference upstream timed out (stream) [request %s]", rid)
-            yield b'data: {"error":"Eve is resting"}\n\n'
+            yield b'data: {"error":"eve_resting"}\n\n'
+            return
         except httpx.HTTPError:
             log.warning("inference upstream error (stream) [request %s]", rid)
-            yield b'data: {"error":"Eve is resting"}\n\n'
+            yield b'data: {"error":"eve_resting"}\n\n'
+            return
+
+        if not done:
+            # Upstream stream ended without a terminal event (mid-stream failure).
+            log.warning("inference upstream stream ended without terminal event [request %s]", rid)
+            yield b'data: {"error":"eve_resting"}\n\n'
 
     return StreamingResponse(_generate(), media_type="text/event-stream")
