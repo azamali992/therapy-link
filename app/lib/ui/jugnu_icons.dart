@@ -77,4 +77,7 @@ abstract final class JugnuIcons {
 
   /// ph-shield-check — safe storage confirmation
   static const shieldCheck = Icons.verified_user_outlined;
+
+  /// ph-translate — language fact on welcome screen
+  static const translate = Icons.translate_outlined;
 }
