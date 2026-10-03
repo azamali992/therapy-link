@@ -1247,4 +1247,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dbOpenFailed =>
       'Your chats on this phone can\'t be opened right now, so nothing new is being saved. Try closing and reopening the app. If you need to talk to someone now, Get help now still works.';
+
+  @override
+  String get eveBusyTitle => 'Eve is with someone else right now';
+
+  @override
+  String get eveBusyBody => 'The server is busy. Wait a moment and try again.';
+
+  @override
+  String get eveSlowTitle => 'Eve is resting';
+
+  @override
+  String get eveSlowBody =>
+      'The connection timed out. Eve may be slow to respond right now. Try again in a moment.';
 }

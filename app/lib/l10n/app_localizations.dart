@@ -2323,6 +2323,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your chats on this phone can\'t be opened right now, so nothing new is being saved. Try closing and reopening the app. If you need to talk to someone now, Get help now still works.'**
   String get dbOpenFailed;
+
+  /// No description provided for @eveBusyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eve is with someone else right now'**
+  String get eveBusyTitle;
+
+  /// No description provided for @eveBusyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The server is busy. Wait a moment and try again.'**
+  String get eveBusyBody;
+
+  /// No description provided for @eveSlowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Eve is resting'**
+  String get eveSlowTitle;
+
+  /// No description provided for @eveSlowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection timed out. Eve may be slow to respond right now. Try again in a moment.'**
+  String get eveSlowBody;
 }
 
 class _AppLocalizationsDelegate

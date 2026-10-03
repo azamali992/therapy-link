@@ -1255,4 +1255,18 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get dbOpenFailed =>
       'Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to \'Abhi madad lein\' ab bhi kaam karta hai.';
+
+  @override
+  String get eveBusyTitle => 'Eve abhi kisi aur se baat kar rahi hai';
+
+  @override
+  String get eveBusyBody =>
+      'Server masroof hai. Thori dair ruk kar dobara koshish karein.';
+
+  @override
+  String get eveSlowTitle => 'Eve araam kar rahi hai';
+
+  @override
+  String get eveSlowBody =>
+      'Connection time out ho gaya. Eve abhi dheere jawab de sakti hai. Thori dair baad dobara koshish karein.';
 }

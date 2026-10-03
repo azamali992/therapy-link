@@ -38,6 +38,16 @@ class _ChatApi extends ApiClient {
     sentComplete.add(List.unmodifiable(messages));
     return 'I hear you.';
   }
+
+  /// complete() goes through the background path (long timeout, never blocks chat).
+  @override
+  Future<String?> cloudChatBackground(
+    List<Map<String, String>> messages, {
+    int maxTokens = 300,
+  }) async {
+    sentComplete.add(List.unmodifiable(messages));
+    return 'I hear you.';
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -98,7 +108,7 @@ void main() {
 
     test('a single message longer than the limit keeps its start', () async {
       final api = _ChatApi();
-      // complete() uses cloudChat, not cloudChatStream.
+      // complete() uses the background path, not cloudChatStream.
       await ServerEveEngine(api).complete([
         {'role': 'user', 'content': 'Summarise:'.padRight(20000, 'y')},
       ]);
