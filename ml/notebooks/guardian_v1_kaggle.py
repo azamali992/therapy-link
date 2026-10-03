@@ -29,9 +29,9 @@ print("data:", SRC, os.listdir(SRC))
 subprocess.run(["nvidia-smi"])
 
 RUNS = {
-    # name: (base, lr, epochs)
-    "xlmr-base": ("FacebookAI/xlm-roberta-base", "3e-5", "5"),
-    "minilm-l12": ("microsoft/Multilingual-MiniLM-L12-H384", "6e-5", "8"),
+    # name: (base, lr, epochs). v1a also trained Multilingual-MiniLM-L12 (6e-5, 8 epochs): smaller (118 MB
+    # int8) but it separated crisis from calm text much worse (held-out AUC 0.935 vs 0.971), so v1b is XLM-R only.
+    "xlmr-base": ("FacebookAI/xlm-roberta-base", "3e-5", "8"),
 }
 results = {}
 for name, (base, lr, epochs) in RUNS.items():

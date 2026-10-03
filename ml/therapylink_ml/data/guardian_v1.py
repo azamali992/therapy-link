@@ -467,8 +467,10 @@ def build_splits(
     written: Path = WRITTEN,
     heldout: Path = HELDOUT,
     probes: Path = PROBES,
-    n_mh_suicidal: int = 3000,
-    n_mh_none: int = 5000,
+    # mh_text is long Reddit posts; at 3,000/5,000 it was most of the English data and pulled the head
+    # away from how people type in a chat app.
+    n_mh_suicidal: int = 1500,
+    n_mh_none: int = 2500,
     n_urdu_mh: int = 2000,
     n_mh_val: int = 300,
     augment_copies: int = 1,
