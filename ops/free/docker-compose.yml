@@ -82,10 +82,14 @@ services:
       TL_APP_CHECK_REQUIRED: ${TL_APP_CHECK_REQUIRED:-false}
       TL_LOG_UID_SALT: ${TL_LOG_UID_SALT:?run setup.sh or set TL_LOG_UID_SALT}
       TL_CORS_ORIGINS: "[]"
+      # The trained Guardian's bundle, served at /guardian/<file> for the app to download.
+      # get-models.sh puts the four files here, sha256-checked against the release report.
+      TL_GUARDIAN_DIR: /guardian
       # TL_PROMPT_SHA256 / TL_PROMPT_CHARS stay unset: the app's summary and memory-note calls
       # (ServerEveEngine.complete) don't carry the Eve prompt, so the check would 422 them.
     volumes:
       - ${FIREBASE_SA_JSON_HOST_PATH:-/dev/null}:/run/secrets/firebase.json:ro
+      - ${GUARDIAN_DIR:-/srv/guardian}:/guardian:ro
     depends_on:
       postgres:
         condition: service_healthy

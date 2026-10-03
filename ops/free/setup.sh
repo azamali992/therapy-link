@@ -11,7 +11,8 @@
 #   3. 2 GB swap (build headroom), unattended security upgrades
 #   4. ops/free/.env from .env.example, random secrets, values given on the command line
 #   5. host firewall: open 80/443 for caddy (Oracle images REJECT everything but 22 in iptables)
-#   6. model files into EVE_MODELS_DIR, verified against ml/registry.json (get-models.sh)
+#   6. model files into EVE_MODELS_DIR, verified against ml/registry.json, and the Guardian bundle
+#      into GUARDIAN_DIR, verified against its release report (get-models.sh)
 #   7. build the images (Eve's llama.cpp build takes 10-20 minutes on 2 OCPUs)
 #   8. Postgres up, migrations (`api release`), everything up, wait for health
 #   9. checks: nothing but 22/80/443 listening publicly, one real reply from Eve through the API's
@@ -20,6 +21,7 @@
 #
 # Values can come from the environment or from ops/free/.env (environment wins on first run):
 #   TL_DOMAIN, ACME_EMAIL, EVE_ADAPTER_URL | EVE_ADAPTER_PATH, EVE_HF_TOKEN, COMPOSE_PROFILES,
+#   GUARDIAN_RELEASE, GUARDIAN_BASE_URL | GUARDIAN_SRC_DIR, GUARDIAN_HF_TOKEN,
 #   TL_DATABASE_URL, CLOUDFLARE_TUNNEL_TOKEN, BACKUP_AGE_RECIPIENT, HC_PING_URL, HC_BACKUP_PING_URL,
 #   FIREBASE_SA_JSON (a path; copied to /srv/therapylink-secrets/ with the API user as owner)
 set -euo pipefail
@@ -95,7 +97,7 @@ PY
 }
 getenv() { sed -n "s/^$1=//p" "$envf" | tail -1; }
 for k in TL_DOMAIN ACME_EMAIL EVE_ADAPTER_URL EVE_ADAPTER_PATH EVE_HF_TOKEN COMPOSE_PROFILES TL_DATABASE_URL \
-         CLOUDFLARE_TUNNEL_TOKEN BACKUP_AGE_RECIPIENT HC_PING_URL HC_BACKUP_PING_URL TL_ENV EVE_THREADS EVE_SLOTS; do
+         CLOUDFLARE_TUNNEL_TOKEN BACKUP_AGE_RECIPIENT HC_PING_URL HC_BACKUP_PING_URL TL_ENV EVE_THREADS EVE_SLOTS          GUARDIAN_RELEASE GUARDIAN_BASE_URL GUARDIAN_SRC_DIR GUARDIAN_HF_TOKEN; do
   if [ -n "${!k:-}" ]; then setenv "$k" "${!k}"; fi
 done
 rand() { python3 -c "import secrets; print(secrets.token_urlsafe($1))"; }
@@ -229,6 +231,17 @@ if [[ "$profiles" == *",caddy,"* ]]; then
     sleep 10
   done
   [ -n "$ok" ] || { dc logs --tail 30 caddy; fail "https://$TL_DOMAIN/ready did not answer. Check DNS, the VCN security list and ports 80/443"; }
+  # The Guardian bundle, as a phone fetches it: the ETag the API sends is the file's sha256.
+  if g="$(curl -fsSI -m 10 "https://$TL_DOMAIN/guardian/config.json")"; then
+    want="$(jq -r '.files["config.json"].sha256' "$repo/ml/releases/${GUARDIAN_RELEASE:-guardian-v1b}/report.json")"
+    if grep -qi "etag: \"$want\"" <<<"$g"; then
+      echo "https://$TL_DOMAIN/guardian/ serves ${GUARDIAN_RELEASE:-guardian-v1b}"
+    else
+      echo "warning: /guardian/config.json is not the ${GUARDIAN_RELEASE:-guardian-v1b} file"
+    fi
+  else
+    echo "warning: https://$TL_DOMAIN/guardian/config.json did not answer; release apps keep Eve's chat paused without it"
+  fi
 fi
 
 # ---------------------------------------------------------------------------------------------
@@ -257,8 +270,10 @@ log "done"
 url="https://${TL_DOMAIN:-<your tunnel hostname>}"
 cat <<EOF
 API:  $url   (health: $url/health, readiness: $url/ready)
-Build the app against it:
-  flutter build apk --release --dart-define=TL_API_URL=$url
+Build the app against it (the Guardian flags come from ml/releases/${GUARDIAN_RELEASE:-guardian-v1b}/report.json):
+  flutter build apk --release --dart-define=TL_API_URL=$url \\
+    --dart-define=TL_GUARDIAN_URL=$url/guardian/ \\
+    --dart-define=$(jq -r .dart_define "$repo/ml/releases/${GUARDIAN_RELEASE:-guardian-v1b}/report.json")
 Measure Eve's speed on this VM (prints no reply text):
   sudo docker compose --project-directory $here -f $here/docker-compose.yml run --rm --no-deps \\
     -v $repo:/repo:ro -e TL_LLM_API_KEY --entrypoint python api /repo/ops/free/bench.py --url http://eve:8080
