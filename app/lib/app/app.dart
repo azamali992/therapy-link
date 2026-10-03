@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/api/consent_sync.dart';
+import '../core/settings/settings.dart';
+import '../features/shared/privacy_gate.dart';
 import '../l10n/app_localizations.dart';
 import 'locale.dart';
 import 'router.dart';
 import 'theme/theme.dart';
 
-// ---------------------------------------------------------------------------
-// Stub settings — TODO(core-team): replace with the real settings provider
-// from lib/core/settings/settings.dart.
-// ---------------------------------------------------------------------------
-
-/// Placeholder settings bag. Replace with the real Settings model + provider.
-/// TODO(core-team): wire to SharedPreferences via settingsProvider.
-class _AppSettings {
-  const _AppSettings();
-  ThemeMode get themeMode => ThemeMode.dark; // dark-first default
-  Locale? get locale => null;               // null = system locale
-  double get textScale => 1.0;
-  bool get reduceMotion => false;
-}
-
-final _appSettingsProvider = Provider<_AppSettings>((_) => const _AppSettings());
-
-/// OS text scale × in-app slider, capped so an OS at 2× doesn't become 3.2×.
+/// The OS text scale times the in-app slider, capped so an OS already at 2× doesn't become 3.2×
+/// and break every fixed layout. 2.0 is past the 1.6× the design is tested at.
 double effectiveTextScale(double os, double app) => (os * app).clamp(0.8, 2.0);
 
 class TherapyLinkApp extends ConsumerWidget {
@@ -31,8 +18,10 @@ class TherapyLinkApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(_appSettingsProvider);
+    final settings = ref.watch(settingsProvider);
     final router = ref.watch(routerProvider);
+    // Keeps consent state on the server in sync after sign-in.
+    ref.watch(consentSyncProvider);
 
     return MaterialApp.router(
       title: 'TherapyLink',
@@ -47,45 +36,22 @@ class TherapyLinkApp extends ConsumerWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
-      builder: (context, child) => _AppFrame(
-        settings: settings,
-        router: router,
-        child: child!,
-      ),
+      // Quick exit resets navigation to the start; '/' redirects to the home tab for the role.
+      builder: (context, child) => appFrame(context, PrivacyGate(onQuickExit: () => router.go('/'), child: child!), settings),
     );
   }
 }
 
-/// Wraps every route: applies the text scale, reduced-motion preference and,
-/// for Roman Urdu, forces LTR layout so Latin-script copy isn't mirrored by
-/// Flutter's ur-locale direction inference.
-class _AppFrame extends StatelessWidget {
-  const _AppFrame({
-    required this.settings,
-    required this.router,
-    required this.child,
-  });
-
-  final _AppSettings settings;
-  final dynamic router; // GoRouter — typed loosely to avoid an extra import
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    Widget framed = MediaQuery(
-      data: mq.copyWith(
-        textScaler: TextScaler.linear(
-          effectiveTextScale(mq.textScaler.scale(1.0), settings.textScale),
-        ),
-        disableAnimations:
-            mq.disableAnimations || settings.reduceMotion,
-      ),
-      child: child,
-    );
-    if (!isRomanUrdu(Localizations.localeOf(context))) return framed;
-    // Roman Urdu content is written LTR (Latin script); override the RTL
-    // direction that Flutter infers from the `ur` locale tag.
-    return Directionality(textDirection: TextDirection.ltr, child: framed);
-  }
+/// Wraps every route: text scale, reduced motion and, for Roman Urdu, left-to-right layout.
+Widget appFrame(BuildContext context, Widget child, Settings settings) {
+  final mq = MediaQuery.of(context);
+  final framed = MediaQuery(
+    data: mq.copyWith(
+      textScaler: TextScaler.linear(effectiveTextScale(mq.textScaler.scale(1.0), settings.textScale)),
+      disableAnimations: mq.disableAnimations || settings.reduceMotion,
+    ),
+    child: child,
+  );
+  if (!isRomanUrdu(Localizations.localeOf(context))) return framed;
+  return Directionality(textDirection: TextDirection.ltr, child: framed);
 }

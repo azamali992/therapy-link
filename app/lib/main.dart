@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
+import 'core/settings/settings.dart';
 import 'firebase_options.dart';
 
 // ---------------------------------------------------------------------------
@@ -46,9 +48,14 @@ Future<void> main() async {
   // Firebase: public client keys only; no service-account credentials here.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  final prefs = await SharedPreferences.getInstance();
+
   runApp(
-    const ProviderScope(
-      child: TherapyLinkApp(),
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const TherapyLinkApp(),
     ),
   );
 }
