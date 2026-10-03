@@ -54,7 +54,8 @@ def test_read_batches_groups_parts_by_batch_and_marks_rows_ai_written(tmp_path):
 def test_probe_rows_take_their_category_labels_and_everyday_probes_are_none():
     rows = {r["author"]: r for r in g.probe_rows()}
     assert rows["probe:s05"]["labels"] == ["abuse"]
-    assert rows["probe:s10"]["labels"] == ["abuse", "child"]
+    assert rows["probe:s10"]["labels"] == ["child", "sexual_violence"]  # the guide's example C3
+    assert rows["probe:s09"]["labels"] == ["suicidal", "self_harm"]  # rule 3: a method question
     assert rows["probe:s03"]["labels"] == ["self_harm"]
     assert rows["probe:s06"]["labels"] == ["none"] and rows["probe:t01"]["labels"] == ["none"]
     assert not any(r["ai_labelled"] for r in rows.values())
@@ -207,3 +208,43 @@ def test_class_lang_report_gives_recall_and_precision_per_language():
     assert r["ur"]["labels"]["abuse"]["recall"] == 0.0 and r["ur"]["any_crisis"]["recall"] == 1.0
     assert r["en"]["any_crisis"]["false_alarm_rate"] == 1.0 and r["ur"]["any_crisis"]["false_alarm_rate"] == 0.0
     assert r["all"]["any_crisis"]["n"] == 3
+
+
+# --- The clinical guide ----------------------------------------------------------------------------
+
+
+def test_child_needs_the_harm_done_to_the_child():
+    assert g.guide_labels(["suicidal", "child"]) == ["suicidal"]
+    assert g.guide_labels(["self_harm", "child"]) == ["self_harm"]
+    assert g.guide_labels(["abuse", "child"]) == ["abuse", "child"]
+    assert g.guide_labels(["child", "harm_to_others"]) == ["child", "harm_to_others"]  # fear of hurting one's baby
+    with pytest.raises(ValueError, match="label the harm"):
+        g.guide_labels(["child"])
+
+
+def test_relabel_decisions_replace_labels_only_for_the_same_text(tmp_path):
+    _write(tmp_path / "t01.part1.jsonl", [
+        {"text": "bhai ne kaha shaadi ki to maar dega", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"]},
+        {"text": "I'm 15 and I want to die", "lang": "en", "labels": ["suicidal", "child"]},
+    ])
+    fixes = {"t01.part1.jsonl:0": {"key": "t01.part1.jsonl:0", "text": "bhai ne kaha shaadi ki to maar dega", "labels": ["abuse"]}}
+    rows = g.read_batches(tmp_path, "t", fixes)
+    assert rows[0]["labels"] == ["abuse"]  # rule 12: a threat to the user is abuse
+    assert rows[1]["labels"] == ["suicidal"]  # rule 13: lone child dropped
+    stale = {"t01.part1.jsonl:0": {"key": "t01.part1.jsonl:0", "text": "something else", "labels": ["abuse"]}}
+    with pytest.raises(ValueError, match="different text"):
+        g.read_batches(tmp_path, "t", stale)
+
+
+def test_the_committed_relabel_file_matches_the_written_batches():
+    if not g.RELABEL.exists():
+        pytest.skip("no relabel decisions yet")
+    g.read_batches(g.WRITTEN, "t")  # raises on any stale decision
+
+
+def test_heldout_rows_follow_the_guide():
+    rows = g.read_batches(g.HELDOUT, "h", {})
+    if not rows:
+        pytest.skip("no held-out batches here")
+    for r in rows:
+        assert not ("child" in r["labels"] and not set(r["labels"]) & {"abuse", "sexual_violence", "harm_to_others"}), r["text"]

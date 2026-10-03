@@ -89,7 +89,40 @@ def batch_of(path: Path) -> str:
     return path.name.split(".")[0]
 
 
-def read_batches(directory: Path, prefix: str) -> list[dict]:
+# --- The clinical guide (docs/clinical/GUARDIAN_LABELS.md) -----------------------------------------
+# The written batches were labelled under LABEL_RULES.md before the guide existed. Where the two
+# disagree on a specific row, a decision in RELABEL (made by reading the row against the guide)
+# replaces its labels; `guide_labels` then applies the one rule that holds for every row.
+
+RELABEL = GUARDIAN_DIR / "relabel_guide_v1.jsonl"
+_CHILD_PARTNERS = {"abuse", "sexual_violence", "harm_to_others"}
+
+
+def guide_labels(labels: list[str]) -> list[str]:
+    """`child` only with the harm done to the child (guide section 1 and rule 13): a minor's own
+    suicidal thoughts or self-harm are `suicidal` / `self_harm`, and the under-18 route handles age."""
+    out = set(labels)
+    if "child" in out and not out & _CHILD_PARTNERS:
+        out.discard("child")
+    if not out:
+        raise ValueError(f"labels {labels} leave nothing once a lone 'child' is dropped; label the harm")
+    return sorted(out, key=crisis_labels().index)
+
+
+def read_relabels(path: Path = RELABEL) -> dict[str, dict]:
+    """{"t03.part1.jsonl:5": {"text": ..., "labels": [...]}} — the row key is file:0-based line."""
+    if not path.exists():
+        return {}
+    out = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            d = json.loads(line)
+            out[d["key"]] = d
+    return out
+
+
+def read_batches(directory: Path, prefix: str, relabels: dict[str, dict] | None = None) -> list[dict]:
+    relabels = read_relabels() if relabels is None else relabels
     rows = []
     for path in sorted(directory.glob(f"{prefix}*.jsonl")):
         with path.open(encoding="utf-8") as f:
@@ -97,9 +130,19 @@ def read_batches(directory: Path, prefix: str) -> list[dict]:
                 if not line.strip():
                     continue
                 r = json.loads(line)
-                row = make_row(r["text"], r["lang"], r["labels"], source="written", author=batch_of(path), generated=True,
-                               ai_labelled=True, commercial_ok=True, tag=r.get("tag", ""))
+                labels = r["labels"]
+                fix = relabels.get(f"{path.name}:{n - 1}")
+                if fix:
+                    if clean_text(fix["text"]) != clean_text(r["text"]):
+                        raise ValueError(f"{path.name}:{n}: relabel decision is for different text; rebuild {RELABEL.name}")
+                    labels = fix["labels"]
                 try:
+                    labels = guide_labels(labels) if labels != ["none"] else labels
+                    row = make_row(r["text"], r["lang"], labels, source="written", author=batch_of(path), generated=True,
+                                   ai_labelled=True, commercial_ok=True, tag=r.get("tag", ""))
+                    for k in ("acuity", "hard_negative", "distress", "who"):
+                        if k in r:
+                            row[k] = r[k]
                     check_row(row)
                 except ValueError as e:
                     raise ValueError(f"{path.name}:{n}: {e}") from None
@@ -108,6 +151,11 @@ def read_batches(directory: Path, prefix: str) -> list[dict]:
 
 
 # --- The eval probes join the held-out set ---------------------------------------------------------
+
+
+# Where the guide labels a probe differently from its category's mapping: s09 is a method comparison
+# (rule 3: any method question is suicidal) about self-harm; s10 is the guide's example C3.
+PROBE_LABELS = {"s09": ["suicidal", "self_harm"], "s10": ["child", "sexual_violence"]}
 
 
 def probe_rows(probes: Path = PROBES) -> list[dict]:
@@ -122,7 +170,7 @@ def probe_rows(probes: Path = PROBES) -> list[dict]:
                 if not line.strip():
                     continue
                 p = json.loads(line)
-                labels = AUTHORED_CATEGORY_LABELS[p["category"]] if p.get("route") == "crisis" else ["none"]
+                labels = PROBE_LABELS.get(p["id"]) or (AUTHORED_CATEGORY_LABELS[p["category"]] if p.get("route") == "crisis" else ["none"])
                 rows.append(make_row(p["text"], p["lang"], labels, source="eval_probe", author=f"probe:{p['id']}",
                                      generated=True, ai_labelled=False, commercial_ok=True, tag=p.get("category") or "therapeutic"))
     return rows
@@ -248,7 +296,7 @@ def authored_rows() -> tuple[list[dict], list[dict]]:
     train, val = split_authored(authored_crisis_texts())
 
     def conv(items):
-        return [make_row(it.text, it.lang, it.labels, source="tl_authored", author="tl_authored", generated=True,
+        return [make_row(it.text, it.lang, guide_labels(it.labels) if it.labels != ["none"] else it.labels, source="tl_authored", author="tl_authored", generated=True,
                          ai_labelled=False, commercial_ok=True, tag="authored") for it in items]
 
     return conv(train), conv(val)
@@ -442,6 +490,11 @@ def build_splits(
     # A validation row's translation would hand its content to training in another script.
     val_en = {norm(r["text"]) for r in val_written}
     mt = [r for r in mt_rows(mt_path) if norm(r["en_text"]) not in val_en] if with_mt else []
+    corrected = {norm(r["text"]): r["labels"] for r in train_written}
+    for r in mt:
+        r["labels"] = corrected.get(norm(r["en_text"]), r["labels"])
+        if r["labels"] != ["none"]:
+            r["labels"] = guide_labels(r["labels"])
     train += a_train + [r for r in mh if r["id"] not in mh_val_ids] + urdu_mh_rows(n_urdu_mh, rng, raw / "urdu_mh.jsonl") + mt
     val = val_written + a_val + mh_val
 
