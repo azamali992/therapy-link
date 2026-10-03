@@ -116,4 +116,5 @@ exec "$server" \
   --no-webui \
   --no-slots \
   --cors-origins localhost \
-  --no-cors-credentials
+  --no-cors-credentials \
+  --swa-full

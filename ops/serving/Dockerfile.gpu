@@ -15,7 +15,7 @@
 
 # Official llama.cpp server image, CUDA build. b10955 is the build the local evals ran on
 # (D:\dev\llama). Pin the digest (@sha256:...) once pulled, so a re-tag can't change what runs.
-ARG LLAMA_IMAGE=ghcr.io/ggml-org/llama.cpp:server-cuda-b10955
+ARG LLAMA_IMAGE=ghcr.io/ggml-org/llama.cpp:server-cuda-b10964
 FROM ${LLAMA_IMAGE}
 
 RUN apt-get update \
