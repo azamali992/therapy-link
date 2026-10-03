@@ -299,12 +299,71 @@ def build_pairs(
     typer.echo(f"{sum(written.values())} new pairs from {len(rows)} prompts → {out}: {dict(written)}")
 
 
-def pairs_from_logged(prompts: list[dict], logged: list[dict], *, rubric: bool = True) -> Iterator[dict]:
+_NAME_ONLY = {
+    "en": {
+        "umang": "You can call Umang on 0311-7786264",
+        "1122": "Rescue 1122 if you are in danger now",
+        "1098": "Madadgaar on 1098",
+        "1099": "the human rights helpline on 1099",
+        "join": ", or ",
+    },
+    "ur": {
+        "umang": "Umang helpline 0311-7786264 par baat ho sakti hai",
+        "1122": "foran khatra ho to Rescue 1122 par call karein",
+        "1098": "Madadgaar 1098 par bhi madad mil sakti hai",
+        "1099": "human rights helpline 1099 bhi hai",
+        "join": "; ",
+    },
+}
+
+
+def strip_claims(text: str, lang: str) -> str:
+    """Replace every sentence that makes an R11 claim about a helpline with its name and number only.
+
+    The numbers the sentence gave are kept, in one plain sentence where the first claim sentence was;
+    any later claim sentence is dropped. Everything else in the reply is left as the model wrote it.
+    """
+    from therapylink_ml.eval import safety_rules
+
+    phrases = _NAME_ONLY["en" if lang == "en" else "ur"]
+    found: list[str] = []
+    spans: list[tuple[int, int]] = []
+    for m in safety_rules.SENTENCE.finditer(text):
+        s = m.group(0)
+        if not (safety_rules.HELPLINE_MENTION.search(s) and safety_rules.HELPLINE_CLAIM.search(s)):
+            continue
+        spans.append(m.span())
+        low = s.lower()
+        for key in ("umang", "1122", "1098", "1099"):
+            hit = ("umang" in low or "0311" in low) if key == "umang" else key in low
+            if hit and key not in found:
+                found.append(key)
+    if not spans:
+        return text
+    order = [k for k in ("umang", "1122", "1098", "1099") if k in found]
+    plain = phrases["join"].join(phrases[k] for k in order)
+    plain = (plain[0].upper() + plain[1:] + ".") if plain else ""
+    out, last = [], 0
+    for i, (a, b) in enumerate(spans):
+        out.append(text[last:a])
+        if i == 0 and plain:
+            out.append(" " + plain if a > 0 else plain)
+        last = b
+    out.append(text[last:])
+    return " ".join("".join(out).split())
+
+
+def pairs_from_logged(prompts: list[dict], logged: list[dict], *, rubric: bool = True, edit_claims: bool = False) -> Iterator[dict]:
     """Policy pairs from samples logs, re-scored with the current rules.
 
     Every logged sample of a prompt (the k=4 pass and a k=8 pass alike) is pooled, so a prompt
     whose first four samples all failed can still pair from its second pass. Prompts not in
     `prompts` are skipped: the prompt files decide what is in the set.
+
+    `edit_claims`: where no sample passes but one fails only on an R11 helpline claim, its claim
+    sentence is replaced with the name and number (strip_claims) and the edited reply is the chosen
+    side (`chosen_source: policy_edit`). The rejected side is the sample breaking the most other
+    rules, or the unedited reply itself when nothing else failed.
     """
     by_id = {p["id"]: p for p in prompts}
     pooled: dict[str, list[dict]] = {}
@@ -314,18 +373,39 @@ def pairs_from_logged(prompts: list[dict], logged: list[dict], *, rubric: bool =
         p = by_id.get(pid)
         if p is None:
             continue
+        bucket = p.get("bucket", "")
         samples = [Sample(s["text"], s.get("truncated", False)) for s in drawn]
-        scores = [score_sample(p["route"], p["lang"], s, rubric=rubric, bucket=p.get("bucket", "")) for s in samples]
+        scores = [score_sample(p["route"], p["lang"], s, rubric=rubric, bucket=bucket) for s in samples]
         picked = pick_pair([s.text for s in samples], scores)
+        source = "policy"
+        if picked is None and edit_claims and not any(s.passed for s in scores):
+            only_claim = [i for i, s in enumerate(scores) if s.failures == ["unverified_claim"]]
+            edited = None
+            for i in sorted(only_claim, key=lambda i: abs(len(samples[i].text.split()) - TARGET_WORDS)):
+                text = strip_claims(samples[i].text, p["lang"])
+                score = score_sample(p["route"], p["lang"], Sample(text), rubric=rubric, bucket=bucket)
+                if score.passed:
+                    edited = (i, text, score)
+                    break
+            if edited is None:
+                continue
+            i, text, score = edited
+            others = [j for j, s in enumerate(scores) if j != i and set(s.failures) - {"unverified_claim"}]
+            rejected = max(others, key=lambda j: len(scores[j].failures)) if others else i
+            samples.append(Sample(text))
+            scores.append(score)
+            picked = (len(samples) - 1, rejected)
+            source = "policy_edit"
         if picked is None:
             continue
         chosen, rejected = picked
         yield {
             "prompt_id": pid,
-            "bucket": p.get("bucket", ""),
+            "bucket": bucket,
             "route": p["route"],
             "lang": p["lang"],
-            "chosen_source": "policy",
+            "chosen_source": source,
+            **({"edited_by": "ai-clinical (R11 claim sentence replaced with name and number)"} if source == "policy_edit" else {}),
             "prompt": fold_system_into_first_user(p["messages"], notes=p.get("notes")),
             "chosen": [{"role": "assistant", "content": samples[chosen].text}],
             "rejected": [{"role": "assistant", "content": samples[rejected].text}],
@@ -356,11 +436,14 @@ def pairs_from_log(
     out: Path = DATA / "dpo_pairs.jsonl",
     failing_out: Path | None = typer.Option(None, help="Also write the prompts where every sample failed (for a k=8 pass)"),
     rubric: bool = True,
+    edit_claims: bool = typer.Option(False, help="Pair an R11-only failure with its claim sentence replaced (policy_edit)"),
+    exclude_ids: Path | None = typer.Option(None, help="File of prompt ids to leave out (one per line), e.g. too close to an eval or gate probe"),
 ) -> None:
     """Rebuild policy pairs offline from samples logs, with the current rules. Overwrites --out."""
-    rows = [r for spec in prompts for r in load_prompts(spec)]
+    skip = set(exclude_ids.read_text(encoding="utf-8").split()) if exclude_ids else set()
+    rows = [r for spec in prompts for r in load_prompts(spec) if r["id"] not in skip]
     logged = [json.loads(line) for path in samples_log for line in _read_jsonl(path)]
-    made = list(pairs_from_logged(rows, logged, rubric=rubric))
+    made = list(pairs_from_logged(rows, logged, rubric=rubric, edit_claims=edit_claims))
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", encoding="utf-8") as f:
         for row in made:
