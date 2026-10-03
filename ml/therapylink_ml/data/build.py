@@ -112,6 +112,65 @@ def build(
     console.print(f"  labeled texts: {len(labeled)} (dropped {lab_dupes} duplicates)")
 
 
+@app.command("refresh")
+def refresh(
+    base: Path = typer.Option(..., "--base", help="An existing corpus directory (conversations.{train,val,test}.jsonl)"),
+    out: Path = typer.Option(..., "--out"),
+    only: list[str] = typer.Option(["tl_authored"], "--only", help="Sources to reload; every other conversation is kept as it is"),
+    seed: int = 13,
+    val_frac: float = 0.03,
+    test_frac: float = 0.03,
+) -> None:
+    """Reload some sources into an existing corpus without downloading the rest again.
+
+    Splits are assigned per source, so re-splitting only the reloaded sources gives the same
+    result as a full build would for them. The other sources keep their rows and splits. Rows held
+    back from training (pending, or AI-reviewed without TL_ACCEPT_AI_CLINICAL_REVIEW=1) stay out
+    exactly as in `build`.
+    """
+    if out.resolve() == base.resolve():
+        raise typer.BadParameter("--out must differ from --base")
+    keep: dict[str, list[Conversation]] = {}
+    for split in ("train", "val", "test"):
+        path = base / f"conversations.{split}.jsonl"
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8") as f:
+            keep[split] = [c for c in (Conversation.model_validate_json(line) for line in f if line.strip()) if c.source not in only]
+    fresh: list[Conversation] = []
+    for d in registry.all_datasets():
+        if d.key in only:
+            if d.kind != "conversation":
+                raise typer.BadParameter(f"{d.key} is not a conversation source")
+            fresh.extend(c for c in (_trim(c) for c in d.loader()) if c is not None)
+    fresh, dupes = dedupe(fresh)
+    assign_splits(fresh, val_frac=val_frac, test_frac=test_frac, seed=seed)
+    for split, items in keep.items():
+        _write_jsonl(out / f"conversations.{split}.jsonl", items + [c for c in fresh if c.split == split])
+    stats_path = base / "stats.json"
+    stats = json.loads(stats_path.read_text(encoding="utf-8")) if stats_path.exists() else {"sources": {}}
+    for key in only:
+        items = [c for c in fresh if c.source == key]
+        splits = Counter(c.split for c in items)
+        stats["sources"][key] = {
+            "final": len(items),
+            "train": splits.get("train", 0),
+            "val": splits.get("val", 0),
+            "test": splits.get("test", 0),
+            "refreshed": True,
+        }
+    stats["refreshed_sources"] = list(only)
+    (out / "stats.json").write_text(json.dumps(stats, indent=2), encoding="utf-8")
+    card = base / "DATA_CARD.md"
+    if card.exists():
+        note = (
+            f"\n\n## Refreshed sources\n\n`tl-data refresh` reloaded {', '.join(only)} into this corpus "
+            f"({len(fresh)} conversations, {dupes} duplicates dropped); the other sources are unchanged from the base build.\n"
+        )
+        (out / "DATA_CARD.md").write_text(card.read_text(encoding="utf-8") + note, encoding="utf-8")
+    console.print(f"[green]wrote[/] {out}: {len(fresh)} reloaded conversations from {', '.join(only)}")
+
+
 def _summarise(datasets, convs, labeled, stats, conv_dupes, lab_dupes, seed) -> dict:
     per_source: dict[str, dict] = {}
     for d in datasets:
