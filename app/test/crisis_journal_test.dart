@@ -54,7 +54,6 @@ Future<_Api> _pump(WidgetTester tester, {bool offline = false}) async {
         theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildTheme(Brightness.dark),
       ),
     ),
   );

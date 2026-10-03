@@ -73,7 +73,6 @@ Future<ProviderContainer> pumpGated(
         theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildTheme(Brightness.dark),
         builder: (context, child) => PrivacyGate(onQuickExit: () => fakes.resets++, child: child!),
         home: home,
       ),

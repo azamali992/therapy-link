@@ -31,7 +31,6 @@ Future<ProviderContainer> pumpApp(
         theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildTheme(brightness),
         home: child,
       ),
     ),
