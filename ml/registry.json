@@ -5,15 +5,15 @@
   "models_dir_hint": "D:\\dev\\models",
   "serve": {
     "base": "gemma-4-e2b-it-q4_k_m",
-    "adapter": "eve-sft-v16c-e2",
-    "prompt_id": "eve-v2",
+    "adapter": "eve-dpo-v17",
+    "prompt_id": "eve-v3",
     "llama_cpp_build": "b10955"
   },
   "prompts": {
     "eve-v3": {
       "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V3",
       "sha256": "b9ed8266ee0ce9c475384b3a26bc95832ec0973b36b59f91918c609b1e351357",
-      "notes": "V2 without \"(free, 24/7)\" after Umang's number (red line R11: Umang's hours and cost are unverified). No other change. Training prompt from v17 on. The app keeps sending V2 (eve_engine.dart) until a V3-trained adapter is served; a V3 adapter must never be served with V2."
+      "notes": "V2 without \"(free, 24/7)\" after Umang's number (red line R11: Umang's hours and cost are unverified). No other change. Training prompt from v17 on, and the app's served prompt since 2026-10-03 (eve-dpo-v17). A V3 adapter must never be served with V2, nor a V2 adapter with V3."
     },
     "eve-v2": {
       "source": "therapylink_ml.prompts:EVE_SYSTEM_PROMPT_V2",

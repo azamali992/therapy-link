@@ -12,8 +12,8 @@ ONNX_GUARDIAN = Path(__file__).resolve().parents[2] / "app" / "lib" / "core" / "
 
 def test_the_bundle_ships_exactly_the_files_the_app_downloads_and_verifies():
     source = ONNX_GUARDIAN.read_text(encoding="utf-8")
-    m = re.search(r"const _files = \[(.*?)\];", source)
-    assert m, "onnx_guardian.dart no longer declares _files"
+    m = re.search(r"const guardianFileNames = \[(.*?)\];", source)
+    assert m, "onnx_guardian.dart no longer declares guardianFileNames"
     assert tuple(re.findall(r"'([^']+)'", m.group(1))) == b.APP_FILES
     assert "const _verifiedMarker = 'verified.json'" in source
 

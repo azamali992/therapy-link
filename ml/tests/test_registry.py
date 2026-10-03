@@ -31,13 +31,13 @@ def test_the_real_registry_is_consistent():
     assert registry.check_structure(registry.load()) == []
 
 
-def test_v16c_e2_is_served_with_the_v2_prompt_and_dpo_is_rejected():
+def test_dpo_v17_is_served_with_the_v3_prompt_and_dpo_v16_is_rejected():
     reg = registry.load()
     base, adapter = registry.serving(reg)
-    assert adapter["id"] == "eve-sft-v16c-e2" and adapter["status"] == "candidate"
+    assert adapter["id"] == "eve-dpo-v17" and adapter["status"] == "candidate"
     assert base["file"] == "gemma-4-E2B-it-Q4_K_M.gguf"
     assert adapter["prompt_sha256"] == hashlib.sha256(prompts.SERVED_SYSTEM_PROMPT.encode()).hexdigest()
-    assert adapter["prompt_sha256"].startswith("4ddd5346") and adapter["prompt_sha256"].endswith("c135202c")
+    assert adapter["prompt_sha256"].startswith("b9ed8266") and adapter["prompt_sha256"].endswith("1e351357")
     dpo = registry.by_id(reg)["eve-dpo-v16"]
     assert dpo["status"] == "rejected" and dpo["status_reason"]
     with pytest.raises(ValueError, match="rejected"):
@@ -100,4 +100,4 @@ def test_show_reports_the_served_pair_as_unapproved(tmp_path):
     r = runner.invoke(registry.app, ["show", "--registry", str(path)])
     assert r.exit_code == 0, r.output
     out = json.loads(r.output)
-    assert out["adapter"]["id"] == "eve-sft-v16c-e2" and out["approved"] is False
+    assert out["adapter"]["id"] == "eve-dpo-v17" and out["approved"] is False

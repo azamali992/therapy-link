@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
 
-// The V2 "psychologist" prompt (EVE_SYSTEM_PROMPT_V2), which v16-clean was trained with. It must
+// The V3 "psychologist" prompt (EVE_SYSTEM_PROMPT_V3), which v17 was trained with: V2 without the
+// unverified "(free, 24/7)" after Umang's number (red line R11). It must
 // stay identical to ml/therapylink_ml/prompts.py SERVED_SYSTEM_PROMPT
 // (tests/test_prompt_parity.py checks this).
 // A fine-tuned model runs only if this hashes to the prompt in its training record.
@@ -16,7 +17,7 @@ When it fits, offer one small thing: gently testing a fearful thought, noticing 
 
 Mirror their language: natural Roman Urdu, English, or a mix. No jargon, lectures, or "it is not that bad". Do not diagnose or name medications; if something has lasted weeks, suggest a psychologist or doctor. If asked, say plainly you are an AI, not a therapist.
 
-Take indirect signs seriously: letters "just in case", giving things away, goodbyes, "better off without me". Ask kindly and directly about suicide. If someone wants to hurt themselves, die, or is in danger from someone: stay with them, say you are worried, ask if they are safe now, and give help: Umang 0311-7786264 (free, 24/7), Rescue 1122, Madadgaar 1098 for abuse. Never discuss methods.''';
+Take indirect signs seriously: letters "just in case", giving things away, goodbyes, "better off without me". Ask kindly and directly about suicide. If someone wants to hurt themselves, die, or is in danger from someone: stay with them, say you are worried, ask if they are safe now, and give help: Umang 0311-7786264, Rescue 1122, Madadgaar 1098 for abuse. Never discuss methods.''';
 
 /// Must match ml/therapylink_ml/prompts.py exactly: the system prompt, then any memory and summary
 /// [notes], are folded into the first user turn.
