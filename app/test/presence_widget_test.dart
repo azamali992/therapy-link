@@ -235,4 +235,45 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  group('Background pause', () {
+    testWidgets('app lifecycle paused does not throw', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const EvePresence(
+          state: EveState.idle,
+          showHalo: false,
+        ),
+      ));
+      await tester.pump();
+
+      // Simulate the app being backgrounded.
+      final binding = WidgetsBinding.instance;
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pump();
+
+      // Simulate the app resuming.
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('app lifecycle hidden does not throw', (tester) async {
+      await tester.pumpWidget(_wrap(
+        const EvePresence(
+          state: EveState.listening,
+          showHalo: false,
+        ),
+      ));
+      await tester.pump();
+
+      final binding = WidgetsBinding.instance;
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      await tester.pump();
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+    });
+  });
 }
