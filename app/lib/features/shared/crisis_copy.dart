@@ -10,6 +10,11 @@ import '../../core/ml/guardian.dart';
 // Wording that follows the app's locale, such as the notices shown while Eve's chat is paused,
 // lives in the ARB files instead (eveSafetyNotReady*, eveUnavailable*), still pending review.
 //
+// The selfHarm, harmToOthers and medical titles and bodies came later (2026-10-03, with Guardian v1)
+// and have NOT had the AI clinical review yet. Engineering wrote them to red-lines.md R5, R7 and R11:
+// worry, one or two direct safety questions, the right line by name, no medical advice, no claims
+// about the services. They need the same review before the pilot.
+//
 // Numbers never appear in these strings: they come from helplines.dart, the one table a human
 // verifies. Nothing here says "free" or "24/7"; those claims wait for that verification.
 
