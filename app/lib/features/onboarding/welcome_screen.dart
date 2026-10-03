@@ -1,8 +1,9 @@
 /// /welcome — first screen new users see.
 ///
 /// Always rendered in Eve's night (forced dark) regardless of the device theme.
-/// Shows: language picker, "Someone to talk to, day or night.", the three
-/// honest facts, Continue CTA, and a "Have an account? Sign in" link.
+/// Shows: brand + language picker in the top clear zone, then "Someone to talk
+/// to, day or night." with three honest facts in the copy zone, Continue CTA,
+/// and a "Have an account? Sign in" link.
 /// The Get help button is reachable before any account exists.
 library;
 
@@ -23,7 +24,7 @@ import '../../ui/presence/presence.dart';
 import '../shared/crisis_sheet.dart' hide GetHelpButton;
 
 // Dark overlay gradient matching the reference design.
-// transparent 48% → night@55% at 66% → solid night at 92%.
+// transparent 48% -> night@55% at 66% -> solid night at 92%.
 const _kOverlay = LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
@@ -44,7 +45,7 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 }
 
 class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
-  // 0 = English, 1 = Roman Urdu, 2 = Urdu script (phase 2 — shown disabled)
+  // 0 = English, 1 = Roman Urdu, 2 = Urdu script (phase 2 - shown disabled)
   int _langIndex = 0;
 
   void _continue() {
@@ -67,7 +68,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Force dark — Eve lives in her own night in both OS themes.
+    // Force dark: Eve lives in her own night in both OS themes.
     return Theme(
       data: buildTheme(Brightness.dark),
       child: _WelcomeBody(
@@ -81,7 +82,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// Body — stateless; state is held by _WelcomeScreenState.
+// Body -- stateless; state is held by _WelcomeScreenState.
 // ---------------------------------------------------------------------------
 
 class _WelcomeBody extends StatelessWidget {
@@ -106,17 +107,17 @@ class _WelcomeBody extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // ── Eve hero: full-bleed, stays above the fold ─────────────────
+          // Eve hero: full-bleed, stays above the fold
           Positioned.fill(child: EveHero()),
 
-          // ── Dark gradient: fades from transparent to solid night ────────
+          // Dark gradient: fades from transparent to solid night
           const Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(gradient: _kOverlay),
             ),
           ),
 
-          // ── Foreground content ──────────────────────────────────────────
+          // Foreground content
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,18 +137,26 @@ class _WelcomeBody extends StatelessWidget {
                   ),
                 ),
 
+                // Language picker sits in the clear top zone, never over Eve.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                      Jugnu.s20, Jugnu.s12, Jugnu.s20, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: _LanguagePicker(
+                      selected: langIndex,
+                      onSelect: onLangSelect,
+                    ),
+                  ),
+                ),
+
                 // Spacer pushes main copy into Eve's clear lower 40%.
                 const Spacer(),
 
-                // Main body: language picker, title, facts
+                // Main body: title + facts (picker now lives in top zone above)
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: Jugnu.s20),
-                  child: _MainCopy(
-                    langIndex: langIndex,
-                    onLangSelect: onLangSelect,
-                    l: l,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: Jugnu.s20),
+                  child: _MainCopy(l: l),
                 ),
 
                 // Footer: CTA + sign-in link
@@ -264,9 +273,9 @@ class _LanguagePicker extends StatelessWidget {
                 onSelect: onSelect,
                 textStyle: Theme.of(context).textTheme.labelMedium,
               ),
-              // Urdu script — phase 2: shown disabled with "jald" tooltip.
+              // Urdu script -- phase 2: shown disabled with "jald" tooltip.
               Semantics(
-                label: 'Urdu script — coming soon',
+                label: 'Urdu script -- coming soon',
                 button: true,
                 enabled: false,
                 child: Tooltip(
@@ -323,8 +332,7 @@ class _LangOption extends StatelessWidget {
         onTap: () => onSelect(index),
         child: AnimatedContainer(
           duration: Jugnu.motionPress,
-          constraints:
-              const BoxConstraints(minHeight: Jugnu.minTarget),
+          constraints: const BoxConstraints(minHeight: Jugnu.minTarget),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(999),
@@ -354,18 +362,12 @@ class _LangOption extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Main copy: language picker + title + facts
+// Main copy: title + facts (language picker now lives in top bar area)
 // ---------------------------------------------------------------------------
 
 class _MainCopy extends StatelessWidget {
-  const _MainCopy({
-    required this.langIndex,
-    required this.onLangSelect,
-    required this.l,
-  });
+  const _MainCopy({required this.l});
 
-  final int langIndex;
-  final ValueChanged<int> onLangSelect;
   final AppLocalizations l;
 
   @override
@@ -375,9 +377,6 @@ class _MainCopy extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _LanguagePicker(selected: langIndex, onSelect: onLangSelect),
-        const SizedBox(height: Jugnu.s16),
-
         // Title: Unbounded 300, 26sp, -0.02em
         Text(
           'Someone to talk to, day or night.',
@@ -408,12 +407,13 @@ class _Facts extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<JugnuColors>()!;
 
+    // No em or en dashes in user-visible text.
     const facts = [
       (JugnuIcons.info, 'Eve is an AI companion,', ' not a therapist.'),
       (
         JugnuIcons.translate,
-        'English and Roman Urdu',
-        ' — mixed is fine. She understands both.'
+        'English and Roman Urdu,',
+        ' mixed is fine. She understands both.'
       ),
       (
         JugnuIcons.phoneLock,
