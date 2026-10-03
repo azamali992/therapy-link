@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:ui' show Locale, PlatformDispatcher;
 
@@ -14,6 +15,20 @@ import 'time_zone.dart';
 /// The upload for a queued mood row, carrying the row's client id.
 MoodPointUpload moodUploadOf(MoodQueueData row) =>
     MoodPointUpload(valence: row.valence, emotion: row.emotion, source: row.source, recordedAt: row.recordedAt, clientId: moodClientId(row.id, row.recordedAt));
+
+/// The server reported that Eve is unavailable (upstream model failure).
+///
+/// Thrown by [ApiClient.cloudChatStream] when the server emits
+/// `data: {"error":"eve_resting"}`.  The [EveController] catches this inside
+/// its `_generate` method (broad `catch (e)`) and returns [eveFailureReply],
+/// showing Eve's calm "I'm having trouble replying" message without crashing
+/// the session or triggering crisis routing.
+class EveRestingException implements Exception {
+  const EveRestingException();
+
+  @override
+  String toString() => 'EveRestingException: Eve is resting (upstream unavailable)';
+}
 
 /// The server said too many requests (429). [retryAfter] is its Retry-After in seconds, when given.
 /// Still a [DioException], so existing handlers keep working.
@@ -190,8 +205,22 @@ class ApiClient {
   Future<String> cloudChat(List<Map<String, String>> messages, {int maxTokens = 450}) async =>
       (await _dio.post('/inference/chat', data: {'messages': messages, 'max_tokens': maxTokens})).data['reply'] as String;
 
-  /// Calls POST /inference/chat with Accept: text/event-stream and yields SSE chunks.
-  /// The server may not support streaming; falls back to [cloudChat] if it does not.
+  /// Calls POST /inference/chat with stream=true and yields Eve's reply tokens.
+  ///
+  /// ## Eve-wire SSE contract
+  ///
+  /// The server normalises the upstream OpenAI SSE stream into these events:
+  ///
+  /// - `data: {"delta":"<text>"}` — one text piece; this method yields the delta.
+  /// - `data: {"done":true,"finish_reason":"<reason>"}` — normal end of stream.
+  /// - `data: [DONE]` — alternative normal-end marker.
+  /// - `data: {"error":"eve_resting"}` — upstream failure; throws [EveRestingException].
+  ///
+  /// Bytes are decoded with UTF-8 before line splitting, so multi-byte characters
+  /// (Urdu, emoji, smart quotes) are never corrupted by raw byte slicing.
+  ///
+  /// If the server does not support streaming (DioException), this method falls
+  /// back to [cloudChat] and trickles the reply word-by-word.
   Stream<String> cloudChatStream(List<Map<String, String>> messages, {int maxTokens = 450}) async* {
     try {
       final response = await _dio.post<ResponseBody>(
@@ -199,22 +228,29 @@ class ApiClient {
         data: {'messages': messages, 'max_tokens': maxTokens, 'stream': true},
         options: Options(responseType: ResponseType.stream, headers: {'Accept': 'text/event-stream'}),
       );
-      final stream = response.data!.stream;
-      var buf = '';
-      await for (final chunk in stream) {
-        buf += String.fromCharCodes(chunk);
-        // SSE: lines starting with 'data: '
-        while (buf.contains('\n')) {
-          final idx = buf.indexOf('\n');
-          final line = buf.substring(0, idx).trim();
-          buf = buf.substring(idx + 1);
-          if (line.startsWith('data: ')) {
-            final payload = line.substring(6);
-            if (payload == '[DONE]') return;
-            yield payload;
-          }
+      // Decode bytes as UTF-8, then split on line boundaries.  Using utf8.decoder
+      // instead of String.fromCharCodes prevents corruption of multi-byte sequences
+      // (Urdu, emoji, smart quotes) when a chunk boundary falls mid-character.
+      // Cast to Stream<List<int>> so utf8.decoder's StreamTransformer<List<int>,String>
+      // signature is satisfied (Uint8List is a List<int> subtype but Dart requires the cast).
+      final lines = response.data!.stream.cast<List<int>>().transform(utf8.decoder).transform(const LineSplitter());
+      await for (final line in lines) {
+        if (!line.startsWith('data: ')) continue;
+        final payload = line.substring(6);
+        if (payload == '[DONE]') return;
+        final Map<String, dynamic> obj;
+        try {
+          obj = jsonDecode(payload) as Map<String, dynamic>;
+        } on FormatException {
+          continue; // malformed event — skip
         }
+        if (obj['done'] == true) return;
+        if (obj.containsKey('error')) throw const EveRestingException();
+        final delta = obj['delta'];
+        if (delta is String && delta.isNotEmpty) yield delta;
       }
+    } on EveRestingException {
+      rethrow; // propagate to EveController._generate where all engine errors are caught
     } on DioException {
       // Server does not support streaming; fall back to non-streaming path and trickle the words.
       final text = await cloudChat(messages, maxTokens: maxTokens);
