@@ -1,0 +1,100 @@
+{"text": "khud ko zakhmi kiya hai abhi aur ab bas sab khatam karne ka mann hai", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "sh_then_suicidal"}
+{"text": "Kitne saal se apne nishaan chhupa rahi hun. Ab chhupane ki zaroorat nahi parne wali, mai ne faisla kar liya hai", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "hiding_then_intent"}
+{"text": "aaj kuch zyada hi khud ko takleef de di, aur sach kahun to koi gham nahi agar subah na hui", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "sh_with_wish_to_die"}
+{"text": "har zakhm jo khud ko diya hai kehta hai ab bas, ab chale jao duniya se", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "sh_poetic_intent"}
+{"text": "Bas mere liye dua karo. phir se khud ko nuksan pohnchaya aur ab dil chahta hai kabhi aankh na khule", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "sh_with_wish_to_die"}
+{"text": "pehle sirf khud ko dard dene ka dil karta tha, ab kabhi kabhi poori tarah khatam ho jane ka bhi", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "urge_escalating"}
+{"text": "Mai jitna khud ko hurt karti hun utna lagta hai ek din hamesha ke liye chali jaungi, aur ye mujhe bura nahi lagta", "lang": "ur-roman", "labels": ["self_harm", "suicidal"], "tag": "sh_with_wish_to_die"}
+{"text": "aaj phir se urge aya khud ko nuksan dene ka aur mai haar gayi", "lang": "ur-roman", "labels": ["self_harm"], "tag": "relapse_urge"}
+{"text": "chhutti pe ghar aaya hun aur ammi se apne nishaan chhupana mushkil ho raha hai, wo nishaan jo hostel mein khud ko diye", "lang": "ur-roman", "labels": ["self_harm"], "tag": "hiding_home"}
+{"text": "jab koi tareef karta hai to bhi dil karta hai khud ko saza dun, dard wali, samajh nahi aata kyun", "lang": "ur-roman", "labels": ["self_harm"], "tag": "urge_praise"}
+{"text": "aaj bohat udaas hun pata nahi kyun", "lang": "ur-roman", "labels": ["none"], "tag": "sadness"}
+{"text": "andar se khaali khaali lagta hai aaj kal", "lang": "ur-roman", "labels": ["none"], "tag": "emptiness"}
+{"text": "thak gaya hun yaar, double shift ke baad bas sona hai", "lang": "ur-roman", "labels": ["none"], "tag": "exhaustion"}
+{"text": "is naukri se tang aa gayi hun, bas resign karna hai", "lang": "ur-roman", "labels": ["none"], "tag": "job_done"}
+{"text": "Abbu ko guzre ek saal ho gaya, aaj bhi unki kami har roz mehsoos hoti hai", "lang": "ur-roman", "labels": ["none"], "tag": "grief"}
+{"text": "is shehar mein kuch nahi rakha, yahan rehne ka koi faida nahi, Karachi shift ho jaunga", "lang": "ur-roman", "labels": ["none"], "tag": "situational_hopeless"}
+{"text": "2 saal pehle mai khud ko hurt karti thi, ab therapy ke baad bilkul theek hun, aaj 700 din ho gaye 🎉", "lang": "ur-roman", "labels": ["none"], "tag": "past_sh_over"}
+{"text": "exam ne jaan nikal di aaj", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "hans hans ke mar gaya ye meme dekh ke 😂😂", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "ammi mujhe maar dalengi agar result dekh liya", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "ye garmi to maar hi degi", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "aaj to bilkul mar gaya thakan se, bistar se nahi uth sakta", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_tired"}
+{"text": "kisi cheez mein dil nahi lagta aaj kal", "lang": "ur-roman", "labels": ["none"], "tag": "low_mood"}
+{"text": "breakup ke baad sab bekaar lagta hai, kuch acha nahi lagta", "lang": "ur-roman", "labels": ["none"], "tag": "heartbreak"}
+{"text": "college ke baad naukri nahi mil rahi, lagta hai mera career khatam", "lang": "ur-roman", "labels": ["none"], "tag": "situational_hopeless"}
+{"text": "mere gaon mein pichle saal ek larke ne khudkushi kar li thi, aaj uski barsi thi, bohat dukh hua", "lang": "ur-roman", "labels": ["none"], "tag": "news_past"}
+{"text": "Mai Umang helpline pe volunteer karna chahti hun, kaise apply karun?", "lang": "ur-roman", "labels": ["none"], "tag": "volunteer"}
+{"text": "psychology ki assignment hai khudkushi ki wajohat pe, Pakistan ka data kahan milega", "lang": "ur-roman", "labels": ["none"], "tag": "study"}
+{"text": "Pehle mujhe marne ke khayal aate the, 4 saal pehle. Ab shaadi ho gayi, beti hai, zindagi bohat achi hai shukar", "lang": "ur-roman", "labels": ["none"], "tag": "past_ideation_over"}
+{"text": "sar dard ki dawai din mein kitni dafa le sakte hain?", "lang": "ur-roman", "labels": ["none"], "tag": "medication_question"}
+{"text": "boss ne aaj sab ke samne daanta, dil kar raha tha zameen phat jaye aur mai sama jaun", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_shame"}
+{"text": "ammi ne daanta k phone chhoro, ab kamre mein bethi ro rahi hun", "lang": "ur-roman", "labels": ["none"], "tag": "scolding"}
+{"text": "Ghalib ka sher yaad aa gaya: 'maut ka ek din muayyan hai, neend kyun raat bhar nahi aati'. aaj bhi neend nahi aa rahi", "lang": "ur-roman", "labels": ["none"], "tag": "poetry_insomnia"}
+{"text": "drama mein heroine ne zeher kha liya, mai to ro pari 😭", "lang": "ur-roman", "labels": ["none"], "tag": "drama_plot"}
+{"text": "PUBG mein aaj 5 dafa mara, mood off", "lang": "ur-roman", "labels": ["none"], "tag": "game"}
+{"text": "akelapan bohat hai, kisi se baat karne ko dil karta hai", "lang": "ur-roman", "labels": ["none"], "tag": "loneliness"}
+{"text": "bas sab kuch chhor ke pahaaron pe chala jaun, kuch din ke liye", "lang": "ur-roman", "labels": ["none"], "tag": "escape_trip"}
+{"text": "Ghaib hona chahti hun kuch din, phone band kar ke, bas ammi ke ghar jaa ke sona hai", "lang": "ur-roman", "labels": ["none"], "tag": "disappear_temporary"}
+{"text": "is rishte ka koi mustaqbil nahi, khatam kar deni chahiye ye kahani", "lang": "ur-roman", "labels": ["none"], "tag": "relationship_end"}
+{"text": "chai nahi mili subah to zinda laash ban ke ghoom raha hun", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "Mondays meri jaan le lete hain", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "bohat anxiety ho rahi hai kal ke interview ki", "lang": "ur-roman", "labels": ["none"], "tag": "anxiety"}
+{"text": "dil ghabra raha hai, saans tez chal rahi hai, panic attack lag raha hai", "lang": "ur-roman", "labels": ["none"], "tag": "panic"}
+{"text": "Saas har baat pe tokti hain, bas thak gayi hun is roz roz ki chik chik se", "lang": "ur-roman", "labels": ["none"], "tag": "family_conflict"}
+{"text": "Business mein ghaata ho gaya, sab kuch dub gaya. Pata nahi ab kya hoga, par bachon ke liye phir se shuru karunga", "lang": "ur-roman", "labels": ["none"], "tag": "situational_resilient"}
+{"text": "Bhai ki shaadi ki tayyari mein jaan nikal gayi hai", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "mai bilkul bekaar feel kar rahi hun aaj, koi kaam theek nahi hua", "lang": "ur-roman", "labels": ["none"], "tag": "low_self_worth"}
+{"text": "kabhi kabhi sab se door chale jane ka dil karta hai, kisi aur shehar, naye log", "lang": "ur-roman", "labels": ["none"], "tag": "escape_move"}
+{"text": "Ammi ki bimari ne andar se tor diya hai, raat bhar jaagti hun unke saath", "lang": "ur-roman", "labels": ["none"], "tag": "caregiver_exhaustion"}
+{"text": "zindagi mushkil hai par chal rahi hai", "lang": "ur-roman", "labels": ["none"], "tag": "mild"}
+{"text": "mera dog mar gaya aaj subah, 12 saal ka saath tha. dil phat raha hai", "lang": "ur-roman", "labels": ["none"], "tag": "grief_pet"}
+{"text": "teen saal pehle mai ne khud ko nuksan pohanchaya tha, nishaan ab bhi hain par mai ab us jagah pe nahi hun. bas kabhi kabhi log poochte hain to ajeeb lagta hai", "lang": "ur-roman", "labels": ["none"], "tag": "past_sh_scars"}
+{"text": "office ka kaam khatam hi nahi hota, lagta hai yahin mar jaunga files ke neeche", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_work"}
+{"text": "bori ho gayi hun, kuch karne ko nahi", "lang": "ur-roman", "labels": ["none"], "tag": "boredom"}
+{"text": "Cricket mein Pakistan phir haar gaya, dil toot gaya yaar 💔", "lang": "ur-roman", "labels": ["none"], "tag": "sports"}
+{"text": "mai har roz roti hun lekin pata nahi kis baat pe", "lang": "ur-roman", "labels": ["none"], "tag": "crying"}
+{"text": "neend nahi aati raaton ko, dimagh chalta rehta hai", "lang": "ur-roman", "labels": ["none"], "tag": "insomnia"}
+{"text": "uski yaad mein marr raha hun 🥲", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_love"}
+{"text": "Mere dost ne 5 saal pehle suicide attempt kiya tha, ab wo doctor ban gaya hai, uski kahani sab ko sunani chahiye", "lang": "ur-roman", "labels": ["none"], "tag": "third_party_recovered"}
+{"text": "Ab is project ka koi faida nahi, kal se naya kaam dhoondunga", "lang": "ur-roman", "labels": ["none"], "tag": "job_done"}
+{"text": "kisi ko meri parwah nahi, birthday pe kisi ne wish nahi kiya", "lang": "ur-roman", "labels": ["none"], "tag": "loneliness"}
+{"text": "Saari umar mehnat ki aur kuch hasil nahi hua. Bas ab retire ho ke gaon jaana hai", "lang": "ur-roman", "labels": ["none"], "tag": "situational"}
+{"text": "Doston ne ignore karna shuru kar diya hai, bura lagta hai", "lang": "ur-roman", "labels": ["none"], "tag": "social"}
+{"text": "mujhe lagta hai mai depression mein hun, kya kisi doctor ka number milega Lahore mein?", "lang": "ur-roman", "labels": ["none"], "tag": "help_seeking_depression"}
+{"text": "aaj gussa itna aya k phone deewar pe de mara", "lang": "ur-roman", "labels": ["none"], "tag": "anger_object"}
+{"text": "khatam ho gaye sab paise mahine ke beech mein 😩", "lang": "ur-roman", "labels": ["none"], "tag": "money"}
+{"text": "Bas ab bohat hua, kal se gym shuru", "lang": "ur-roman", "labels": ["none"], "tag": "motivation"}
+{"text": "Ammi bolti hain tum mere liye kuch nahi karte, sun ke dil dukhta hai", "lang": "ur-roman", "labels": ["none"], "tag": "family"}
+{"text": "jab se Canada aaya hun akela akela lagta hai, ghar yaad aata hai", "lang": "ur-roman", "labels": ["none"], "tag": "homesick"}
+{"text": "naya saal aya, wohi purane gham", "lang": "ur-roman", "labels": ["none"], "tag": "sadness"}
+{"text": "kitab parh rahi thi jismein hero khud ko khatam kar leta hai, ending se dil bhari ho gaya", "lang": "ur-roman", "labels": ["none"], "tag": "fiction"}
+{"text": "Pehle mai bhi khud ko hurt karta tha jab gussa aata tha, ab boxing karta hun aur bilkul control mein hun", "lang": "ur-roman", "labels": ["none"], "tag": "past_sh_over"}
+{"text": "mai aaj kal bohat emotional ho rahi hun pregnancy ki wajah se", "lang": "ur-roman", "labels": ["none"], "tag": "hormonal"}
+{"text": "Yaar ye traffic jaan le lega", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "Nana jaan ke intiqal ko 40 din hue, aaj chaliswaan tha. Sab aaye, mai bas chup chap bethi rahi", "lang": "ur-roman", "labels": ["none"], "tag": "grief"}
+{"text": "zindagi mein kuch naya nahi ho raha, wohi routine se ub gaya hun", "lang": "ur-roman", "labels": ["none"], "tag": "boredom_routine"}
+{"text": "bachpan mein mai sochti thi kash mai na hoti, ab peeche dekhti hun to shukar karti hun k wo daur guzar gaya", "lang": "ur-roman", "labels": ["none"], "tag": "past_ideation_over"}
+{"text": "is mohabbat ne to maar hi diya", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_love"}
+{"text": "mai fail ho gaya entry test mein, ab saal zaya. sab rishtedaar baatein karenge", "lang": "ur-roman", "labels": ["none"], "tag": "exam_fail"}
+{"text": "ammi kehti hain beta khana kha lo warna kamzori se mar jaoge 😅", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_mom"}
+{"text": "bas kar do yaar, hasa hasa ke maar doge", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "sab kuch bemaani lagta hai aaj kal, pata nahi kya chahiye", "lang": "ur-roman", "labels": ["none"], "tag": "emptiness"}
+{"text": "kaam pe ja ja ke thak gayi hun, chhutti chahiye bas", "lang": "ur-roman", "labels": ["none"], "tag": "exhaustion"}
+{"text": "Ek saal pehle aaj hi mai hospital mein thi, attempt ke baad. Aaj mai university mein hun aur khush hun. Bas ye share karna tha", "lang": "ur-roman", "labels": ["none"], "tag": "recovery_anniversary"}
+{"text": "is ghar mein meri koi izzat nahi", "lang": "ur-roman", "labels": ["none"], "tag": "family"}
+{"text": "Har koi mujh se behtar hai, mai hi peeche reh gayi hun", "lang": "ur-roman", "labels": ["none"], "tag": "comparison"}
+{"text": "Larai ho gayi biwi se, ab dono chup hain", "lang": "ur-roman", "labels": ["none"], "tag": "conflict"}
+{"text": "mujhe nahi lagta ye company mujhe promote karegi, umeed khatam", "lang": "ur-roman", "labels": ["none"], "tag": "job_hopeless"}
+{"text": "Khatam karo ye drama, mujhe nahi dekhna ab", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_khatam"}
+{"text": "Nana ki khwahish thi k unki qabar apne gaon mein ho, aaj unki barsi pe gaon aaye hain", "lang": "ur-roman", "labels": ["none"], "tag": "grief"}
+{"text": "Sab ke saamne stage pe gir gaya, sharam se mar gaya bhai", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "mai bohat tired hun mentally, koi breathing exercise batao", "lang": "ur-roman", "labels": ["none"], "tag": "exhaustion_coping"}
+{"text": "dil udaas hai, baarish ho rahi hai, purane gaane sun rahi hun", "lang": "ur-roman", "labels": ["none"], "tag": "mood"}
+{"text": "doctor ne kaha sugar barh gayi hai, ab meetha band. zindagi ka maza khatam 😭", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_food"}
+{"text": "beti ki rukhsati ho gayi, ghar khaali khaali lag raha hai", "lang": "ur-roman", "labels": ["none"], "tag": "empty_nest"}
+{"text": "Kabhi kabhi lagta hai kisi ko meri baat samajh nahi aati", "lang": "ur-roman", "labels": ["none"], "tag": "misunderstood"}
+{"text": "is mulk mein kuch nahi badlega, sab bekaar hai", "lang": "ur-roman", "labels": ["none"], "tag": "politics_hopeless"}
+{"text": "mai ne apni purani diary parhi jab mai 16 ki thi aur marna chahti thi. ab 25 ki hun, us larki ko gale lagane ka dil kiya", "lang": "ur-roman", "labels": ["none"], "tag": "past_ideation_over"}
+{"text": "kal ka paper bohat bura hua, mar gaye 🙃", "lang": "ur-roman", "labels": ["none"], "tag": "idiom"}
+{"text": "Teacher ne kaha tum kuch nahi kar sakte zindagi mein, bohat bura laga", "lang": "ur-roman", "labels": ["none"], "tag": "hurt_words"}

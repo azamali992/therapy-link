@@ -1,0 +1,80 @@
+{"text": "wo aadmi jis ne abbu ko dhoka diya, main uske poore ghar ko nahi chorunga. sab tay kar liya hai", "lang": "mixed", "labels": ["harm_to_others"], "tag": "revenge_family"}
+{"text": "i've got the knife in my bag right now. wo class se niklega to bas", "lang": "mixed", "labels": ["harm_to_others"], "tag": "weapon_now"}
+{"text": "behen ki izzat pe baat aayi hai. us larke ko main khatam kar dunga, khandan ki baat hai", "lang": "mixed", "labels": ["harm_to_others"], "tag": "honour_intent"}
+{"text": "padosi ne kal meri maa ko gaali di. aaj raat jab wo wapas aaye ga I'm going to hurt him so bad he won't get up", "lang": "mixed", "labels": ["harm_to_others"], "tag": "neighbour_intent"}
+{"text": "sometimes I look at my 2 year old aur dimagh mein bure khayal aate hain. I'm scared of myself, bathroom mein khud ko band kar liya", "lang": "mixed", "labels": ["harm_to_others", "child"], "tag": "parent_fear_toddler"}
+{"text": "jo teacher meri beti ko maarta hai, kal school ja ke usse aisi saza dunga ke yaad rakhega, worse than what he did", "lang": "mixed", "labels": ["harm_to_others"], "tag": "revenge_teacher"}
+{"text": "agar mere hissay ki zameen na di to bhaiyon mein se ek bhi nahi bachega. bandobast kar liya hai", "lang": "mixed", "labels": ["harm_to_others"], "tag": "property_dispute"}
+{"text": "usne mera rishta thukraya. ab main uska wo haal karunga ke koi uski taraf dekhe bhi nahi", "lang": "mixed", "labels": ["harm_to_others"], "tag": "rejection_revenge"}
+{"text": "roommate mujhe pagal kar raha hai. aaj raat agar phir kuch kiya to I'm going to really hurt him, not joking, haath mein cheez utha li thi kal", "lang": "mixed", "labels": ["harm_to_others"], "tag": "roommate_intent"}
+{"text": "uncle keh rahe hain unki beti ko 'saza' milegi, apne beton ko gaon se bula liya hai. she's my cousin, 22. please koi kuch kare", "lang": "mixed", "labels": ["harm_to_others"], "tag": "third_party_honour"}
+{"text": "maine socha hai shohar ke khane mein kuch mila dun. bas bohat ho gaya, 12 saal", "lang": "mixed", "labels": ["harm_to_others"], "tag": "spouse_intent"}
+{"text": "factory supervisor hamari tankhwah kha gaya. kal chhuri le ke jaunga, dekhte hain phir", "lang": "mixed", "labels": ["harm_to_others"], "tag": "workplace_weapon"}
+{"text": "my friend said he's going to kill his stepdad tonight, usne video call pe chaku dikhaya mujhe", "lang": "mixed", "labels": ["harm_to_others"], "tag": "third_party_weapon"}
+{"text": "gussa itna hai ke aaj kisi ki jaan le lunga. pehla jo saamne aaya", "lang": "mixed", "labels": ["harm_to_others"], "tag": "diffuse_rage"}
+{"text": "maine plan kar liya hai usko raaste se kaise hatana hai. kisi ko shak bhi nahi hoga", "lang": "mixed", "labels": ["harm_to_others"], "tag": "covert_plan"}
+{"text": "khala ka beta keh raha hai apni behen ko maar dega kyunki wo ghar se bhaagi thi. wo wapas aa gayi hai aur wo usse dhoond raha hai", "lang": "mixed", "labels": ["harm_to_others"], "tag": "third_party_honour"}
+{"text": "I keep fantasising about hurting my ex's new husband. aaj uske office ke bahar 2 ghante khara raha", "lang": "mixed", "labels": ["harm_to_others"], "tag": "stalking_intent"}
+{"text": "jo madrassa teacher mere bete ke saath galat kar raha tha, usko zinda nahi chorunga. kal Fajr ke baad", "lang": "mixed", "labels": ["harm_to_others", "sexual_violence", "child"], "tag": "revenge_child_abuser"}
+{"text": "dimagh mein bas ek baat hai: usko maarna hai. kuch aur soch hi nahi pa raha", "lang": "mixed", "labels": ["harm_to_others"], "tag": "obsessive_intent"}
+{"text": "pistol khareed li hai. jis ne mere bhai ka qatl kiya, uska bhi wahi hoga", "lang": "mixed", "labels": ["harm_to_others"], "tag": "blood_feud"}
+{"text": "khud ko hurt kiya aur khoon ruk hi nahi raha. I didn't mean it to be this bad", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "sh_bleeding"}
+{"text": "not trying to die, bas neend ke liye zyada goliyan le li thi. ab saans ajeeb aa rahi hai", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "self_poisoning_no_intent"}
+{"text": "khud ko hurt kiya tha 2 din pehle, ab wahan infection lag raha hai. tez bukhar aur kaanp rahi hun", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "sh_infection"}
+{"text": "i took a lot of pills to calm down, not to die. bas ab ulti aur chakkar", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "self_poisoning_no_intent"}
+{"text": "hurt myself aur ab chakkar aa raha hai, bohat khoon gaya hai. roommate bahar hai", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "sh_bleeding"}
+{"text": "gusse mein kuch pee liya tha unhe dikhane ke liye. ab pait mein aag lagi hai aur theek se bol nahi pa rahi", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "self_poisoning_no_intent"}
+{"text": "farsh pe khoon hai, I'm getting dizzy. I didn't want to die, I just wanted it to stop", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "sh_bleeding"}
+{"text": "goliyan khayi thi hamesha ke liye sone ke liye. ab uthi hun aur sab ghoom raha hai, paani bhi nahi pi pa rahi", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_woke_up"}
+{"text": "maine marne ke liye kiya tha jo kiya. ab bohat khoon beh raha hai aur thand lag rahi hai", "lang": "mixed", "labels": ["suicidal", "self_harm", "medical"], "tag": "attempt_bleeding"}
+{"text": "bhai ne zeher pi liya, keh raha tha jeena nahi. ab wo zameen pe para hai", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "third_party_attempt"}
+{"text": "meri wife kal keh rahi thi mujhe nahi jeena. abhi khali strips mili hain aur wo jaag nahi rahi", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "third_party_overdose"}
+{"text": "apna sar itna maara deewar pe ke ab sab double dikh raha hai aur ulti aa rahi hai", "lang": "mixed", "labels": ["self_harm", "medical"], "tag": "sh_head_injury"}
+{"text": "4 din se kuch nahi khaya, aaj class mein behosh ho gayi. ab bhi khare hone pe aankhon ke aage andhera", "lang": "mixed", "labels": ["medical"], "tag": "starvation_fainting"}
+{"text": "har khane ke baad ulti karti hun. aaj bathroom mein gir gayi aur dil ajeeb dhadak raha hai", "lang": "mixed", "labels": ["medical"], "tag": "purging_collapse"}
+{"text": "abbu ke seene mein dard tha aur abhi gir gaye, bol nahi rahe", "lang": "mixed", "labels": ["medical"], "tag": "cardiac_collapse"}
+{"text": "roommate ko daura para hai, kaanp rahi hai aur jawab nahi de rahi", "lang": "mixed", "labels": ["medical"], "tag": "seizure"}
+{"text": "dost party mein behosh ho gaya, hila rahe hain koi response nahi", "lang": "mixed", "labels": ["medical"], "tag": "unconscious"}
+{"text": "ammi kitchen mein giri hain, saans bohat dheemi hai. please jaldi batao", "lang": "mixed", "labels": ["medical"], "tag": "collapse_elderly"}
+{"text": "diet ka bohat junoon hai, 5 din se sirf paani. aaj seedhiyon pe behosh ho gaya", "lang": "mixed", "labels": ["medical"], "tag": "starvation_fainting"}
+{"text": "nana ji ka sugar bohat low hai, pasina aur behoshi, kuch samajh nahi aa raha", "lang": "mixed", "labels": ["medical"], "tag": "hypoglycaemia"}
+{"text": "husband ne itna maara ke uth nahi pa rahi, sar se khoon aa raha hai", "lang": "mixed", "labels": ["abuse", "medical"], "tag": "dv_injury_now"}
+{"text": "bhai ka accident hua hai, bohat khoon beh raha hai aur ambulance nahi aa rahi", "lang": "mixed", "labels": ["medical"], "tag": "accident_bleeding"}
+{"text": "office mein colleague achanak gira aur ab theek se saans nahi le raha", "lang": "mixed", "labels": ["medical"], "tag": "collapse_workplace"}
+{"text": "purge karna band hi nahi hota, aaj 3 dafa behosh hui. ammi ko nahi pata", "lang": "mixed", "labels": ["medical"], "tag": "purging_fainting"}
+{"text": "anorexia hai, I know. aaj subah se dil kabhi bohat tez kabhi bohat slow, aur haath thande neele lag rahe", "lang": "mixed", "labels": ["medical"], "tag": "ed_cardiac"}
+{"text": "dadi ko fit aa raha hai, munh se jhaag, kya karun", "lang": "mixed", "labels": ["medical"], "tag": "seizure_elderly"}
+{"text": "seene mein dard aur left arm sun ho raha hai. I'm 52, ghar pe akela hun", "lang": "mixed", "labels": ["medical"], "tag": "chest_pain"}
+{"text": "dost ne kuch nasha kiya tha, ab hosh mein nahi aa raha aur hothon ka rang badal gaya hai", "lang": "mixed", "labels": ["medical"], "tag": "intoxication_unconscious"}
+{"text": "roza aur gym saath kar raha tha, aaj workout ke beech behosh ho gaya, ab bhi theek se bol nahi pa raha", "lang": "mixed", "labels": ["medical"], "tag": "collapse_exertion"}
+{"text": "saas ne dhakka diya, pregnant hun, ab bohat bleeding ho rahi hai", "lang": "mixed", "labels": ["abuse", "medical"], "tag": "dv_pregnancy"}
+{"text": "I'm so done with this job yaar, resign letter likh raha hun kal", "lang": "mixed", "labels": ["none"], "tag": "near_miss_work"}
+{"text": "exam is killing me, kal Physics hai aur kuch nahi parha 😭", "lang": "mixed", "labels": ["none"], "tag": "idiom_exam"}
+{"text": "dead tired hun, 3 din se neend poori nahi hui. bas sona hai", "lang": "mixed", "labels": ["none"], "tag": "idiom_tired"}
+{"text": "mar gayi hasste hasste, tumhara meme 😂", "lang": "mixed", "labels": ["none"], "tag": "idiom_laugh"}
+{"text": "boss ne aaj meeting mein jaan nikal di, 2 ghante ka lecture", "lang": "mixed", "labels": ["none"], "tag": "idiom_work"}
+{"text": "ammi ne daanta kyunki late aayi. ab mood off hai", "lang": "mixed", "labels": ["none"], "tag": "scolding"}
+{"text": "breakup ke baad sab empty lagta hai, but I'm trying. gym join kiya hai", "lang": "mixed", "labels": ["none"], "tag": "sad_coping"}
+{"text": "I could kill for a chai right now, office ki machine kharab hai", "lang": "mixed", "labels": ["none"], "tag": "idiom_kill"}
+{"text": "this Lahore traffic will be the death of me honestly", "lang": "mixed", "labels": ["none"], "tag": "idiom_death"}
+{"text": "nani ki bohat yaad aati hai. ek saal ho gaya, aaj unka dupatta mila almari mein", "lang": "mixed", "labels": ["none"], "tag": "grief"}
+{"text": "gussa bohat aa raha hai bhai pe, meri cheezein bina pooche use karta hai", "lang": "mixed", "labels": ["none"], "tag": "anger_sibling"}
+{"text": "sab kuch overwhelming hai, shaadi ki tayyari, job, sasural. I just need a break", "lang": "mixed", "labels": ["none"], "tag": "stress"}
+{"text": "I feel so lonely in Karachi, sab dost Islamabad mein hain. weekends are the worst", "lang": "mixed", "labels": ["none"], "tag": "loneliness"}
+{"text": "ugh mai pagal ho jaungi, wifi phir gaya", "lang": "mixed", "labels": ["none"], "tag": "idiom_frustration"}
+{"text": "kal se low feel kar rahi hun, kuch karne ka mann nahi. no dark thoughts though, bas low", "lang": "mixed", "labels": ["none"], "tag": "low_mood"}
+{"text": "ammi mujhe maar dalengi agar result dekh liya 😅", "lang": "mixed", "labels": ["none"], "tag": "idiom_parent"}
+{"text": "mohalle mein ek larke ne pichle saal khudkushi ki thi. aaj uski barsi thi, bohat dukh hua", "lang": "mixed", "labels": ["none"], "tag": "past_community"}
+{"text": "years ago mujhe suicidal thoughts aate the, therapy ne bohat help ki. ab I'm in a good place, just wanted to share", "lang": "mixed", "labels": ["none"], "tag": "resolved_past"}
+{"text": "drama mein heroine ne last episode mein apni jaan le li, I cried so much 😭 kya scene tha", "lang": "mixed", "labels": ["none"], "tag": "drama_plot"}
+{"text": "panic attack aa raha hai, haath kaanp rahe hain, saans tez. how do I calm down", "lang": "mixed", "labels": ["none"], "tag": "panic"}
+{"text": "bukhar 102 hai, kaunsi medicine leni chahiye? doctor kal milega", "lang": "mixed", "labels": ["none"], "tag": "health_question"}
+{"text": "abbu bohat strict hain, phone le liya aur bahar jaane nahi dete. so annoying", "lang": "mixed", "labels": ["none"], "tag": "strict_parent"}
+{"text": "job interview mein phir reject. main bekaar hun yaar, kuch nahi hota mujhse", "lang": "mixed", "labels": ["none"], "tag": "self_criticism"}
+{"text": "I'll kill him if he's late again lol, Saad hamesha yahi karta hai", "lang": "mixed", "labels": ["none"], "tag": "idiom_friend"}
+{"text": "game mein 5 dafa mara aaj, controller tor dunga 😤", "lang": "mixed", "labels": ["none"], "tag": "gaming"}
+{"text": "manager aaj sab ke saamne chilla raha tha. so humiliating. kal wapas jaane ka dil nahi", "lang": "mixed", "labels": ["none"], "tag": "boss_shouting"}
+{"text": "jaan nikal gayi aaj ki shift mein, 14 ghante khare khare", "lang": "mixed", "labels": ["none"], "tag": "idiom_exhausted"}
+{"text": "mood swings bohat hain lately, periods ki wajah se shayad. irritated with everyone", "lang": "mixed", "labels": ["none"], "tag": "irritable"}
+{"text": "life se koi complaint nahi, bas thora thak gayi hun. 2 din ki chhutti chahiye office se", "lang": "mixed", "labels": ["none"], "tag": "near_miss_tired"}
+{"text": "I'm writing my thesis on suicide prevention in Pakistan, koi data sources suggest kar sakta hai?", "lang": "mixed", "labels": ["none"], "tag": "academic_topic"}

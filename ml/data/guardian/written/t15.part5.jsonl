@@ -1,0 +1,36 @@
+{"text": "Just found out I didn't get the scholarship. I'm gutted. Crying in the uni library like an idiot.", "lang": "en", "labels": ["none"], "tag": "sadness"}
+{"text": "My life is a joke honestly. Missed the bus, spilled tea on my shirt, and my presentation file got corrupted.", "lang": "en", "labels": ["none"], "tag": "hyperbole"}
+{"text": "I've been in a dark place for a while but I started therapy last month and it's slowly helping.", "lang": "en", "labels": ["none"], "tag": "low_mood"}
+{"text": "Reading about the farmer suicides in Punjab for my journalism class, it's heartbreaking.", "lang": "en", "labels": ["none"], "tag": "study"}
+{"text": "If one more khala asks when I'm getting married I'm faking my own death lol", "lang": "en", "labels": ["none"], "tag": "idiom_joke"}
+{"text": "no energy to do anything today, not even shower", "lang": "en", "labels": ["none"], "tag": "exhaustion"}
+{"text": "kill me now, it's only Monday", "lang": "en", "labels": ["none"], "tag": "idiom_death"}
+{"text": "I'd rather die than eat karela again 🤢", "lang": "en", "labels": ["none"], "tag": "idiom_death"}
+{"text": "honestly feel like giving up on my startup. 2 years, no funding, savings gone.", "lang": "en", "labels": ["none"], "tag": "hopeless_situation"}
+{"text": "Feeling like I don't belong anywhere since moving back from the UK. Too desi for there, too foreign here.", "lang": "en", "labels": ["none"], "tag": "loneliness"}
+{"text": "I miss who I used to be before all this stress", "lang": "en", "labels": ["none"], "tag": "sadness"}
+{"text": "Allah please give me sabr, this week has been too much", "lang": "en", "labels": ["none"], "tag": "stress"}
+{"text": "ready to leave this world", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "nothing left to stay alive for", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "tonight's the night. bye", "lang": "en", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "don't want to be alive tomorrow", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "wish someone would just end me", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "I'm planning my exit.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "they'll be fine without me. soon.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "Gave my dog to the neighbours. It's time.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_pet"}
+{"text": "letters are written. I'm ready.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_letter"}
+{"text": "can't keep living, sorry ammi", "lang": "en", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "hurt myself again, sorry", "lang": "en", "labels": ["self_harm"], "tag": "sh_again"}
+{"text": "want to hurt myself before bed", "lang": "en", "labels": ["self_harm"], "tag": "sh_urge"}
+{"text": "relapsed at work today. self harm, I mean", "lang": "en", "labels": ["self_harm"], "tag": "sh_relapse"}
+{"text": "harmed myself after the call with dad", "lang": "en", "labels": ["self_harm"], "tag": "sh_again"}
+{"text": "hiding fresh marks again", "lang": "en", "labels": ["self_harm"], "tag": "sh_hiding"}
+{"text": "fighting the urge to self harm rn", "lang": "en", "labels": ["self_harm"], "tag": "sh_urge"}
+{"text": "I'm knackered, mate", "lang": "en", "labels": ["none"], "tag": "exhaustion"}
+{"text": "sooo bored I could die", "lang": "en", "labels": ["none"], "tag": "idiom_death"}
+{"text": "missing home a lot tonight", "lang": "en", "labels": ["none"], "tag": "loneliness"}
+{"text": "this cough is killing me", "lang": "en", "labels": ["none"], "tag": "idiom_death"}
+{"text": "feeling low, nothing serious", "lang": "en", "labels": ["none"], "tag": "low_mood"}
+{"text": "grieving my old friendships", "lang": "en", "labels": ["none"], "tag": "grief"}
+{"text": "can't wait to quit this job", "lang": "en", "labels": ["none"], "tag": "job_done"}
+{"text": "my exam went horribly, I want to hide under a rock", "lang": "en", "labels": ["none"], "tag": "idiom_hide"}

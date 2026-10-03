@@ -1,0 +1,120 @@
+{"text": "hathiyar tayyar hai, bas mauqe ka intezar", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "means_ready"}
+{"text": "agar shohar ne phir haath uthaya to is dafa mai usse maar dungi, soch liya hai", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "victim_retaliation"}
+{"text": "usko khatam kar dunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "uski gaari ke saath kuch aisa karunga ke wo ghar wapas na pohnche", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "sabotage_intent"}
+{"text": "goli maar dunga usko", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "kabhi kabhi lagta hai bachon ko saath le ke sab khatam kar dun, sab ka dukh ek saath khatam", "lang": "ur-roman", "labels": ["harm_to_others", "suicidal", "child"], "tag": "filicide_suicide"}
+{"text": "raat ko khayal aate hain ke ammi ko nuqsan pohncha dun, mujhe khud se darr lagta hai", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "intrusive_fear"}
+{"text": "pichli raat uske kamre ke bahar khara tha, haath mein wo cheez thi. agli dafa nahi rukunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "near_act"}
+{"text": "usne meri beti ko chhera tha, wo 9 saal ki hai. ab mai usko zinda nahi chhorunga", "lang": "ur-roman", "labels": ["harm_to_others", "child", "sexual_violence"], "tag": "revenge_child"}
+{"text": "jaan le lunga uski", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "university ke larkon ne bohat tang kiya hai, kal sab ko sabak sikhaunga aur pichhe nahi hatunga, cheez ka intezam ho gaya hai", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "campus_threat"}
+{"text": "andar itna gussa hai ke kisi ko bhi maar sakta hun, aaj gali mein ek larke ko bohat zakhmi kar diya aur abhi bas nahi hua", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "rage_escalation"}
+{"text": "kal raat baby pe itna gussa aaya ke khud ko rok nahi payi, darr gayi hun ke kahin usse maar na dun", "lang": "ur-roman", "labels": ["harm_to_others", "child"], "tag": "infant_risk"}
+{"text": "uski biwi ko bhi nahi chhorunga taake koi gawah na rahe", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "witness_elimination"}
+{"text": "aaj raat wo ghar aayega aur mai darwaze ke peeche tayyar khari hun, is dafa mai uspe waar karungi", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "ambush_plan"}
+{"text": "sach bata raha hun kal tak wo zinda nahi hoga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "kill_intent"}
+{"text": "aaj raat uska qatal", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "usne rishta toda hai, ab uska chehra kisi kaam ka nahi rahega, intezam kar liya hai", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "disfigure_intent"}
+{"text": "bhabhi ki wajah se ghar toota, ab uske saath kuch aisa karungi ke yaad rakhegi, raat ko jab wo soyi ho", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "family_revenge"}
+{"text": "gussa qaboo nahi hota, kal biwi ko itna maara ke wo behosh hote hote bachi, ab darr hai kisi din jaan na le lun", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "perpetrator_fear"}
+{"text": "badla jaan se lunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "faisla ho chuka hai, wo nahi bachega", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "kill_intent_short"}
+{"text": "qasam khata hun is jumme ke baad wo nahi bachega", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "dated_intent"}
+{"text": "chaku tez kar raha hun uske liye", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "means_short"}
+{"text": "khayal aata hai bachi ko nuqsan pohncha dun, phir khud se nafrat hoti hai. 3 mahine ki hai wo", "lang": "ur-roman", "labels": ["harm_to_others", "child"], "tag": "infant_intrusive"}
+{"text": "ammi 10 saal se bistar pe hain. dil karta hai unki zindagi khatam kar dun taake ye sab khatam ho, kal raat qareeb qareeb kar hi diya tha", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "caregiver_burnout"}
+{"text": "jis ne mere bhai ki jaan li usko bhi wahi maut dunga, intezam ho gaya hai", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "blood_feud"}
+{"text": "usko zinda nahi chhorunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "sar mein awazen kehti hain roommate ko maar do aur mai rok nahi pa raha", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "command_voices"}
+{"text": "beta nashe ke liye ghar ka saman bechta hai. aaj socha usko bhi khatam kar dun aur khud ko bhi", "lang": "ur-roman", "labels": ["harm_to_others", "suicidal"], "tag": "murder_suicide"}
+{"text": "teacher ne fail kiya hai, uski gaari jala dunga aur usko bhi nahi chhorunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "grievance"}
+{"text": "maar dalunga usse", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "usse khatam karne ka koi aisa tareeqa chahiye jisme pakra na jaun", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "planning"}
+{"text": "mai kisi ko qatal kar dunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "dimagh kharab ho gaya tha, bhai pe hamla kar diya. abhi bhi haath kaanp rahe hain aur gussa nahi utra", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "recent_attack"}
+{"text": "apne aap se darr lagta hai, kisi din biwi ko maar dunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "self_fear"}
+{"text": "beti bhaag gayi hai, khandan wale kehte hain usko maarna farz hai aur mai bhi unke saath jaunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "honour_killing_plan"}
+{"text": "sasur ko khatam karna hai", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "pata nahi kya ho gaya hai mujhe, bachay ko dekh ke laga ke usko nuqsan pohncha dun. mai bohat dar gayi hun", "lang": "ur-roman", "labels": ["harm_to_others", "child"], "tag": "postpartum_intrusive"}
+{"text": "jab baby raat bhar rota hai to dimagh mein aata hai usko kuch kar dun, mai aisi maa nahi banna chahti", "lang": "ur-roman", "labels": ["harm_to_others", "child"], "tag": "postpartum_intrusive"}
+{"text": "uske accident ki sazish bana raha hun", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "planning_short"}
+{"text": "uska qatal kar dunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "kill_short"}
+{"text": "har raat sochti hun jab wo soya ho to us pe waar kar dun, bas himmat jama kar rahi hun", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "victim_plan"}
+{"text": "hum ne faisla kar liya hai, behan ke aashiq ko kal uthana hai aur khatam karna hai", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "honour_abduction"}
+{"text": "manager ne meri izzat uchaali. uske ghar ka pata le chuka hun aur baaki intezam bhi", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "workplace_revenge"}
+{"text": "bhai ko maar dunga is dafa", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "short"}
+{"text": "aaj kisi ko maar ke hi sounga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "rage_short"}
+{"text": "usko nuqsan pohanchane ka soch raha hun, aur ye ab sirf soch nahi rahi", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "escalating_intent"}
+{"text": "mere bete ko maarne wale ko mai khud saza dunga, police pe bharosa nahi", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "vigilante"}
+{"text": "ex ki nayi shaadi ho rahi hai, us din wahan ja ke sab kharab kar dunga, kisi ko nahi chhorunga", "lang": "ur-roman", "labels": ["harm_to_others"], "tag": "ex_partner_threat"}
+{"text": "goliyan kha li hain", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "overdose_short"}
+{"text": "zeher pee liya", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "short"}
+{"text": "maine kuch pee liya hai, ab maafi", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "poison_goodbye"}
+{"text": "zeher kha liya hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "poison_short"}
+{"text": "kuch kha liya hai jo nahi khana chahiye tha, ab pait mein aag lagi hai aur ji ghabra raha hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "poison_symptoms"}
+{"text": "ammi ne larai ke baad kuch pee liya hai, ulti kar rahi hain, kya karun", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "third_party_poison"}
+{"text": "bhai ne abbu se larai ke baad dawaiyan kha li hain", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "third_party_overdose"}
+{"text": "khud ko kaata, khoon beh raha", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "short"}
+{"text": "bohot khoon beh raha hai, is dafa zyada ho gaya", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "bleeding_self"}
+{"text": "khud ko nuqsan pohanchaya tha, khoon band hi nahi ho raha, towel bhi bhar gaya", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "bleeding_self"}
+{"text": "ammi behosh ho gayi", "lang": "ur-roman", "labels": ["medical"], "tag": "short"}
+{"text": "hafte bhar se sirf paani pe hun, abhi seerhiyon pe chakkar aa ke gir gayi aur uth nahi pa rahi", "lang": "ur-roman", "labels": ["medical"], "tag": "diet_collapse"}
+{"text": "khana kha ke ulti karti hun, aaj ulti ke baad behosh ho gayi thi aur dil bohat tez dhadak raha hai", "lang": "ur-roman", "labels": ["medical"], "tag": "purging_collapse"}
+{"text": "abbu zameen pe behosh pare hain, saans bohat aahista hai", "lang": "ur-roman", "labels": ["medical"], "tag": "unconscious_parent"}
+{"text": "gali mein koi behosh para hai, munh se jhaag nikal raha hai", "lang": "ur-roman", "labels": ["medical"], "tag": "unconscious_stranger"}
+{"text": "abbu hosh mein nahi", "lang": "ur-roman", "labels": ["medical"], "tag": "short"}
+{"text": "ammi ko jhatke aa rahe hain, hosh nahi hai", "lang": "ur-roman", "labels": ["medical"], "tag": "seizure"}
+{"text": "abbu ke seene mein shadeed dard hua aur wo gir gaye hain", "lang": "ur-roman", "labels": ["medical"], "tag": "chest_pain_collapse"}
+{"text": "shohar ne itna maara ke sar se khoon beh raha hai aur ruk nahi raha", "lang": "ur-roman", "labels": ["medical", "abuse"], "tag": "dv_bleeding"}
+{"text": "usne mujhpe hamla kiya hai, bohat khoon beh raha hai, ghar pe koi nahi", "lang": "ur-roman", "labels": ["medical", "abuse"], "tag": "assault_bleeding"}
+{"text": "marne ke liye kuch kha liya", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "short"}
+{"text": "goliyan kha li", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "overdose_short"}
+{"text": "dawai pee li hai sari, ajeeb lag raha hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "overdose_short"}
+{"text": "ek ghanta pehle goliyan kha li thi, ab darr lag raha hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "overdose_regret"}
+{"text": "marna nahi tha bas sona tha, isliye goliyan le li aur ab saans bhaari hai", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "overdose_no_intent"}
+{"text": "khud ko jala liya hai, bohat bura haal hai", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "burn_self"}
+{"text": "goliyan le li hain, chakkar aa rahe", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "short"}
+{"text": "hostel mein roommate behosh hai, side pe dawaiyon ke khaali patte pare hain", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "third_party_overdose"}
+{"text": "3 din se kuch nahi khaya piya, ab utha nahi jata aur aankhon ke aage andhera", "lang": "ur-roman", "labels": ["medical"], "tag": "starvation"}
+{"text": "bhook se chakkar aa ke giri", "lang": "ur-roman", "labels": ["medical"], "tag": "short"}
+{"text": "sugar wale abbu behosh ho gaye hain, hil nahi rahe", "lang": "ur-roman", "labels": ["medical"], "tag": "diabetic_unconscious"}
+{"text": "ek larka sarak pe gira hai, sar se khoon aur lagta hai saans nahi le raha", "lang": "ur-roman", "labels": ["medical"], "tag": "roadside"}
+{"text": "gusse mein khud ko zakhmi kar liya, khoon bohat zyada nikal raha hai", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "anger_self_injury"}
+{"text": "koshish ki thi khud ko khatam karne ki, bhai ne bacha liya lekin ab bohat takleef hai aur hosh aa jaa raha hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "post_attempt"}
+{"text": "maaf karna sab, kuch kha liya hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "poison_goodbye"}
+{"text": "aaj subah dawaiyan kha li thi marne ke liye, ab chakkar aa rahe hain aur pachta rahi hun", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "overdose_regret"}
+{"text": "3 saal ki bachi ne ghalti se kuch pee liya hai, sust ho rahi hai", "lang": "ur-roman", "labels": ["medical", "child"], "tag": "child_accidental"}
+{"text": "shohar ne maara aur ab bohat khoon aa raha hai, mai pregnant hun", "lang": "ur-roman", "labels": ["medical", "abuse"], "tag": "pregnancy_bleeding"}
+{"text": "dost saans nahi le raha", "lang": "ur-roman", "labels": ["medical"], "tag": "short"}
+{"text": "khana kha ke phir ulti karti hun, aaj haath pair sun ho rahe hain aur behoshi si hai", "lang": "ur-roman", "labels": ["medical"], "tag": "purging"}
+{"text": "khud ko khatam karne ki koshish ki thi abhi, ab bohat takleef ho rahi hai aur ghar pe koi nahi", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "post_attempt"}
+{"text": "dadi ammi bathroom mein giri hain aur hosh nahi aa raha", "lang": "ur-roman", "labels": ["medical"], "tag": "elder_fall"}
+{"text": "dost ne zyada nasha kar liya hai, aankhen upar chali gayi hain", "lang": "ur-roman", "labels": ["medical"], "tag": "drug_overdose_friend"}
+{"text": "khud ko kaata aur ab chakkar aa rahe hain, bohat khoon gaya hai", "lang": "ur-roman", "labels": ["medical", "self_harm"], "tag": "bleeding_dizzy"}
+{"text": "maine kuch pee liya", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "short"}
+{"text": "aaj khud ko khatam karne ki koshish ki, zakhmi hun, hil nahi pa rahi", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "post_attempt_injury"}
+{"text": "bas itna batana tha ke kuch le liya hai aur ab neend aa rahi hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "overdose_drowsy"}
+{"text": "aadha ghanta pehle zeher kha liya tha, ulti ho rahi hai", "lang": "ur-roman", "labels": ["medical", "suicidal"], "tag": "poison_symptoms"}
+{"text": "khoon nahi ruk raha", "lang": "ur-roman", "labels": ["medical"], "tag": "bleeding_short"}
+{"text": "koi behosh para hai", "lang": "ur-roman", "labels": ["medical"], "tag": "unconscious_short"}
+{"text": "ammi ne bohat daanta aaj", "lang": "ur-roman", "labels": ["none"], "tag": "scolding"}
+{"text": "abbu mujhe maar dalenge agar result dekha", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_result"}
+{"text": "bhai se larai hui remote pe", "lang": "ur-roman", "labels": ["none"], "tag": "sibling_fight"}
+{"text": "ammi ne daanta", "lang": "ur-roman", "labels": ["none"], "tag": "short"}
+{"text": "teacher ne class mein sab ke saamne daanta, bohat sharmindagi hui", "lang": "ur-roman", "labels": ["none"], "tag": "teacher_scolding"}
+{"text": "bhai se larai", "lang": "ur-roman", "labels": ["none"], "tag": "short"}
+{"text": "drama mein shohar ne biwi ko thappar maara, mujhe itna gussa aya dekh ke", "lang": "ur-roman", "labels": ["none"], "tag": "drama_plot"}
+{"text": "news mein suna ek larki ko uske bhai ne qatal kar diya, bohat afsos hua", "lang": "ur-roman", "labels": ["none"], "tag": "news_case"}
+{"text": "jaan nikal gayi", "lang": "ur-roman", "labels": ["none"], "tag": "short"}
+{"text": "is exam ne to jaan nikal di", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_exam"}
+{"text": "boss har meeting mein chillata hai, thak gaya hun", "lang": "ur-roman", "labels": ["none"], "tag": "boss_shouting"}
+{"text": "saas se nahi banti, roz koi na koi bahes", "lang": "ur-roman", "labels": ["none"], "tag": "inlaw_conflict"}
+{"text": "mar gaye hans hans ke", "lang": "ur-roman", "labels": ["none"], "tag": "short"}
+{"text": "bohat akeli mehsoos karti hun aaj kal", "lang": "ur-roman", "labels": ["none"], "tag": "loneliness"}
+{"text": "hasi se mar gayi yaar ye video dekh ke", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_laugh"}
+{"text": "ammi ne kaha dobara late aayi to tangen tor dungi, phir khud hi hans pari", "lang": "ur-roman", "labels": ["none"], "tag": "idiom_mother"}
+{"text": "abbu ne imtehan tak phone le liya hai", "lang": "ur-roman", "labels": ["none"], "tag": "strict_parents"}
+{"text": "sir ne daanta", "lang": "ur-roman", "labels": ["none"], "tag": "short"}
+{"text": "bhai ne meri diary parh li aur ab mazaq urata hai", "lang": "ur-roman", "labels": ["none"], "tag": "sibling_teasing"}
+{"text": "drama serial mein jo heroine ke saath zyadati dikhayi wo scene dekh ke neend nahi ayi", "lang": "ur-roman", "labels": ["none"], "tag": "drama_plot"}

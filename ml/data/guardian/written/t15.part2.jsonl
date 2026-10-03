@@ -1,0 +1,100 @@
+{"text": "want to be gone", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "no reason to stay alive anymore", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "this is my last night", "lang": "en", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "kinda hoping i just don't make it through the night", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "i'm ready to go now", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "i want to end my life", "lang": "en", "labels": ["suicidal"], "tag": "active_wish"}
+{"text": "Not planning on seeing 2027.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "dead inside. want the outside to match", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "life isnt for me. checking out soon", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "everyone's better off without me, that's just a fact", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "I want out. Permanently.", "lang": "en", "labels": ["suicidal"], "tag": "disappear"}
+{"text": "Can't see a single reason to keep living.", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "im going to kill myself", "lang": "en", "labels": ["suicidal"], "tag": "active_intent"}
+{"text": "too tired to keep living tbh", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "such a burden, they'd be relieved if i died", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "My final goodbye to whoever cares.", "lang": "en", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "Already wrote my will. I'm 23.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_affairs"}
+{"text": "Nobody needs me alive", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "honestly hoping something kills me soon", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "I give up on living.", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "Done. Signing off forever.", "lang": "en", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "who would even come to my funeral lol. guess we'll find out soon", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "i just want to die and nobody gets it", "lang": "en", "labels": ["suicidal"], "tag": "active_wish"}
+{"text": "Mate, I genuinely want to be dead.", "lang": "en", "labels": ["suicidal"], "tag": "active_wish"}
+{"text": "Won't be around much longer x", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "pls let today be my last day", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "i should just die", "lang": "en", "labels": ["suicidal"], "tag": "active_wish"}
+{"text": "No more tomorrows for me.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "Hate being alive. want it over.", "lang": "en", "labels": ["suicidal"], "tag": "active_wish"}
+{"text": "time to say my goodbyes", "lang": "en", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "Lost the whole crop in the floods and the loan is still there. I look at my children and think they'd manage better if I wasn't around anymore.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "I'm a khwaja sira and my own family won't let me in for my father's funeral. There's no place in this world for people like me. I don't want to keep living in it.", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "I'm gay and my parents are fixing my nikkah for next month. I'd rather not be alive than live that lie. I've already decided I won't be there for it.", "lang": "en", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "My baby is 3 months old and I feel like she'd be better off with a mother who isn't me. Sometimes I think about just not existing anymore so she gets that chance.", "lang": "en", "labels": ["suicidal"], "tag": "burden_postpartum"}
+{"text": "Working in Riyadh, sending everything home, and they still say I've done nothing for them. I'm so tired. I've started thinking I'm worth more to them dead than alive.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "Retired 8 years now, wife passed last winter. The children are in Canada. I talk to the walls. I'm ready for Allah to call me and if He doesn't soon, I might go to Him myself.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "Third year MBBS. Failed prof twice. I've started giving away my notes and my stethoscope to juniors. I tell them I'm switching fields. I'm not switching anything.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_belongings"}
+{"text": "Teacher here. A boy in my class (12 years old) wrote in his essay 'I will not be alive by summer holidays and that's ok'. He's been withdrawn for weeks. What do I do right now?", "lang": "en", "labels": ["suicidal", "child"], "tag": "third_party_minor"}
+{"text": "My neighbour aunty asked me this morning to take her parrot because she 'won't be here to feed him'. She's been very low since her son died. Should I do something?", "lang": "en", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "my coworker just sent the whole team a 'thanks for everything, it was an honour' email at midnight and he's not answering calls. he talked about ending his life at iftar last week", "lang": "en", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "I'm 16 and I've failed my matric exams. I'd rather die than face results day at school, and I mean it, I've thought about how.", "lang": "en", "labels": ["suicidal", "child"], "tag": "minor_intent"}
+{"text": "Every relationship I've had ended with me being told I'm too much. I've decided I'll stop being anything at all. Soon.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "I can't afford my mother's treatment, I can't afford rent, I can't afford anything. The only thing I can still do for my family is stop being an expense.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "I keep scrolling through old photos and saying sorry to each person in my head. It feels like I'm saying goodbye. I think I am.", "lang": "en", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "I've been calm all day for the first time in months and I know why. I've made the decision. Tomorrow I'll start telling people I love them.", "lang": "en", "labels": ["suicidal"], "tag": "intent_calm"}
+{"text": "I'm a doctor and I'm writing this between patients. I tell people to hold on every day. I can't. I don't plan to be alive by the end of this month.", "lang": "en", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "my girlfriend just sent me a voice note crying saying she's sorry for everything and she won't bother me again, ever. she's said she wants to die before. i'm in Lahore and she's in Peshawar.", "lang": "en", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "It was supposed to get better after the divorce. It didn't. I don't want to fight through another year of this. I'm tired of being alive.", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "Bought a new notebook just to write letters to everyone. Mum, Dad, my sisters, my best mate. I'll leave them on my desk for when they find me gone.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_letter"}
+{"text": "Do you think my parents will finally be proud of me at my funeral? Because that's the only thing I'm planning anymore.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "I'm 13 and my mama says I ruined her life by being born. I want to fix it by not being alive.", "lang": "en", "labels": ["suicidal", "child"], "tag": "minor_burden"}
+{"text": "I keep hiding it from my wife but every night when she's asleep I sit awake in the dark thinking this is the night I finally go through with it.", "lang": "en", "labels": ["suicidal"], "tag": "intent_plan"}
+{"text": "I don't want to talk about solutions. I want to talk about how tired I am of being alive, and how I'm planning to stop.", "lang": "en", "labels": ["suicidal"], "tag": "intent_plan"}
+{"text": "My son (17) has been talking about death a lot. Today he gave his younger brother his cricket bat and said 'you'll need it more than me'. I'm scared.", "lang": "en", "labels": ["suicidal", "child"], "tag": "third_party_minor"}
+{"text": "Lost my job, then my fiancee broke it off, and Abbu had a stroke the same month. Everyone keeps telling me Allah tests those He loves. I'm done being tested. I want to go.", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "I'm not depressed. I'm just finished. I've lived enough and I'm choosing to stop.", "lang": "en", "labels": ["suicidal"], "tag": "intent_calm"}
+{"text": "Overheard my parents say they regret having me. Since then I've been counting down. I'm planning to be gone before my birthday.", "lang": "en", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "Honestly the only thing stopping me was my cat. I've found someone to take her now.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_pet"}
+{"text": "There's a point where trying stops making sense. I hit it last week. I've been tying up loose ends since.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_affairs"}
+{"text": "My sister keeps saying 'soon I won't be your headache anymore' and she's stopped eating with us. She's 22. Our parents think it's drama. I don't.", "lang": "en", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "if allah forgives people who can't go on then i hope he forgives me soon", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "I'm a single mum in Bradford. Three kids, no help, no money. I've started to think they'd be better off in care, and I'd be better off not here at all.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "Mentally I've already left. Just waiting for my body to follow.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "My grandfather told me today he's ready to die and he's going to 'make it happen' because he doesn't want to be a burden on us. He's 78 and lives with us in Gujranwala.", "lang": "en", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "everything is so loud and heavy and i want it to stop. i want me to stop.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "Gave my phone password to my best friend and told her to delete my search history if anything happens to me. She laughed. I didn't.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_affairs"}
+{"text": "I'm 15 and I keep thinking about not being alive. it's not a phase. ammi thinks it's because of my phone.", "lang": "en", "labels": ["suicidal", "child"], "tag": "minor_passive"}
+{"text": "Can someone please look after my fish after I'm gone? Not joking. Karachi, Gulshan.", "lang": "en", "labels": ["suicidal"], "tag": "preparation_pet"}
+{"text": "I have no one left. My parents are dead, my wife left, my friends stopped calling. I've already made my peace with leaving too.", "lang": "en", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "Rent due Friday, salary hasn't come for 3 months, wife sick. I keep thinking if I end it the landlord will at least leave them alone out of pity.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "Each morning I wake up disappointed that I woke up.", "lang": "en", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "I'm 17. if my result is bad tomorrow I'm not going home. I'm not going anywhere ever again.", "lang": "en", "labels": ["suicidal", "child"], "tag": "minor_intent"}
+{"text": "Recently started saying 'love you' to everyone at the end of calls. My brother noticed. I didn't tell him why. It's because I'm saying goodbye.", "lang": "en", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "my dad (55) sold his car, paid everyone back and keeps saying he's 'wrapping things up'. he's been hopeless since the business crashed. am i overreacting", "lang": "en", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "I've stopped believing it will ever get better and I've stopped wanting to stay alive to find out.", "lang": "en", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "Every night I promise myself that tomorrow is my last day. One of these days I'll keep the promise.", "lang": "en", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "honestly the thought of ending everything is the only thing that calms me down rn", "lang": "en", "labels": ["suicidal"], "tag": "active_wish"}
+{"text": "I'm a burden, I've always been a burden. My parents spent everything on my treatment and I'm still sick. They should be free of me for good.", "lang": "en", "labels": ["suicidal"], "tag": "burden"}
+{"text": "hurt myself again tonight and this time I was kind of hoping I wouldn't wake up after", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "The self harm used to be enough. It's not anymore. I'm starting to think about ending it properly.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_escalation"}
+{"text": "i keep hurting myself and thinking maybe one day it'll just finish me off. i wouldn't mind", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "I'm 15. I hurt myself every night now and I don't want to be alive anymore.", "lang": "en", "labels": ["suicidal", "self_harm", "child"], "tag": "minor_sh_ideation"}
+{"text": "relapsed after 6 months clean. what's the point of any of it. I don't want to be here", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_relapse_ideation"}
+{"text": "Long sleeves in July again. Nobody asks. I don't think I'll be around to explain anyway.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_hiding_ideation"}
+{"text": "the urges are back and they're bigger now. not just to hurt. to be gone.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_urge_ideation"}
+{"text": "did it again. hate myself. wish I was dead", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_again_ideation"}
+{"text": "My 14 yo brother has marks on his arms he keeps hiding and he wrote 'I want to die' all over his notebook.", "lang": "en", "labels": ["suicidal", "self_harm", "child"], "tag": "third_party_minor_sh"}
+{"text": "hurting myself doesn't help anymore, nothing helps, i just want everything to end", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "I've been harming myself for years. Tonight I want it to be the last time, for good.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_intent"}
+{"text": "Mum found the marks today. Now she's crying and I feel like the worst person alive. Honestly I'd be doing her a favour if I disappeared for good.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_discovered_burden"}
+{"text": "self harmed again. thinking about the bigger thing again too.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_again_ideation"}
+{"text": "I'm in 10th class, I hurt myself in the school washroom today and I keep thinking I want to die", "lang": "en", "labels": ["suicidal", "self_harm", "child"], "tag": "minor_sh_ideation"}
+{"text": "My wife has been hurting herself, I've seen the scars. Last night she said she's tired of living and it scared me.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "third_party_sh_ideation"}
+{"text": "i'm not trying to die when i hurt myself. at least i wasn't. now i'm not sure i care if i do.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "Back to hurting myself every day. Gave my journal to my friend and told her not to read it till later. She doesn't know what later means.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_preparation"}
+{"text": "hurting myself is the only thing that makes me feel real, and lately I've been thinking about not feeling anything ever again", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "i'm so ashamed of what i do to myself. i think the world would be cleaner without me", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_shame_ideation"}
+{"text": "Clean for 2 years and I broke it today. I feel like I've wasted everyone's effort on me. They'd be better off if I was gone.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_relapse_burden"}
+{"text": "hurting myself isn't enough anymore. I want it all to stop for good.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_escalation"}
+{"text": "Uni student in Leeds. Self harm's been getting worse since November and now I've started writing goodbye texts in my drafts.", "lang": "en", "labels": ["suicidal", "self_harm"], "tag": "sh_preparation"}
