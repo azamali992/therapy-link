@@ -35,7 +35,9 @@ from therapylink_api.models import ClinicianProfile, User  # noqa: E402
 
 async def _list() -> None:
     async with db.sessionmaker()() as s:
-        rows = (await s.execute(select(User, ClinicianProfile).join(ClinicianProfile, ClinicianProfile.uid == User.uid))).all()
+        rows = (
+            await s.execute(select(User, ClinicianProfile).join(ClinicianProfile, ClinicianProfile.uid == User.uid))
+        ).all()
     if not rows:
         print("no clinician profiles yet — sign up via You → I'm a clinician")
     for user, profile in rows:
@@ -53,7 +55,10 @@ async def _set(who: str, revoke: bool) -> int:
             return 1
         if not revoke and not user.email_verified:
             # Otherwise anyone could sign up with a clinician's address and inherit the approval.
-            print(f"{user.email or user.uid} has not verified their email; ask them to, then sign in again", file=sys.stderr)
+            print(
+                f"{user.email or user.uid} has not verified their email; ask them to, then sign in again",
+                file=sys.stderr,
+            )
             return 1
         profile.verified_at = None if revoke else datetime.now(UTC)
         await s.commit()

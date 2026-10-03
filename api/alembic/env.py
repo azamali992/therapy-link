@@ -1,10 +1,10 @@
 import asyncio
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
+from alembic import context
 from therapylink_api import models  # noqa: F401
 from therapylink_api.db import Base, engine_kwargs
 from therapylink_api.settings import get_settings
@@ -33,7 +33,11 @@ async def run_migrations_online() -> None:
     # Same pooler handling as the app, minus the pool sizes that NullPool doesn't take. Not
     # db.make_engine: its sqlite foreign-key pragma would make batch migrations, which drop and
     # recreate a table, cascade-delete every row that points at it.
-    kwargs = {k: v for k, v in engine_kwargs(url, get_settings().database_pooled).items() if k not in ("pool_size", "max_overflow")}
+    kwargs = {
+        k: v
+        for k, v in engine_kwargs(url, get_settings().database_pooled).items()
+        if k not in ("pool_size", "max_overflow")
+    }
     connectable = create_async_engine(url, poolclass=pool.NullPool, **kwargs)
     async with connectable.connect() as connection:
         await connection.run_sync(_run)
