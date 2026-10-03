@@ -17,7 +17,7 @@ import sys
 import time
 
 START = time.time()
-subprocess.run([sys.executable, "-m", "pip", "install", "-q", "typer", "rich"], check=True)
+subprocess.run([sys.executable, "-m", "pip", "install", "-q", "typer", "rich", "onnx", "onnxruntime", "onnxscript"], check=True)
 
 SRC = os.path.dirname(glob.glob("/kaggle/input/**/build/labeled.crisis.train.jsonl", recursive=True)[0])
 CODE = os.path.dirname(glob.glob("/kaggle/input/**/code/therapylink_ml/__init__.py", recursive=True)[0])
@@ -50,6 +50,12 @@ for name, (base, lr, epochs) in RUNS.items():
         env=env,
     ).returncode
     subprocess.run([sys.executable, "-u", "-m", "therapylink_ml.train.guardian", "probe", "--run", out], env=env)
+    # Export here rather than on the laptop, whose RAM is shared with other work. Only the int8 file
+    # leaves Kaggle; the fp32 graph is dropped, and the XLM-R checkpoint too once exported.
+    subprocess.run([sys.executable, "-u", "-m", "therapylink_ml.train.guardian", "export-onnx", "--run", out], env=env)
+    for f in ["guardian.onnx", "guardian.onnx.data"] + (["model.pt"] if name == "xlmr-base" else []):
+        if os.path.exists(f"{out}/{f}"):
+            os.remove(f"{out}/{f}")
     results[name] = {"train_rc": rc, "heldout_rc": hrc, "train_minutes": round(train_min, 1)}
     print(name, results[name], flush=True)
 
