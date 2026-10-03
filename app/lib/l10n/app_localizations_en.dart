@@ -1070,6 +1070,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'No connection. Check your network and try again.';
 
   @override
+  String get authErrorGeneric => 'That didn\'t work. Try again in a moment.';
+
+  @override
+  String get authErrorGoogle =>
+      'Google sign-in didn\'t work on this phone. Use email for now.';
+
+  @override
+  String get resetNeedsEmail =>
+      'Type your email above first, then tap this again.';
+
+  @override
   String get validateEmail => 'Enter your email';
 
   @override

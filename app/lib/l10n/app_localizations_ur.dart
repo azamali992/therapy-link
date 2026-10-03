@@ -1076,6 +1076,18 @@ class AppLocalizationsUr extends AppLocalizations {
       'Connection nahi hai. Network check kar ke dobara koshish karein.';
 
   @override
+  String get authErrorGeneric =>
+      'Yeh nahi hua. Thori der baad dobara koshish karein.';
+
+  @override
+  String get authErrorGoogle =>
+      'Is phone par Google sign-in nahi chala. Abhi email istemal karein.';
+
+  @override
+  String get resetNeedsEmail =>
+      'Pehle oopar apni email likhein, phir dobara yahan tap karein.';
+
+  @override
   String get validateEmail => 'Apni email likhein';
 
   @override

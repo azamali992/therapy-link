@@ -2018,6 +2018,24 @@ abstract class AppLocalizations {
   /// **'No connection. Check your network and try again.'**
   String get authErrorNetwork;
 
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Try again in a moment.'**
+  String get authErrorGeneric;
+
+  /// No description provided for @authErrorGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in didn\'t work on this phone. Use email for now.'**
+  String get authErrorGoogle;
+
+  /// No description provided for @resetNeedsEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your email above first, then tap this again.'**
+  String get resetNeedsEmail;
+
   /// No description provided for @validateEmail.
   ///
   /// In en, this message translates to:
