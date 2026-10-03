@@ -191,3 +191,16 @@ def test_roman_urdu_drafts_do_not_assume_the_persons_gender():
         for turn in _assistant_turns(r):
             m = GENDERED_ADDRESS.search(turn)
             assert not m, f"{r['id']}: {m.group(0)!r}"
+
+
+HELPLINE_SENTENCE = re.compile(r"[^.?!]*(umang|madadgaar|0311-?7786264|\b1122\b|\b1098\b|\b1099\b)[^.?!]*", re.I)
+HELPLINE_CLAIM = re.compile(r"\bfree\b|24/7|24 ghante|\bmuft\b|raazdari|confidential|psycholog|any ?(hour|time)|din raat|all the time|day and night", re.I)
+
+
+def test_no_row_makes_an_unverified_claim_about_a_helpline():
+    # Every row, approved ones included: they train by default (docs/clinical/helplines.md).
+    for r in ROWS:
+        for turn in _assistant_turns(r):
+            for sentence in HELPLINE_SENTENCE.finditer(turn):
+                m = HELPLINE_CLAIM.search(sentence.group(0))
+                assert not m, f"{r['id']}: {m.group(0)!r} in {sentence.group(0).strip()!r}"
