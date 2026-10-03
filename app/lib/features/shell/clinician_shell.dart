@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/tokens.dart';
 import '../shared/widgets.dart';
+import '../you/account_actions.dart';
 
 /// Frame around the clinician workspace screens.
 ///
@@ -10,13 +12,13 @@ import '../shared/widgets.dart';
 /// NavigationBar and NavigationRail both require ≥ 2 items and throw with one,
 /// so narrow screens get no navigation chrome — the caseload AppBar carries
 /// sign-out. Wide screens get a plain sidebar instead of a rail.
-class ClinicianShell extends StatelessWidget {
+class ClinicianShell extends ConsumerWidget {
   const ClinicianShell({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (MediaQuery.sizeOf(context).width < 840) return child;
 
     final l = context.l10n;
@@ -46,11 +48,10 @@ class ClinicianShell extends StatelessWidget {
                       onTap: () => context.go('/clinic'),
                     ),
                     const Spacer(),
-                    // TODO(core-team): wire to signOutWithConfirm from account_actions.dart.
                     Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () => signOutWithConfirm(context, ref),
                         icon: const Icon(Icons.logout_rounded),
                         label: Text(l.signOut),
                       ),
