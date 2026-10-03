@@ -150,6 +150,23 @@ class AppLocalizationsUr extends AppLocalizations {
   String get guardianUnavailable => 'Abhi publish nahi hua.';
 
   @override
+  String guardianWaitingForWifi(int megabytes) {
+    return 'Safety model ($megabytes MB) Wi-Fi milne par download hoga. Tab tak built-in keyword check chal raha hai.';
+  }
+
+  @override
+  String get guardianDownloadOnData => 'Mobile data par download karein';
+
+  @override
+  String guardianNoSpace(int megabytes) {
+    return 'Is phone mein safety model ke liye jagah kam hai. Taqreeban $megabytes MB khali kar ke dobara koshish karein. Tab tak built-in keyword check chal raha hai.';
+  }
+
+  @override
+  String get guardianMeanwhile =>
+      'Jab tak yeh tayyar nahi hota, built-in keyword check chal raha hai.';
+
+  @override
   String get crisisCallUmang => 'Umang ko call karein · 0311 7786264';
 
   @override

@@ -17,6 +17,9 @@ import '../../ui/jugnu_icons.dart';
 // to avoid ambiguity.
 import '../../ui/presence/presence.dart';
 import '../../core/ml/guardian.dart' show CrisisKind;
+import '../../core/ml/onnx_guardian.dart' show guardianGateOpen, guardianModelManagerProvider, guardianProvider;
+import '../../core/settings/settings.dart' show devControlsProvider;
+import '../shared/guardian_status.dart';
 import '../shared/crisis_copy.dart';
 import '../shared/helplines.dart';
 import '../shared/widgets.dart';
@@ -78,6 +81,16 @@ class _EveScreenState extends ConsumerState<EveScreen> {
     final crisis = ref.watch(crisisModeProvider);
     final copy = CrisisCopy.forContext(context);
     final showQuickExit = ref.watch(privacySettingsProvider.select((s) => s.quickExit));
+
+    // A release build chats only once the trained safety check is installed and working
+    // (guardianGateOpen). Until then the transcript stays readable and help stays one tap away, but
+    // the composer gives way to a notice that says why and shows where the download stands.
+    final safetyReady = guardianGateOpen(
+      ref.watch(guardianModelManagerProvider),
+      release: !ref.watch(devControlsProvider),
+    );
+    // Starts loading the model as the chat opens, so the first message doesn't wait for it.
+    ref.watch(guardianProvider);
 
     // EvePresence animation state (enum from presence_assets.dart).
     // Hold idle when the server is busy or slow — animated states during an
@@ -174,25 +187,31 @@ class _EveScreenState extends ConsumerState<EveScreen> {
               ),
             ),
 
-          // Composer with grounding quick-replies when relevant.
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: Jugnu.readingWidth),
-            child: Composer(
-              onSend: _send,
-              enabled: !state.generating,
-              hint: context.l10n.eveComposerHint,
-              quickReplies: _quickReplies(state, context),
-              onQuickReply: (chip) {
-                ref.read(ctrl.eveControllerProvider.notifier).send(chip);
-                setState(() => _hasText = false);
-                _scrollToEnd();
-              },
-              onChanged: (text) {
-                final has = text.trim().isNotEmpty;
-                if (has != _hasText) setState(() => _hasText = has);
-              },
+          if (!safetyReady)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(Jugnu.s16, Jugnu.s8, Jugnu.s16, Jugnu.s16),
+              child: _SafetyPaused(),
+            )
+          else
+            // Composer with grounding quick-replies when relevant.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: Jugnu.readingWidth),
+              child: Composer(
+                onSend: _send,
+                enabled: !state.generating,
+                hint: context.l10n.eveComposerHint,
+                quickReplies: _quickReplies(state, context),
+                onQuickReply: (chip) {
+                  ref.read(ctrl.eveControllerProvider.notifier).send(chip);
+                  setState(() => _hasText = false);
+                  _scrollToEnd();
+                },
+                onChanged: (text) {
+                  final has = text.trim().isNotEmpty;
+                  if (has != _hasText) setState(() => _hasText = has);
+                },
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -458,6 +477,44 @@ class _StarterChip extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Eve status banner (busy / slow server)
 // ---------------------------------------------------------------------------
+
+/// Shown in place of the composer while a release build waits for the trained safety check. Same
+/// quiet surface as the busy notice: no red, and help is still in the app bar. On a short screen it
+/// scrolls rather than squeezing the transcript out.
+class _SafetyPaused extends StatelessWidget {
+  const _SafetyPaused();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<JugnuColors>()!;
+    final t = Theme.of(context).textTheme;
+    final l = context.l10n;
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: Jugnu.readingWidth, maxHeight: MediaQuery.sizeOf(context).height * 0.4),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(Jugnu.rNested),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(Jugnu.s16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(l.eveSafetyNotReadyTitle, style: t.titleSmall?.copyWith(color: Theme.of(context).colorScheme.onSurface)),
+              const SizedBox(height: Jugnu.s4),
+              Text(l.eveSafetyNotReadyBody, style: t.bodyMedium?.copyWith(color: colors.ink2)),
+              const SizedBox(height: Jugnu.s12),
+              const GuardianStatusPanel(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// Calm inline notice shown above the composer when Eve's server is busy or
 /// slow. Uses the `surface` / `ink2` tokens so it blends into the UI without

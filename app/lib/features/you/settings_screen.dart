@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/tokens.dart';
-import '../../core/ml/onnx_guardian.dart';
 import '../../core/security/app_lock.dart';
 import '../../core/security/privacy_settings.dart';
 import '../../core/settings/settings.dart';
-import '../../ui/components/buttons.dart';
 import '../../ui/components/setting_row.dart';
 import '../../ui/components/slab.dart';
+import '../shared/guardian_status.dart';
 import '../shared/widgets.dart';
 import 'account_actions.dart';
 
@@ -148,10 +147,11 @@ class SettingsScreen extends ConsumerWidget {
                 t.bodySmall?.copyWith(color: colors.ink2),
           ),
 
-          if (dev) ...[
-            SectionTitle(l.guardianTitle),
-            const _GuardianRow(),
-          ],
+          // ── Safety check ───────────────────────────────────────────────
+          // Shown in every build: in a release build Eve waits for this model, so where its
+          // download stands is something the person should be able to see.
+          SectionTitle(l.guardianTitle),
+          const GuardianStatusPanel(),
         ],
       ),
     );
@@ -199,53 +199,6 @@ class _QuickExitTile extends ConsumerWidget {
       value: ref.watch(privacySettingsProvider.select((s) => s.quickExit)),
       onChanged: ref.read(privacySettingsProvider.notifier).setQuickExit,
       icon: Icons.visibility_off_outlined,
-    );
-  }
-}
-
-class _GuardianRow extends ConsumerWidget {
-  const _GuardianRow();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l = context.l10n;
-    final t = Theme.of(context).textTheme;
-    final colors = Theme.of(context).extension<JugnuColors>()!;
-    final status = ref.watch(guardianModelManagerProvider);
-    final manager = ref.read(guardianModelManagerProvider.notifier);
-
-    final body = switch (status) {
-      GuardianReady() => l.guardianReady,
-      GuardianDownloading(:final percent) => l.guardianDownloading(percent),
-      GuardianFailed() => l.guardianFailed,
-      _ => l.guardianHeuristic,
-    };
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(body, style: t.bodyMedium?.copyWith(color: colors.ink2)),
-        if (status is GuardianDownloading) ...[
-          const SizedBox(height: Tokens.s8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-                value: status.percent / 100, minHeight: 6),
-          ),
-        ],
-        if (status is! GuardianReady && status is! GuardianDownloading) ...[
-          const SizedBox(height: Tokens.s12),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: GhostButton(
-              label: manager.available
-                  ? l.guardianDownload
-                  : l.guardianUnavailable,
-              onPressed:
-                  manager.available ? manager.download : () {},
-            ),
-          ),
-        ],
-      ],
     );
   }
 }

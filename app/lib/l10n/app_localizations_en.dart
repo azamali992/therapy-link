@@ -149,6 +149,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guardianUnavailable => 'Not published yet.';
 
   @override
+  String guardianWaitingForWifi(int megabytes) {
+    return 'Waiting for Wi-Fi to download the safety model ($megabytes MB). The built-in keyword check runs until then.';
+  }
+
+  @override
+  String get guardianDownloadOnData => 'Download on mobile data';
+
+  @override
+  String guardianNoSpace(int megabytes) {
+    return 'There isn\'t enough space on this phone for the safety model. Free up about $megabytes MB, then try again. The built-in keyword check runs until then.';
+  }
+
+  @override
+  String get guardianMeanwhile =>
+      'The built-in keyword check runs until it\'s ready.';
+
+  @override
   String get crisisCallUmang => 'Call Umang · 0311 7786264';
 
   @override

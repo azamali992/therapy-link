@@ -63,6 +63,24 @@
     }
   },
   "guardianUnavailable": "Abhi publish nahi hua.",
+  "guardianWaitingForWifi": "Safety model ({megabytes} MB) Wi-Fi milne par download hoga. Tab tak built-in keyword check chal raha hai.",
+  "@guardianWaitingForWifi": {
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "guardianDownloadOnData": "Mobile data par download karein",
+  "guardianNoSpace": "Is phone mein safety model ke liye jagah kam hai. Taqreeban {megabytes} MB khali kar ke dobara koshish karein. Tab tak built-in keyword check chal raha hai.",
+  "@guardianNoSpace": {
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "guardianMeanwhile": "Jab tak yeh tayyar nahi hota, built-in keyword check chal raha hai.",
   "crisisCallUmang": "Umang ko call karein · 0311 7786264",
   "crisisCallEmergency": "Emergency · 1122",
   "crisisKeepTalking": "Eve se baat jaari rakhein",

@@ -350,6 +350,30 @@ abstract class AppLocalizations {
   /// **'Not published yet.'**
   String get guardianUnavailable;
 
+  /// PENDING CLINICIAN REVIEW: safety-status line while the Guardian download waits for Wi-Fi. Wording drafted by engineering, not yet approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Wi-Fi to download the safety model ({megabytes} MB). The built-in keyword check runs until then.'**
+  String guardianWaitingForWifi(int megabytes);
+
+  /// No description provided for @guardianDownloadOnData.
+  ///
+  /// In en, this message translates to:
+  /// **'Download on mobile data'**
+  String get guardianDownloadOnData;
+
+  /// PENDING CLINICIAN REVIEW: safety-status line when the phone lacks space for the Guardian bundle. Wording drafted by engineering, not yet approved.
+  ///
+  /// In en, this message translates to:
+  /// **'There isn\'t enough space on this phone for the safety model. Free up about {megabytes} MB, then try again. The built-in keyword check runs until then.'**
+  String guardianNoSpace(int megabytes);
+
+  /// No description provided for @guardianMeanwhile.
+  ///
+  /// In en, this message translates to:
+  /// **'The built-in keyword check runs until it\'s ready.'**
+  String get guardianMeanwhile;
+
   /// No description provided for @crisisCallUmang.
   ///
   /// In en, this message translates to:
@@ -2252,7 +2276,7 @@ abstract class AppLocalizations {
   /// **'Eve\'s model for this app hasn\'t been released yet. Exercises, your journal and help are all still here.'**
   String get eveUnavailableBody;
 
-  /// PENDING CLINICIAN REVIEW: safety-status line in Settings when the trained Guardian failed to download, failed its install or hash check, or failed at runtime. Only shown in debug and profile builds, where the keyword check keeps chat open; release builds hide this row and pause Eve instead. Wording drafted by engineering, not yet approved.
+  /// PENDING CLINICIAN REVIEW: safety-status line (Settings, and the paused-chat notice in release builds) when the trained Guardian failed to download, failed its install or hash check, or failed at runtime. Wording drafted by engineering, not yet approved.
   ///
   /// In en, this message translates to:
   /// **'The trained safety model couldn\'t be downloaded, set up or run on this phone, so the built-in keyword check is running on its own. Try downloading it again.'**

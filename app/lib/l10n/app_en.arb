@@ -63,6 +63,26 @@
     }
   },
   "guardianUnavailable": "Not published yet.",
+  "guardianWaitingForWifi": "Waiting for Wi-Fi to download the safety model ({megabytes} MB). The built-in keyword check runs until then.",
+  "@guardianWaitingForWifi": {
+    "description": "PENDING CLINICIAN REVIEW: safety-status line while the Guardian download waits for Wi-Fi. Wording drafted by engineering, not yet approved.",
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "guardianDownloadOnData": "Download on mobile data",
+  "guardianNoSpace": "There isn't enough space on this phone for the safety model. Free up about {megabytes} MB, then try again. The built-in keyword check runs until then.",
+  "@guardianNoSpace": {
+    "description": "PENDING CLINICIAN REVIEW: safety-status line when the phone lacks space for the Guardian bundle. Wording drafted by engineering, not yet approved.",
+    "placeholders": {
+      "megabytes": {
+        "type": "int"
+      }
+    }
+  },
+  "guardianMeanwhile": "The built-in keyword check runs until it's ready.",
   "crisisCallUmang": "Call Umang · 0311 7786264",
   "crisisCallEmergency": "Emergency · 1122",
   "crisisKeepTalking": "Keep talking to Eve",
@@ -585,7 +605,7 @@
   },
   "guardianFailed": "The trained safety model couldn't be downloaded, set up or run on this phone, so the built-in keyword check is running on its own. Try downloading it again.",
   "@guardianFailed": {
-    "description": "PENDING CLINICIAN REVIEW: safety-status line in Settings when the trained Guardian failed to download, failed its install or hash check, or failed at runtime. Only shown in debug and profile builds, where the keyword check keeps chat open; release builds hide this row and pause Eve instead. Wording drafted by engineering, not yet approved."
+    "description": "PENDING CLINICIAN REVIEW: safety-status line (Settings, and the paused-chat notice in release builds) when the trained Guardian failed to download, failed its install or hash check, or failed at runtime. Wording drafted by engineering, not yet approved."
   },
   "settingsPrivacy": "Privacy on this phone",
   "appLockTitle": "App lock",
