@@ -40,7 +40,7 @@ for name, (base, lr, epochs) in RUNS.items():
     rc = subprocess.run(
         [sys.executable, "-u", "-m", "therapylink_ml.train.guardian", "train", "--task", "crisis", "--base", base,
          "--data-dir", SRC, "--out", out, "--epochs", epochs, "--lr", lr, "--batch", "32", "--max-len", "128",
-         "--no-with-authored", "--lang-recall", "0.98", "--seed", "13"],
+         "--no-with-authored", "--no-freeze-embeddings", "--lang-recall", "0.98", "--seed", "13"],
         env=env,
     ).returncode
     train_min = (time.time() - t0) / 60
