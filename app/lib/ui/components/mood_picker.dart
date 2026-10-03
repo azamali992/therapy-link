@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import '../../app/theme/tokens.dart';
 import 'moon_glyph.dart';
 
-/// The five mood options in order.
+/// The five mood options in order (semantic labels, no embedded newlines).
 const _kLabels = ['Bahut bura', 'Theek nahi', 'Theek hoon', 'Acha', 'Zabardast'];
+
+/// Display label for the picker: breaks two-word labels at the space so each
+/// option column is only as wide as its longest single word (≈ CSS `min-content`).
+/// Single-word labels like "Acha" and "Zabardast" are returned unchanged.
+String _pickerLabel(String label) => label.replaceFirst(' ', '\n');
 const _kPhases = [
   MoonPhase.newMoon,
   MoonPhase.crescent,
@@ -164,6 +169,9 @@ class _MoodPickerState extends State<MoodPicker>
                 label: 'Mood check-in, radio group',
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Top-align so every moon sits on the same baseline regardless
+                  // of whether the label below it is one line or two.
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(5, (i) => _MoodOption(
                     phase: _kPhases[i],
                     label: _kLabels[i],
@@ -245,18 +253,18 @@ class _MoodOption extends StatelessWidget {
             children: [
               MoonGlyph(phase: phase, size: 28, selected: selected),
               const SizedBox(height: Jugnu.s8),
-              SizedBox(
-                width: 48,
-                child: Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: text.labelMedium?.copyWith(
-                    color: selected
-                        ? Theme.of(context).colorScheme.onSurface
-                        : colors.ink2,
-                    fontWeight:
-                        selected ? FontWeight.w700 : FontWeight.w500,
-                  ),
+              // No fixed width: let the label take its intrinsic width so that
+              // "Zabardast" stays on one line while two-word labels break at
+              // the explicit '\n' inserted by _pickerLabel.
+              Text(
+                _pickerLabel(label),
+                textAlign: TextAlign.center,
+                style: text.labelMedium?.copyWith(
+                  color: selected
+                      ? Theme.of(context).colorScheme.onSurface
+                      : colors.ink2,
+                  fontWeight:
+                      selected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
             ],

@@ -77,6 +77,7 @@
   "moodGood": "Acha",
   "moodGreat": "Bohat acha",
   "moodTrend": "Pichlay 30 din",
+  "moodTrendWeek": "Is hafte",
   "moodTrendEmpty": "Chand baar check-in karein, trend yahan nazar aayega.",
   "groundingOffer": "Lagta hai bohat kuch chal raha hai. Ek minute saans par tawajjo se faida hoga?",
   "groundingAccept": "Karke dekhein",
@@ -133,6 +134,8 @@
       }
     }
   },
+  "breathResume": "Dobara shuru",
+  "breathStop": "Jab chahein rok sakte hain. Kuch count nahi hota.",
   "breathNote": "Jab chahein rok dein. Agar sar chakraye to normal saans lein.",
   "assessmentsTitle": "Check-ins",
   "assessmentPhq9": "Mood check-in",
@@ -198,6 +201,7 @@
   "resultNote": "Yeh ek screening score hai, diagnosis nahi. Waqt ke saath trend dekhna sab se mufeed hai.",
   "resultFlagged": "Aap ne bataya ke aap ko lagta hai mar jana behtar hoga ya khud ko nuqsan pohanchane ke khayal aaye. Yeh ahem hai, aur abhi log hain jo madad karna chahte hain.",
   "resultDone": "Ho gaya",
+  "resultTalkToEve": "Eve se baat karein",
   "journalTitle": "Journal",
   "journalNew": "Naya entry",
   "journalEmptyTitle": "Abhi yahan kuch nahi",
