@@ -99,6 +99,9 @@ api/*.sqlite3
 ml/data/raw/
 ml/data/processed/
 ml/data/cache/
+# Guardian v1: the built splits and machine translations are rebuilt from written/ and heldout/.
+ml/data/guardian/build/
+ml/data/guardian/mt/
 ml/models/
 ml/runs/
 ml/outputs/
