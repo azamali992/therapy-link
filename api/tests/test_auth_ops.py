@@ -123,3 +123,31 @@ def test_verify_goes_through_the_admin_sdk(monkeypatch):
         firebase_auth, "verify_id_token", lambda tok, app=None: seen.update(tok=tok, app=app) or {"uid": "x"}
     )
     assert auth._verify("abc") == {"uid": "x"} and seen == {"tok": "abc", "app": "the-app"}
+
+
+def test_verify_falls_back_to_public_certs_without_cloud_credentials(monkeypatch):
+    """No service account and no ADC: the Admin SDK can't start, so tokens are checked directly."""
+    from google.auth import exceptions as gexc
+
+    def no_adc(tok, app=None):
+        raise gexc.DefaultCredentialsError("no ADC")
+
+    monkeypatch.setattr(auth.firebase, "app", lambda: "the-app")
+    monkeypatch.setattr(firebase_auth, "verify_id_token", no_adc)
+    monkeypatch.setattr(auth.firebase, "verify_id_token_public", lambda tok: {"uid": "pub-" + tok})
+    assert auth._verify("abc") == {"uid": "pub-abc"}
+
+
+def test_public_cert_check_rejects_another_projects_token(monkeypatch):
+    from google.oauth2 import id_token
+
+    from therapylink_api import firebase as fb
+
+    monkeypatch.setattr(
+        id_token,
+        "verify_firebase_token",
+        lambda tok, req, audience=None: {"iss": "https://securetoken.google.com/someone-else", "sub": "u1"},
+    )
+    monkeypatch.setattr(fb, "_google_request", lambda: None)
+    with pytest.raises(ValueError):
+        fb.verify_id_token_public("t")

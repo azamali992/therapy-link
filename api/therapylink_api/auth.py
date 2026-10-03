@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.concurrency import run_in_threadpool
 from firebase_admin import auth as firebase_auth
+from google.auth import exceptions as google_auth_exceptions
 from sqlalchemy import insert
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
@@ -56,9 +57,12 @@ def _uid_hash(uid: str, salt: str) -> str:
 
 
 def _verify(token: str) -> dict:
-    # The Admin SDK caches Google's signing certs between calls; a plain google-auth transport
-    # fetched them on every request.
-    return firebase_auth.verify_id_token(token, app=firebase.app())
+    # The Admin SDK caches Google's signing certs between calls. Without Cloud credentials it can't
+    # start at all, so fall back to checking the token against the public certs directly.
+    try:
+        return firebase_auth.verify_id_token(token, app=firebase.app())
+    except google_auth_exceptions.DefaultCredentialsError:
+        return firebase.verify_id_token_public(token)
 
 
 async def _verify_app_check(request: Request) -> None:
@@ -120,7 +124,7 @@ async def signed_in(request: Request) -> Identity:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "missing bearer token")
     try:
         claims = await run_in_threadpool(_verify, header[7:])
-    except firebase_auth.CertificateFetchError as e:
+    except (firebase_auth.CertificateFetchError, google_auth_exceptions.TransportError) as e:
         # Our problem, not the token's: don't make the app sign the user out.
         log.warning("could not fetch signing certs [request %s]: %s", requestid.current(), e)
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "sign-in check unavailable, try again") from None
