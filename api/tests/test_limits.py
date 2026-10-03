@@ -37,13 +37,17 @@ async def test_oversized_bodies_are_422(client, method, path, body):
 
 async def test_mood_batch_is_capped(client):
     point = {"valence": 0, "source": "manual", "recorded_at": datetime.now(UTC).isoformat()}
-    assert (await client.post("/mood/batch", json=[point] * (MAX_MOOD_BATCH + 1), headers=as_user("u"))).status_code == 422
+    assert (
+        await client.post("/mood/batch", json=[point] * (MAX_MOOD_BATCH + 1), headers=as_user("u"))
+    ).status_code == 422
     r = await client.post("/mood/batch", json=[point] * MAX_MOOD_BATCH, headers=as_user("u"))
     assert r.status_code == 201
 
 
 async def test_bodies_at_the_limit_are_accepted(client):
-    assert (await client.post("/journal", json={"body": "x" * MAX_JOURNAL_BODY}, headers=as_user("u"))).status_code == 201
+    assert (
+        await client.post("/journal", json={"body": "x" * MAX_JOURNAL_BODY}, headers=as_user("u"))
+    ).status_code == 201
     # Within every cap; 503 because no inference server is configured in tests.
     r = await client.post("/inference/chat", json={"messages": _msgs(4, MAX_CHAT_CHARS // 4)}, headers=as_user("u"))
     assert r.status_code == 503
@@ -56,14 +60,19 @@ async def test_one_long_message_within_the_total_is_accepted(client):
     notes = "\n".join(f"- situation: {'z' * 190}" for _ in range(20))
     content = f"{'Read this conversation. ' * 30}\n\nExisting notes:\n{notes}\n\nConversation:\n{transcript}"
     assert 10_000 < len(content) < MAX_CHAT_CHARS
-    r = await client.post("/inference/chat", json={"messages": [{"role": "user", "content": content}]}, headers=as_user("u"))
+    r = await client.post(
+        "/inference/chat", json={"messages": [{"role": "user", "content": content}]}, headers=as_user("u")
+    )
     assert r.status_code == 503  # past validation; no inference server in tests
 
 
 async def test_chat_is_rate_limited_per_uid(app, client):
     app.state.chat_limiter = TokenBucket(capacity=2, period_s=600)
     body = {"messages": _msgs(1, 5)}
-    assert [(await client.post("/inference/chat", json=body, headers=as_user("a"))).status_code for _ in range(2)] == [503, 503]
+    assert [(await client.post("/inference/chat", json=body, headers=as_user("a"))).status_code for _ in range(2)] == [
+        503,
+        503,
+    ]
     r = await client.post("/inference/chat", json=body, headers=as_user("a"))
     assert r.status_code == 429 and int(r.headers["retry-after"]) > 0
     # Another uid has its own bucket.

@@ -4,9 +4,9 @@ text, journal entries, and summaries generated on-device)."""
 
 from __future__ import annotations
 
-import enum
 import uuid
 from datetime import datetime
+from enum import StrEnum
 
 from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Integer, String, Text, UniqueConstraint, false, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,22 +24,23 @@ def _now():
 
 def _now_utc() -> datetime:
     from datetime import UTC
+
     return datetime.now(UTC)
 
 
-class Role(str, enum.Enum):
+class Role(StrEnum):
     patient = "patient"
     clinician = "clinician"
     admin = "admin"
 
 
-class LinkStatus(str, enum.Enum):
+class LinkStatus(StrEnum):
     pending = "pending"
     active = "active"
     revoked = "revoked"
 
 
-class Instrument(str, enum.Enum):
+class Instrument(StrEnum):
     phq9 = "phq9"
     gad7 = "gad7"
     bdi2 = "bdi2"
@@ -143,7 +144,9 @@ class JournalEntry(Base):
     # formats both this column and shared_from with the same 'YYYY-MM-DD HH:MM:SS.ffffff'
     # pattern. CURRENT_TIMESTAMP (second precision) would be shorter, making the >= comparison
     # against shared_from fail for same-second entries (string prefix ordering in SQLite).
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now_utc, server_default=_now(), index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now_utc, server_default=_now(), index=True
+    )
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=_now(), onupdate=_now())
 
 
@@ -159,7 +162,9 @@ class SharedSummary(Base):
     period_start: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Python-side default for microsecond precision: see JournalEntry.created_at comment.
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now_utc, server_default=_now(), index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now_utc, server_default=_now(), index=True
+    )
 
 
 class AccessLog(Base):

@@ -61,7 +61,11 @@ async def test_trend_buckets_by_local_day_defaulting_to_karachi(client):
 async def test_offsets_on_upload_are_respected(client):
     # 22:00 in Karachi is 17:00 UTC, same day. Stored as a bare wall time and read back as UTC, it
     # would move to 03:00 the next day.
-    local = (datetime.now(UTC) - timedelta(days=1)).astimezone(timezone(timedelta(hours=5))).replace(hour=22, minute=0, second=0, microsecond=0)
+    local = (
+        (datetime.now(UTC) - timedelta(days=1))
+        .astimezone(timezone(timedelta(hours=5)))
+        .replace(hour=22, minute=0, second=0, microsecond=0)
+    )
     await client.post("/mood/batch", json=[_point(local, 1)], headers=as_user("u"))
     [day] = (await client.get("/mood/trend", params={"tz": "Asia/Karachi"}, headers=as_user("u"))).json()
     assert day["day"] == local.date().isoformat()

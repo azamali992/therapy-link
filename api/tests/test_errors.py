@@ -58,7 +58,9 @@ async def test_upstream_failures_hide_the_upstream(client, monkeypatch, caplog, 
 
 async def test_unreadable_upstream_reply_is_a_generic_502(client, monkeypatch):
     _cloud_inference(monkeypatch, lambda request: httpx.Response(200, text=f"<html>{SECRET}</html>"))
-    r = await client.post("/inference/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers=as_user("u"))
+    r = await client.post(
+        "/inference/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers=as_user("u")
+    )
     assert r.status_code == 502 and SECRET not in r.text
 
 
@@ -70,6 +72,8 @@ async def test_a_good_upstream_reply_passes_through_with_the_key(client, monkeyp
         return httpx.Response(200, json={"model": "eve", "choices": [{"message": {"content": " hello "}}]})
 
     _cloud_inference(monkeypatch, ok)
-    r = await client.post("/inference/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers=as_user("u"))
+    r = await client.post(
+        "/inference/chat", json={"messages": [{"role": "user", "content": "hi"}]}, headers=as_user("u")
+    )
     assert r.status_code == 200 and r.json() == {"reply": "hello", "model": "eve"}
     assert seen[0].headers["authorization"] == "Bearer k"

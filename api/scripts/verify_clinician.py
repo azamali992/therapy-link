@@ -1,10 +1,20 @@
-"""Approve (or revoke) a clinician account — the admin step between sign-up and seeing patients.
+"""Approve (or revoke) a clinician account — local dev / emergency fallback only.
 
+PREFER THE ADMIN API IN PRODUCTION:
+    POST /admin/clinicians/{uid}/verify  — requires Firebase token with admin:true custom claim
+    POST /admin/clinicians/{uid}/revoke
+
+This script requires direct database access (TL_DATABASE_URL). Never put a production database
+URL on a developer laptop. It exists only for:
+  - local dev with SQLite (TL_DEV_AUTH_BYPASS=true)
+  - emergency break-glass when the admin API is unavailable
+
+Usage:
     python scripts/verify_clinician.py                    # list clinician profiles
     python scripts/verify_clinician.py doctor@example.com # approve by email or uid
     python scripts/verify_clinician.py doctor@example.com --revoke
 
-Uses TL_DATABASE_URL like the server does, so run it from api/ with the same .env.
+Run from api/ so the .env file is found.
 """
 
 from __future__ import annotations

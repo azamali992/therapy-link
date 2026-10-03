@@ -26,7 +26,9 @@ async def list_for(session: AsyncSession, uid: str, instrument: Instrument | Non
 
 
 @router.post("", response_model=AssessmentOut, status_code=201)
-async def submit(body: AssessmentIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def submit(
+    body: AssessmentIn, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)
+):
     try:
         s = score(body.instrument, body.answers)
     except ValueError as e:
@@ -59,5 +61,9 @@ async def submit(body: AssessmentIn, p: Principal = Depends(current_principal), 
 
 
 @router.get("", response_model=list[AssessmentOut])
-async def mine(instrument: Instrument | None = None, p: Principal = Depends(current_principal), session: AsyncSession = Depends(get_session)):
+async def mine(
+    instrument: Instrument | None = None,
+    p: Principal = Depends(current_principal),
+    session: AsyncSession = Depends(get_session),
+):
     return await list_for(session, p.uid, instrument)

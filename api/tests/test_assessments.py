@@ -7,7 +7,9 @@ async def test_assessment_records_the_locale_it_was_answered_in(client):
     await client.patch("/me", json={"locale": "ur"}, headers=as_user("pat"))
     r = await client.post("/assessments", json={"instrument": "phq9", "answers": [0] * 9}, headers=as_user("pat"))
     assert r.status_code == 201 and r.json()["locale"] == "ur"  # falls back to the app language
-    r = await client.post("/assessments", json={"instrument": "gad7", "answers": [0] * 7, "locale": "en"}, headers=as_user("pat"))
+    r = await client.post(
+        "/assessments", json={"instrument": "gad7", "answers": [0] * 7, "locale": "en"}, headers=as_user("pat")
+    )
     assert r.json()["locale"] == "en"
     assert [a["locale"] for a in (await client.get("/assessments", headers=as_user("pat"))).json()] == ["en", "ur"]
     bad = {"instrument": "gad7", "answers": [0] * 7, "locale": "fr"}
@@ -17,7 +19,9 @@ async def test_assessment_records_the_locale_it_was_answered_in(client):
 async def test_clinician_sees_the_locale_in_overview_and_caseload(client):
     await verified_clinician(client)
     await linked(client, "pat", assessments=True)
-    await client.post("/assessments", json={"instrument": "phq9", "answers": [1] * 9, "locale": "ur"}, headers=as_user("pat"))
+    await client.post(
+        "/assessments", json={"instrument": "phq9", "answers": [1] * 9, "locale": "ur"}, headers=as_user("pat")
+    )
     overview = (await client.get("/clinician/patients/pat", headers=as_user("doc"))).json()
     assert overview["assessments"][0]["locale"] == "ur"
     [row] = (await client.get("/clinician/patients", headers=as_user("doc"))).json()

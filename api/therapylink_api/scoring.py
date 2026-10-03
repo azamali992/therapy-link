@@ -15,9 +15,24 @@ class Scored:
 
 
 _SPEC = {
-    Instrument.phq9: {"items": 9, "max_item": 3, "bands": [(4, "minimal"), (9, "mild"), (14, "moderate"), (19, "moderately_severe"), (27, "severe")], "risk_item": 8},
-    Instrument.gad7: {"items": 7, "max_item": 3, "bands": [(4, "minimal"), (9, "mild"), (14, "moderate"), (21, "severe")], "risk_item": None},
-    Instrument.bdi2: {"items": 21, "max_item": 3, "bands": [(13, "minimal"), (19, "mild"), (28, "moderate"), (63, "severe")], "risk_item": 8},
+    Instrument.phq9: {
+        "items": 9,
+        "max_item": 3,
+        "bands": [(4, "minimal"), (9, "mild"), (14, "moderate"), (19, "moderately_severe"), (27, "severe")],
+        "risk_item": 8,
+    },
+    Instrument.gad7: {
+        "items": 7,
+        "max_item": 3,
+        "bands": [(4, "minimal"), (9, "mild"), (14, "moderate"), (21, "severe")],
+        "risk_item": None,
+    },
+    Instrument.bdi2: {
+        "items": 21,
+        "max_item": 3,
+        "bands": [(13, "minimal"), (19, "mild"), (28, "moderate"), (63, "severe")],
+        "risk_item": 8,
+    },
 }
 
 # How many points of increase constitute a clinically meaningful worsening, per instrument.

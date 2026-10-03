@@ -1,15 +1,18 @@
 """The migrations, not create_all, build production. They must reach the models and come back down."""
 
 import io
-import io
+import uuid
 from pathlib import Path
 
+import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.config import Config
 from alembic.runtime.migration import MigrationContext
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import command
+from tests.conftest import PG_URL
 from therapylink_api import models  # noqa: F401
 from therapylink_api.db import Base
 from therapylink_api.settings import get_settings
@@ -63,7 +66,10 @@ def test_data_migrations(tmp_path, monkeypatch):
 
     command.upgrade(cfg, "head")
     with sync.connect() as conn:
-        assert conn.exec_driver_sql("SELECT status, shared_from FROM care_links").one() == ("active", "2026-01-01 00:00:00")
+        assert conn.exec_driver_sql("SELECT status, shared_from FROM care_links").one() == (
+            "active",
+            "2026-01-01 00:00:00",
+        )
         assert conn.exec_driver_sql("SELECT instrument FROM assessments").scalars().all() == ["phq9"]
         assert conn.exec_driver_sql("SELECT email_verified FROM users WHERE uid = 'p'").scalar() == 0
     sync.dispose()
@@ -91,3 +97,42 @@ def test_postgres_downgrade_removes_types_and_rules(monkeypatch):
     # Rules go before their table, types after theirs.
     assert sql.index("DROP RULE IF EXISTS access_log_no_update") < sql.index("DROP TABLE access_log")
     assert sql.index("DROP TABLE users") < sql.index("DROP TYPE IF EXISTS role")
+
+
+@pytest.mark.skipif(PG_URL is None, reason="requires a Postgres test database (TL_TEST_DATABASE_URL)")
+async def test_access_log_is_append_only_on_postgres(monkeypatch):
+    """The Postgres RULE on access_log silently drops UPDATE and DELETE statements.
+
+    Rows are inserted, then an UPDATE and a DELETE are attempted.  Both must leave the original
+    rows unchanged — demonstrating the append-only guarantee from migration b2d4f6a81023.
+    """
+    monkeypatch.setenv("TL_DATABASE_URL", PG_URL)
+    get_settings.cache_clear()
+    engine = create_async_engine(PG_URL, pool_pre_ping=True)
+    row_id = uuid.uuid4().hex
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(
+                text(
+                    "INSERT INTO access_log (id, clinician_uid, patient_uid, action, sections, at)"
+                    " VALUES (:id, 'c1', 'p1', 'caseload', '[]', now())"
+                ),
+                {"id": row_id},
+            )
+        async with engine.begin() as conn:
+            # These are no-ops under the Postgres rule; they must not raise.
+            await conn.execute(text("UPDATE access_log SET action = 'tampered' WHERE id = :id"), {"id": row_id})
+            await conn.execute(text("DELETE FROM access_log WHERE id = :id"), {"id": row_id})
+        async with engine.connect() as conn:
+            action = await conn.scalar(text("SELECT action FROM access_log WHERE id = :id"), {"id": row_id})
+        # Row still exists and action is unchanged.
+        assert action == "caseload", f"expected 'caseload', got {action!r} — UPDATE/DELETE rules may not be active"
+    finally:
+        # Clean up: RULE blocks DELETE, so we use TRUNCATE (permitted to superuser in tests).
+        # If the test DB doesn't allow TRUNCATE, the conftest teardown will handle it anyway.
+        try:
+            async with engine.begin() as conn:
+                await conn.execute(text("TRUNCATE access_log CASCADE"))
+        except Exception:
+            pass
+        await engine.dispose()

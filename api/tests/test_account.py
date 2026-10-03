@@ -7,7 +7,16 @@ from sqlalchemy import func, select
 from tests.conftest import as_user, linked, verified_clinician
 from therapylink_api import db, firebase
 from therapylink_api.auth import Identity, signed_in
-from therapylink_api.models import Assessment, CareLink, ClinicianProfile, ErasedAccount, JournalEntry, MoodPoint, Role, SharedSummary, User
+from therapylink_api.models import (
+    Assessment,
+    CareLink,
+    ClinicianProfile,
+    ErasedAccount,
+    JournalEntry,
+    MoodPoint,
+    SharedSummary,
+    User,
+)
 
 _TABLES = (User, Assessment, MoodPoint, JournalEntry, SharedSummary, CareLink)
 
@@ -25,7 +34,9 @@ async def _patient_with_everything(client, uid: str = "pat") -> None:
     await verified_clinician(client)
     await client.post("/assessments", json={"instrument": "phq9", "answers": [1] * 9}, headers=as_user(uid))
     now = datetime.now(UTC).isoformat()
-    await client.post("/mood/batch", json=[{"valence": 1, "source": "manual", "recorded_at": now}], headers=as_user(uid))
+    await client.post(
+        "/mood/batch", json=[{"valence": 1, "source": "manual", "recorded_at": now}], headers=as_user(uid)
+    )
     await client.post("/journal", json={"body": "a day"}, headers=as_user(uid))
     await client.post("/summaries", json={"kind": "weekly", "content": "a week"}, headers=as_user(uid))
     await linked(client, uid)

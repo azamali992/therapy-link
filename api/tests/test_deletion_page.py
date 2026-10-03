@@ -69,7 +69,7 @@ async def test_style_hash_matches_the_inline_block(client, monkeypatch):
     html = (await _page(client, monkeypatch)).text
     served = re.search(r"<style>(.*?)</style>", html, re.S).group(1)
     assert served == STYLE
-    assert STYLE_HASH == "sha256-" + base64.b64encode(hashlib.sha256(served.encode()).digest()).decode()
+    assert "sha256-" + base64.b64encode(hashlib.sha256(served.encode()).digest()).decode() == STYLE_HASH
 
 
 async def test_nothing_external_or_scripted(client, monkeypatch):
