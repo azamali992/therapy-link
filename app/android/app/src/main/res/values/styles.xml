@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dark-first in every OS mode: TherapyLink opens on its night ground whether the phone is in
+    light or dark mode, so there are no values-night overrides.
+-->
 <resources>
-    <!-- Light splash: shown while the Flutter engine initialises (OS dark mode off). -->
-    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+    <!-- Shown while the Flutter engine starts: the Eve bud on night. -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:statusBarColor">@color/night</item>
+        <item name="android:navigationBarColor">@color/night</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
-    <!-- Window background once the engine is running, before Flutter draws its first frame. -->
-    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+    <!-- Behind the Flutter surface until its first frame: the same night, so nothing flashes. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@color/night</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>

@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Android 12+ (API 31) splash screen. Uses the SplashScreen API; the windowBackground is
-    behind the branded splash icon. forceDarkAllowed=false keeps the palette from being
-    inverted by Android's auto-dark mode.
+    Android 12+ (API 31) splash screen: the Eve bud (splash_eve, 288 dp canvas, bud and glow inside
+    the 192 dp circle) on night #1D1E2C. Same colour as the window background and the Flutter
+    ground, and the same image as the pre-12 launch_background, so the hand-off is seamless.
+    forceDarkAllowed=false keeps Android's auto-dark from touching the palette.
 -->
 <resources>
-    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">@color/ic_launcher_background</item>
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowSplashScreenBackground">@color/night</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_eve</item>
+        <item name="android:statusBarColor">@color/night</item>
+        <item name="android:navigationBarColor">@color/night</item>
         <item name="android:forceDarkAllowed">false</item>
-        <item name="android:windowSplashScreenBackground">@color/ic_launcher_background</item>
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
-    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">@color/night</item>
         <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>
