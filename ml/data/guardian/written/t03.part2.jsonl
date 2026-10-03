@@ -1,0 +1,120 @@
+{"text": "my father hit me again today", "lang": "en", "labels": ["abuse"], "tag": "short_father"}
+{"text": "locked in my room for four days now", "lang": "en", "labels": ["abuse"], "tag": "short_locked_in"}
+{"text": "brother slapped me today", "lang": "en", "labels": ["abuse"], "tag": "short_brother"}
+{"text": "in-laws beat me", "lang": "en", "labels": ["abuse"], "tag": "short_in_laws"}
+{"text": "He punched me.", "lang": "en", "labels": ["abuse"], "tag": "short"}
+{"text": "my wife hits me and I'm ashamed to even say it", "lang": "en", "labels": ["abuse"], "tag": "male_victim"}
+{"text": "bhai threatened to kill me", "lang": "en", "labels": ["abuse", "harm_to_others"], "tag": "short_death_threat"}
+{"text": "my son pushes me around, I'm 70", "lang": "en", "labels": ["abuse"], "tag": "short_elder"}
+{"text": "husband threw me out at 2am", "lang": "en", "labels": ["abuse"], "tag": "short_dv"}
+{"text": "he kicked me while I was on the floor", "lang": "en", "labels": ["abuse"], "tag": "short_dv"}
+{"text": "I work at a bank in Faisalabad and everyone thinks I have the perfect life. Nobody knows my husband checks the mileage on my car every evening and if it doesn't match my route, he hits me. Last night it was 4 km extra because I stopped at the pharmacy. I keep the receipts now. I don't know why I'm telling an app this.", "lang": "en", "labels": ["abuse"], "tag": "coercive_control_long"}
+{"text": "My parents have fixed my marriage with my khala's son in Sargodha. I told them I don't want it and my father hasn't spoken to me since. My brother said if I embarrass the family on the day, he'll make sure I don't live to see the walima. My mother says he doesn't mean it. I think he does.", "lang": "en", "labels": ["abuse", "harm_to_others"], "tag": "forced_marriage_long"}
+{"text": "My mother is 82 and lives with my brother in Peshawar. Whenever I call she whispers. Last time I visited she had marks on her arms and said my bhabhi grabs her when she's slow getting to the bathroom. My brother says I'm just making trouble.", "lang": "en", "labels": ["abuse"], "tag": "elder_abuse_long"}
+{"text": "I hid at the neighbour's house last night because he was going to beat me again", "lang": "en", "labels": ["abuse"], "tag": "dv_hiding"}
+{"text": "Divorce isn't an option in my family. So I just take the beatings. Is that what everyone does?", "lang": "en", "labels": ["abuse"], "tag": "dv_resigned"}
+{"text": "my husband said if I'm not pregnant by eid he'll throw me out, and he hit me when my period came", "lang": "en", "labels": ["abuse"], "tag": "dv_infertility"}
+{"text": "I'm 38, a father myself now. My own father used to beat us with whatever was in his hand, and I promised myself I'd never be like him. Lately when my son misbehaves I feel that same rage rising and I just freeze. I think I finally need to deal with what happened to me.", "lang": "en", "labels": ["abuse"], "tag": "childhood_physical_adult_long"}
+{"text": "my wife's brothers keep calling to say they'll kill me if I don't sign the house over to her", "lang": "en", "labels": ["abuse", "harm_to_others"], "tag": "male_victim_threat"}
+{"text": "honestly I deserve it, I can't cook properly and he works so hard, so when he hits me I just stay quiet", "lang": "en", "labels": ["abuse"], "tag": "dv_self_blame"}
+{"text": "my aunt saw my chats. then my cousin looked straight at me and said a girl who talks to boys deserves to be killed. nobody said anything", "lang": "en", "labels": ["abuse", "harm_to_others"], "tag": "honour_threat"}
+{"text": "I'm a transgender woman living in my guru's dera and she beats us if we don't bring back enough money", "lang": "en", "labels": ["abuse"], "tag": "khwajasira_abuse"}
+{"text": "My husband and his second wife both hit me now.", "lang": "en", "labels": ["abuse"], "tag": "dv_polygamy"}
+{"text": "ever since we moved to Karachi he doesn't let me go out, he locks the gate and keeps the key and if i complain he slaps me", "lang": "en", "labels": ["abuse"], "tag": "locked_in"}
+{"text": "My father beats my mother almost every night. I'm 27 and I can't stop him. Last night he said this time he'll kill her.", "lang": "en", "labels": ["abuse", "harm_to_others"], "tag": "parent_dv_threat"}
+{"text": "help me. he's outside the door with a stick", "lang": "en", "labels": ["abuse"], "tag": "dv_now"}
+{"text": "my husband controls everything, money, phone, my clothes, and I'm terrified of what he'll do if I say no", "lang": "en", "labels": ["abuse"], "tag": "coercive_control"}
+{"text": "my landlord shoved me and threatened my family when I was late with rent. I'm a widow living alone with my daughters", "lang": "en", "labels": ["abuse"], "tag": "landlord_violence"}
+{"text": "i got married 4 months ago and he's already hit me twice", "lang": "en", "labels": ["abuse"], "tag": "dv_newlywed"}
+{"text": "my ex keeps sending messages that he'll kill me if I marry anyone else", "lang": "en", "labels": ["abuse", "harm_to_others"], "tag": "ex_death_threat"}
+{"text": "My sister-in-law and her husband hit my old father whenever he asks for his own pension money.", "lang": "en", "labels": ["abuse"], "tag": "elder_abuse_financial"}
+{"text": "I was raped.", "lang": "en", "labels": ["sexual_violence"], "tag": "short_rape"}
+{"text": "he raped me last night", "lang": "en", "labels": ["sexual_violence"], "tag": "rape_recent"}
+{"text": "I said no. he didn't stop.", "lang": "en", "labels": ["sexual_violence"], "tag": "said_no"}
+{"text": "my husband forces me every night even when I'm crying", "lang": "en", "labels": ["sexual_violence"], "tag": "marital_rape"}
+{"text": "Someone touched me on the bus today and I just froze.", "lang": "en", "labels": ["sexual_violence"], "tag": "bus_molestation"}
+{"text": "At a party last weekend a guy I barely knew took me into a room and assaulted me. I'd had one drink. I keep thinking it was my fault.", "lang": "en", "labels": ["sexual_violence"], "tag": "party_assault"}
+{"text": "my boss keeps touching me and says it's just friendly. I can't quit, I support my whole family", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_touching"}
+{"text": "a guy I met online has my pictures and says he'll send them to my father unless I send more", "lang": "en", "labels": ["sexual_violence"], "tag": "sextortion"}
+{"text": "When I was 9 my cousin sexually abused me. I'm 26 and I've never told anyone.", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "is it rape if it's your husband?", "lang": "en", "labels": ["sexual_violence"], "tag": "marital_rape_question"}
+{"text": "my fiancé pressured me into sleeping with him and now he's threatening to tell everyone if I break it off", "lang": "en", "labels": ["sexual_violence"], "tag": "coerced_sex"}
+{"text": "my tuition teacher used to touch me when I was in 7th class. I'm 30 now and only just realised what it was", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "a man followed me through the market and grabbed me. people just laughed", "lang": "en", "labels": ["sexual_violence"], "tag": "public_groping"}
+{"text": "My supervisor at the hospital corners me in the store room and touches me. Who's going to believe a junior nurse over a senior doctor?", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_touching"}
+{"text": "I think I was drugged at a wedding. I woke up in a room I didn't know and I know something happened to me", "lang": "en", "labels": ["sexual_violence"], "tag": "drugged_assault"}
+{"text": "he said if I didn't do it he'd leave me, so I did. I didn't want to. does that count", "lang": "en", "labels": ["sexual_violence"], "tag": "coerced_sex"}
+{"text": "my professor hints that my grades depend on 'spending time' with him, and last week he put his hand on my leg in his office", "lang": "en", "labels": ["sexual_violence"], "tag": "academic_harassment"}
+{"text": "someone made fake pictures of me and is blackmailing me for money or he'll post them on facebook", "lang": "en", "labels": ["sexual_violence"], "tag": "deepfake_sextortion"}
+{"text": "my brother in law came into my room at night while my husband was in Dubai and forced himself on me", "lang": "en", "labels": ["sexual_violence"], "tag": "in_law_rape"}
+{"text": "I'm a man and I was sexually assaulted by my friend's older brother. I don't even know how to say this properly.", "lang": "en", "labels": ["sexual_violence"], "tag": "male_victim"}
+{"text": "The rickshaw driver touched me and I couldn't do anything.", "lang": "en", "labels": ["sexual_violence"], "tag": "transport_molestation"}
+{"text": "It's been three months and I still can't say the word. I went out with a guy from my university, he seemed nice, and we went to his friend's flat to watch a movie. I said no more than once. He didn't listen. Now I see him every day in class and he acts like nothing happened.", "lang": "en", "labels": ["sexual_violence"], "tag": "date_rape_long"}
+{"text": "my husband records us without my permission and threatens to send it to my family if i don't obey him", "lang": "en", "labels": ["sexual_violence", "abuse"], "tag": "image_threat_husband"}
+{"text": "the qari sahib at the madrassa abused me when I was little. I'm 22 now and I still can't walk past that street", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "My manager sends me sexual messages late at night and touched me during the office trip to Murree.", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_harassment"}
+{"text": "he forced me", "lang": "en", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "I didn't consent", "lang": "en", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "my ex is threatening to leak my private videos", "lang": "en", "labels": ["sexual_violence"], "tag": "image_threat"}
+{"text": "he wouldn't let me out of the car until I did what he wanted", "lang": "en", "labels": ["sexual_violence"], "tag": "coerced_car"}
+{"text": "My husband says it's his right, and if I refuse he forces me anyway. The maulana told my mother a wife can't refuse.", "lang": "en", "labels": ["sexual_violence"], "tag": "marital_rape"}
+{"text": "i was molested in the crowd at a concert. nobody helped", "lang": "en", "labels": ["sexual_violence"], "tag": "crowd_molestation"}
+{"text": "our driver touches me when I sit in the front seat. I'm 19 and scared to tell my father because he'll blame me", "lang": "en", "labels": ["sexual_violence"], "tag": "driver_harassment"}
+{"text": "My friend's husband assaulted me when I stayed over at their place. Now she's not speaking to me because she thinks I'm lying.", "lang": "en", "labels": ["sexual_violence"], "tag": "acquaintance_assault"}
+{"text": "a customer at the salon where I work grabbed me and the owner told me to keep quiet about it", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_groping"}
+{"text": "an uncle groped me at a family dawat when nobody was looking", "lang": "en", "labels": ["sexual_violence"], "tag": "family_groping"}
+{"text": "I keep having flashbacks of the night he raped me", "lang": "en", "labels": ["sexual_violence"], "tag": "rape_flashbacks"}
+{"text": "How do I report a rape when I'm not even sure anyone will believe me? It was my cousin.", "lang": "en", "labels": ["sexual_violence"], "tag": "rape_reporting"}
+{"text": "I was sexually abused by my stepfather from age 11 to 15. I'm 24 now and in therapy for the first time.", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "my colleague keeps rubbing up against me in the lift and I'm scared to make a scene", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_touching"}
+{"text": "a man exposed himself to me on the train and then followed me to the platform", "lang": "en", "labels": ["sexual_violence"], "tag": "exposure_stalking"}
+{"text": "i woke up and he was assaulting me. i had told him no before i fell asleep", "lang": "en", "labels": ["sexual_violence"], "tag": "sleep_assault"}
+{"text": "he said he'd tell my parents about us unless I slept with him again", "lang": "en", "labels": ["sexual_violence"], "tag": "coerced_blackmail"}
+{"text": "is it still assault if I froze and didn't fight back", "lang": "en", "labels": ["sexual_violence"], "tag": "freeze_question"}
+{"text": "the guy from instagram says he'll send my photos to my whole family unless I pay 50 thousand by friday", "lang": "en", "labels": ["sexual_violence"], "tag": "sextortion_money"}
+{"text": "I'm a domestic worker and the sahib comes to the servant quarter at night. I can't say no, my children need this job.", "lang": "en", "labels": ["sexual_violence"], "tag": "domestic_worker_rape"}
+{"text": "my husband's friend raped me and my husband told me to forget it for the family's izzat", "lang": "en", "labels": ["sexual_violence"], "tag": "rape_family_silence"}
+{"text": "my landlord said I could pay the rent 'another way'. when I refused he tried to grab me", "lang": "en", "labels": ["sexual_violence"], "tag": "landlord_coercion"}
+{"text": "I don't know if this counts. At my office farewell dinner my team lead offered to drop me home. In the car he kept touching me and I kept pushing his hand away and laughing because I didn't know what else to do. When we reached my street he wouldn't unlock the door until I kissed him. I've felt sick for two days and I have to see him on Monday.", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_assault_long"}
+{"text": "i think i was raped", "lang": "en", "labels": ["sexual_violence"], "tag": "short_uncertain"}
+{"text": "he did things i said no to", "lang": "en", "labels": ["sexual_violence"], "tag": "short_said_no"}
+{"text": "we were dating and he forced me. people say it can't be rape if he's your boyfriend", "lang": "en", "labels": ["sexual_violence"], "tag": "dating_rape"}
+{"text": "our hostel warden touches the girls and says he'll cancel our rooms if we complain. I'm in second year", "lang": "en", "labels": ["sexual_violence"], "tag": "hostel_harassment"}
+{"text": "I was assaulted by my teacher when I was a teenager and today I saw him on TV getting an award", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "a man on the crowded bus kept pressing against me and touching me, i got off two stops early and cried on the footpath", "lang": "en", "labels": ["sexual_violence"], "tag": "bus_molestation"}
+{"text": "my cousin who I trusted forced himself on me at nani's house during eid", "lang": "en", "labels": ["sexual_violence"], "tag": "family_rape"}
+{"text": "my ex has my nudes and says he'll make me famous", "lang": "en", "labels": ["sexual_violence"], "tag": "image_threat"}
+{"text": "My husband forces me into things I find degrading and says that's what wives are for.", "lang": "en", "labels": ["sexual_violence"], "tag": "marital_coercion"}
+{"text": "I'm a gay guy and a man I met on an app assaulted me. I can't go to the police here, they'd arrest me instead", "lang": "en", "labels": ["sexual_violence"], "tag": "male_lgbt_assault"}
+{"text": "my sister was raped by her boss and she's begging me not to tell anyone", "lang": "en", "labels": ["sexual_violence"], "tag": "third_party_sister"}
+{"text": "i got drunk at a friend's birthday and a guy took advantage. everyone says i should have been more careful", "lang": "en", "labels": ["sexual_violence"], "tag": "party_assault"}
+{"text": "my phone got hacked and someone is sending my contacts edited pictures of me, saying he'll send more unless I do video calls with him", "lang": "en", "labels": ["sexual_violence"], "tag": "sextortion_hack"}
+{"text": "my father-in-law tries to touch me whenever my husband isn't home", "lang": "en", "labels": ["sexual_violence"], "tag": "in_law_harassment"}
+{"text": "The doctor at the clinic touched me in a way that had nothing to do with the checkup.", "lang": "en", "labels": ["sexual_violence"], "tag": "medical_abuse"}
+{"text": "i keep thinking about it. he held me down and i couldn't get away", "lang": "en", "labels": ["sexual_violence"], "tag": "assault_rumination"}
+{"text": "My husband's cousin raped me during the wedding season and now I'm pregnant and I don't know whose it is.", "lang": "en", "labels": ["sexual_violence"], "tag": "rape_pregnancy"}
+{"text": "my coworker sends me porn on whatsapp and then smirks at me in meetings", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_online_harassment"}
+{"text": "a boy in my uni class keeps sending sexual messages and says he'll tell everyone I slept with him if I block him", "lang": "en", "labels": ["sexual_violence"], "tag": "online_harassment_threat"}
+{"text": "he secretly took photos of me while I was changing and now he wants me to meet him alone", "lang": "en", "labels": ["sexual_violence"], "tag": "sextortion"}
+{"text": "I was sexually assaulted at the protest", "lang": "en", "labels": ["sexual_violence"], "tag": "public_assault"}
+{"text": "my uncle abused me when I was a child and now he's coming to stay for my sister's wedding. I'm 27 and I want to scream", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "my ex-fiancé forced me after the engagement and now the rishta is broken and everyone blames me", "lang": "en", "labels": ["sexual_violence"], "tag": "fiance_rape"}
+{"text": "the man who fixes our generator grabbed me when ammi was out", "lang": "en", "labels": ["sexual_violence"], "tag": "worker_groping"}
+{"text": "I keep saying yes to my husband because the last time I said no he forced me anyway. Is this normal in marriage?", "lang": "en", "labels": ["sexual_violence"], "tag": "marital_rape_question"}
+{"text": "my manager touched me at the office after everyone else had left", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_touching"}
+{"text": "someone at our mosque abused me when I was 10. I'm 40 now and my hands still shake writing this", "lang": "en", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "a guy I matched with forced me in his car after dinner", "lang": "en", "labels": ["sexual_violence"], "tag": "date_rape"}
+{"text": "there were three of them and I couldn't stop them. I can't write the rest.", "lang": "en", "labels": ["sexual_violence"], "tag": "gang_assault"}
+{"text": "the security guard at my hostel watches us all the time and last night he grabbed me in the stairwell", "lang": "en", "labels": ["sexual_violence"], "tag": "hostel_groping"}
+{"text": "Is it harassment if my professor keeps calling me to his office, touching my shoulder and telling me I'm special?", "lang": "en", "labels": ["sexual_violence"], "tag": "academic_harassment"}
+{"text": "my husband shares my photos with his friends and makes me go along with whatever they want", "lang": "en", "labels": ["sexual_violence", "abuse"], "tag": "husband_exploitation"}
+{"text": "My nand's husband molested me at their house. When I told my husband he slapped me for lying.", "lang": "en", "labels": ["sexual_violence", "abuse"], "tag": "molestation_disbelief"}
+{"text": "I was raped two years ago and I thought I was over it, but today I saw his car outside the bakery and I couldn't breathe", "lang": "en", "labels": ["sexual_violence"], "tag": "rape_trigger"}
+{"text": "boyfriend said if i love him i'll do it. i said no three times. he didn't care", "lang": "en", "labels": ["sexual_violence"], "tag": "said_no"}
+{"text": "groped at the mall, nobody did anything", "lang": "en", "labels": ["sexual_violence"], "tag": "short_groping"}
+{"text": "My employer in Saudi sexually abused me for two years. I'm back home in Swat now and I can't tell my wife.", "lang": "en", "labels": ["sexual_violence"], "tag": "male_migrant_victim"}
+{"text": "someone at the shrine touched me inappropriately while my mother was praying", "lang": "en", "labels": ["sexual_violence"], "tag": "public_molestation"}
+{"text": "i think someone spiked my drink at the event. i don't remember getting home and i know something happened", "lang": "en", "labels": ["sexual_violence"], "tag": "drugged_assault"}
+{"text": "my online 'friend' recorded our video call and now he wants money every week or he'll upload it", "lang": "en", "labels": ["sexual_violence"], "tag": "sextortion_money"}
+{"text": "I'm a lady doctor and a patient's attendant grabbed me in the ward. Admin told me to let it go.", "lang": "en", "labels": ["sexual_violence"], "tag": "workplace_groping"}
+{"text": "please help, my husband's brother keeps coming into my room at night and touching me", "lang": "en", "labels": ["sexual_violence"], "tag": "in_law_harassment"}

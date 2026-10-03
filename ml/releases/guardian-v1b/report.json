@@ -1,0 +1,1203 @@
+{
+  "run": "Kaggle azamaliafzal/tl-guardian-v1-train version 2 (xlmr-base, 8 epochs, data azamaliafzal/therapylink-guardian-v1-data version 2)",
+  "heldout_rows": 1242,
+  "by_class_lang": {
+    "model": {
+      "all": {
+        "labels": {
+          "suicidal": {
+            "n": 297,
+            "recall": 0.949,
+            "detect_recall": 0.953,
+            "precision": 0.57,
+            "fired": 495
+          },
+          "self_harm": {
+            "n": 189,
+            "recall": 0.91,
+            "detect_recall": 0.984,
+            "precision": 0.619,
+            "fired": 278
+          },
+          "abuse": {
+            "n": 131,
+            "recall": 0.962,
+            "detect_recall": 1.0,
+            "precision": 0.483,
+            "fired": 261
+          },
+          "child": {
+            "n": 51,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.398,
+            "fired": 128
+          },
+          "sexual_violence": {
+            "n": 103,
+            "recall": 0.971,
+            "detect_recall": 0.981,
+            "precision": 0.386,
+            "fired": 259
+          },
+          "harm_to_others": {
+            "n": 43,
+            "recall": 0.86,
+            "detect_recall": 1.0,
+            "precision": 0.394,
+            "fired": 94
+          },
+          "medical": {
+            "n": 41,
+            "recall": 0.927,
+            "detect_recall": 0.951,
+            "precision": 0.342,
+            "fired": 111
+          }
+        },
+        "any_crisis": {
+          "n": 713,
+          "recall": 0.972,
+          "precision": 0.898,
+          "n_calm": 529,
+          "false_alarm_rate": 0.149
+        }
+      },
+      "en": {
+        "labels": {
+          "suicidal": {
+            "n": 77,
+            "recall": 0.974,
+            "detect_recall": 0.974,
+            "precision": 0.62,
+            "fired": 121
+          },
+          "self_harm": {
+            "n": 48,
+            "recall": 0.979,
+            "detect_recall": 1.0,
+            "precision": 0.671,
+            "fired": 70
+          },
+          "abuse": {
+            "n": 33,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.541,
+            "fired": 61
+          },
+          "child": {
+            "n": 13,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.448,
+            "fired": 29
+          },
+          "sexual_violence": {
+            "n": 28,
+            "recall": 0.964,
+            "detect_recall": 1.0,
+            "precision": 0.403,
+            "fired": 67
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.727,
+            "detect_recall": 1.0,
+            "precision": 0.4,
+            "fired": 20
+          },
+          "medical": {
+            "n": 10,
+            "recall": 0.7,
+            "detect_recall": 0.8,
+            "precision": 0.304,
+            "fired": 23
+          }
+        },
+        "any_crisis": {
+          "n": 179,
+          "recall": 0.983,
+          "precision": 0.898,
+          "n_calm": 135,
+          "false_alarm_rate": 0.148
+        }
+      },
+      "mixed": {
+        "labels": {
+          "suicidal": {
+            "n": 71,
+            "recall": 0.944,
+            "detect_recall": 0.958,
+            "precision": 0.568,
+            "fired": 118
+          },
+          "self_harm": {
+            "n": 46,
+            "recall": 0.913,
+            "detect_recall": 1.0,
+            "precision": 0.636,
+            "fired": 66
+          },
+          "abuse": {
+            "n": 31,
+            "recall": 0.968,
+            "detect_recall": 1.0,
+            "precision": 0.517,
+            "fired": 58
+          },
+          "child": {
+            "n": 12,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.387,
+            "fired": 31
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.379,
+            "fired": 66
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.909,
+            "detect_recall": 1.0,
+            "precision": 0.4,
+            "fired": 25
+          },
+          "medical": {
+            "n": 10,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.455,
+            "fired": 22
+          }
+        },
+        "any_crisis": {
+          "n": 173,
+          "recall": 0.983,
+          "precision": 0.934,
+          "n_calm": 124,
+          "false_alarm_rate": 0.097
+        }
+      },
+      "ur": {
+        "labels": {
+          "suicidal": {
+            "n": 76,
+            "recall": 0.921,
+            "detect_recall": 0.921,
+            "precision": 0.56,
+            "fired": 125
+          },
+          "self_harm": {
+            "n": 48,
+            "recall": 0.792,
+            "detect_recall": 0.958,
+            "precision": 0.521,
+            "fired": 73
+          },
+          "abuse": {
+            "n": 34,
+            "recall": 0.912,
+            "detect_recall": 1.0,
+            "precision": 0.425,
+            "fired": 73
+          },
+          "child": {
+            "n": 15,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.417,
+            "fired": 36
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.96,
+            "detect_recall": 0.96,
+            "precision": 0.414,
+            "fired": 58
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.909,
+            "detect_recall": 1.0,
+            "precision": 0.5,
+            "fired": 20
+          },
+          "medical": {
+            "n": 10,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.312,
+            "fired": 32
+          }
+        },
+        "any_crisis": {
+          "n": 181,
+          "recall": 0.95,
+          "precision": 0.891,
+          "n_calm": 132,
+          "false_alarm_rate": 0.159
+        }
+      },
+      "ur-roman": {
+        "labels": {
+          "suicidal": {
+            "n": 73,
+            "recall": 0.959,
+            "detect_recall": 0.959,
+            "precision": 0.534,
+            "fired": 131
+          },
+          "self_harm": {
+            "n": 47,
+            "recall": 0.957,
+            "detect_recall": 0.979,
+            "precision": 0.652,
+            "fired": 69
+          },
+          "abuse": {
+            "n": 33,
+            "recall": 0.97,
+            "detect_recall": 1.0,
+            "precision": 0.464,
+            "fired": 69
+          },
+          "child": {
+            "n": 11,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.344,
+            "fired": 32
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.96,
+            "detect_recall": 0.96,
+            "precision": 0.353,
+            "fired": 68
+          },
+          "harm_to_others": {
+            "n": 10,
+            "recall": 0.9,
+            "detect_recall": 1.0,
+            "precision": 0.31,
+            "fired": 29
+          },
+          "medical": {
+            "n": 11,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.324,
+            "fired": 34
+          }
+        },
+        "any_crisis": {
+          "n": 180,
+          "recall": 0.972,
+          "precision": 0.871,
+          "n_calm": 138,
+          "false_alarm_rate": 0.188
+        }
+      }
+    },
+    "keywords": {
+      "all": {
+        "labels": {
+          "suicidal": {
+            "n": 297,
+            "recall": 0.236,
+            "detect_recall": 0.239,
+            "precision": 0.486,
+            "fired": 144
+          },
+          "self_harm": {
+            "n": 189,
+            "recall": 0.0,
+            "detect_recall": 0.397,
+            "precision": null,
+            "fired": 0
+          },
+          "abuse": {
+            "n": 131,
+            "recall": 0.26,
+            "detect_recall": 0.412,
+            "precision": 0.618,
+            "fired": 55
+          },
+          "child": {
+            "n": 51,
+            "recall": 0.353,
+            "detect_recall": 0.412,
+            "precision": 1.0,
+            "fired": 18
+          },
+          "sexual_violence": {
+            "n": 103,
+            "recall": 0.233,
+            "detect_recall": 0.301,
+            "precision": 0.889,
+            "fired": 27
+          },
+          "harm_to_others": {
+            "n": 43,
+            "recall": 0.0,
+            "detect_recall": 0.209,
+            "precision": null,
+            "fired": 0
+          },
+          "medical": {
+            "n": 41,
+            "recall": 0.0,
+            "detect_recall": 0.171,
+            "precision": null,
+            "fired": 0
+          }
+        },
+        "any_crisis": {
+          "n": 713,
+          "recall": 0.296,
+          "precision": 0.865,
+          "n_calm": 529,
+          "false_alarm_rate": 0.062
+        }
+      },
+      "en": {
+        "labels": {
+          "suicidal": {
+            "n": 77,
+            "recall": 0.182,
+            "detect_recall": 0.195,
+            "precision": 0.467,
+            "fired": 30
+          },
+          "self_harm": {
+            "n": 48,
+            "recall": 0.0,
+            "detect_recall": 0.292,
+            "precision": null,
+            "fired": 0
+          },
+          "abuse": {
+            "n": 33,
+            "recall": 0.152,
+            "detect_recall": 0.303,
+            "precision": 0.556,
+            "fired": 9
+          },
+          "child": {
+            "n": 13,
+            "recall": 0.308,
+            "detect_recall": 0.385,
+            "precision": 1.0,
+            "fired": 4
+          },
+          "sexual_violence": {
+            "n": 28,
+            "recall": 0.25,
+            "detect_recall": 0.321,
+            "precision": 1.0,
+            "fired": 7
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.0,
+            "detect_recall": 0.273,
+            "precision": null,
+            "fired": 0
+          },
+          "medical": {
+            "n": 10,
+            "recall": 0.0,
+            "detect_recall": 0.1,
+            "precision": null,
+            "fired": 0
+          }
+        },
+        "any_crisis": {
+          "n": 179,
+          "recall": 0.251,
+          "precision": 0.9,
+          "n_calm": 135,
+          "false_alarm_rate": 0.037
+        }
+      },
+      "mixed": {
+        "labels": {
+          "suicidal": {
+            "n": 71,
+            "recall": 0.239,
+            "detect_recall": 0.239,
+            "precision": 0.5,
+            "fired": 34
+          },
+          "self_harm": {
+            "n": 46,
+            "recall": 0.0,
+            "detect_recall": 0.391,
+            "precision": null,
+            "fired": 0
+          },
+          "abuse": {
+            "n": 31,
+            "recall": 0.29,
+            "detect_recall": 0.516,
+            "precision": 0.692,
+            "fired": 13
+          },
+          "child": {
+            "n": 12,
+            "recall": 0.5,
+            "detect_recall": 0.5,
+            "precision": 1.0,
+            "fired": 6
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.2,
+            "detect_recall": 0.24,
+            "precision": 0.833,
+            "fired": 6
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.0,
+            "detect_recall": 0.273,
+            "precision": null,
+            "fired": 0
+          },
+          "medical": {
+            "n": 10,
+            "recall": 0.0,
+            "detect_recall": 0.2,
+            "precision": null,
+            "fired": 0
+          }
+        },
+        "any_crisis": {
+          "n": 173,
+          "recall": 0.301,
+          "precision": 0.881,
+          "n_calm": 124,
+          "false_alarm_rate": 0.056
+        }
+      },
+      "ur": {
+        "labels": {
+          "suicidal": {
+            "n": 76,
+            "recall": 0.237,
+            "detect_recall": 0.237,
+            "precision": 0.514,
+            "fired": 35
+          },
+          "self_harm": {
+            "n": 48,
+            "recall": 0.0,
+            "detect_recall": 0.417,
+            "precision": null,
+            "fired": 0
+          },
+          "abuse": {
+            "n": 34,
+            "recall": 0.353,
+            "detect_recall": 0.529,
+            "precision": 0.571,
+            "fired": 21
+          },
+          "child": {
+            "n": 15,
+            "recall": 0.467,
+            "detect_recall": 0.6,
+            "precision": 1.0,
+            "fired": 7
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.24,
+            "detect_recall": 0.4,
+            "precision": 0.75,
+            "fired": 8
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.0,
+            "detect_recall": 0.182,
+            "precision": null,
+            "fired": 0
+          },
+          "medical": {
+            "n": 10,
+            "recall": 0.0,
+            "detect_recall": 0.3,
+            "precision": null,
+            "fired": 0
+          }
+        },
+        "any_crisis": {
+          "n": 181,
+          "recall": 0.337,
+          "precision": 0.859,
+          "n_calm": 132,
+          "false_alarm_rate": 0.076
+        }
+      },
+      "ur-roman": {
+        "labels": {
+          "suicidal": {
+            "n": 73,
+            "recall": 0.288,
+            "detect_recall": 0.288,
+            "precision": 0.467,
+            "fired": 45
+          },
+          "self_harm": {
+            "n": 47,
+            "recall": 0.0,
+            "detect_recall": 0.489,
+            "precision": null,
+            "fired": 0
+          },
+          "abuse": {
+            "n": 33,
+            "recall": 0.242,
+            "detect_recall": 0.303,
+            "precision": 0.667,
+            "fired": 12
+          },
+          "child": {
+            "n": 11,
+            "recall": 0.091,
+            "detect_recall": 0.091,
+            "precision": 1.0,
+            "fired": 1
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.24,
+            "detect_recall": 0.24,
+            "precision": 1.0,
+            "fired": 6
+          },
+          "harm_to_others": {
+            "n": 10,
+            "recall": 0.0,
+            "detect_recall": 0.1,
+            "precision": null,
+            "fired": 0
+          },
+          "medical": {
+            "n": 11,
+            "recall": 0.0,
+            "detect_recall": 0.091,
+            "precision": null,
+            "fired": 0
+          }
+        },
+        "any_crisis": {
+          "n": 180,
+          "recall": 0.294,
+          "precision": 0.828,
+          "n_calm": 138,
+          "false_alarm_rate": 0.08
+        }
+      }
+    },
+    "union": {
+      "all": {
+        "labels": {
+          "suicidal": {
+            "n": 297,
+            "recall": 0.956,
+            "detect_recall": 0.96,
+            "precision": 0.518,
+            "fired": 548
+          },
+          "self_harm": {
+            "n": 189,
+            "recall": 0.91,
+            "detect_recall": 0.984,
+            "precision": 0.619,
+            "fired": 278
+          },
+          "abuse": {
+            "n": 131,
+            "recall": 0.985,
+            "detect_recall": 1.0,
+            "precision": 0.466,
+            "fired": 277
+          },
+          "child": {
+            "n": 51,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.398,
+            "fired": 128
+          },
+          "sexual_violence": {
+            "n": 103,
+            "recall": 0.971,
+            "detect_recall": 0.981,
+            "precision": 0.385,
+            "fired": 260
+          },
+          "harm_to_others": {
+            "n": 43,
+            "recall": 0.86,
+            "detect_recall": 1.0,
+            "precision": 0.394,
+            "fired": 94
+          },
+          "medical": {
+            "n": 41,
+            "recall": 0.927,
+            "detect_recall": 0.951,
+            "precision": 0.342,
+            "fired": 111
+          }
+        },
+        "any_crisis": {
+          "n": 713,
+          "recall": 0.975,
+          "precision": 0.867,
+          "n_calm": 529,
+          "false_alarm_rate": 0.202
+        }
+      },
+      "en": {
+        "labels": {
+          "suicidal": {
+            "n": 77,
+            "recall": 0.974,
+            "detect_recall": 0.974,
+            "precision": 0.564,
+            "fired": 133
+          },
+          "self_harm": {
+            "n": 48,
+            "recall": 0.979,
+            "detect_recall": 1.0,
+            "precision": 0.671,
+            "fired": 70
+          },
+          "abuse": {
+            "n": 33,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.516,
+            "fired": 64
+          },
+          "child": {
+            "n": 13,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.448,
+            "fired": 29
+          },
+          "sexual_violence": {
+            "n": 28,
+            "recall": 0.964,
+            "detect_recall": 1.0,
+            "precision": 0.403,
+            "fired": 67
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.727,
+            "detect_recall": 1.0,
+            "precision": 0.4,
+            "fired": 20
+          },
+          "medical": {
+            "n": 10,
+            "recall": 0.7,
+            "detect_recall": 0.8,
+            "precision": 0.304,
+            "fired": 23
+          }
+        },
+        "any_crisis": {
+          "n": 179,
+          "recall": 0.983,
+          "precision": 0.88,
+          "n_calm": 135,
+          "false_alarm_rate": 0.178
+        }
+      },
+      "mixed": {
+        "labels": {
+          "suicidal": {
+            "n": 71,
+            "recall": 0.944,
+            "detect_recall": 0.958,
+            "precision": 0.519,
+            "fired": 129
+          },
+          "self_harm": {
+            "n": 46,
+            "recall": 0.913,
+            "detect_recall": 1.0,
+            "precision": 0.636,
+            "fired": 66
+          },
+          "abuse": {
+            "n": 31,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.508,
+            "fired": 61
+          },
+          "child": {
+            "n": 12,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.387,
+            "fired": 31
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.373,
+            "fired": 67
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.909,
+            "detect_recall": 1.0,
+            "precision": 0.4,
+            "fired": 25
+          },
+          "medical": {
+            "n": 10,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.455,
+            "fired": 22
+          }
+        },
+        "any_crisis": {
+          "n": 173,
+          "recall": 0.983,
+          "precision": 0.904,
+          "n_calm": 124,
+          "false_alarm_rate": 0.145
+        }
+      },
+      "ur": {
+        "labels": {
+          "suicidal": {
+            "n": 76,
+            "recall": 0.947,
+            "detect_recall": 0.947,
+            "precision": 0.514,
+            "fired": 140
+          },
+          "self_harm": {
+            "n": 48,
+            "recall": 0.792,
+            "detect_recall": 0.958,
+            "precision": 0.521,
+            "fired": 73
+          },
+          "abuse": {
+            "n": 34,
+            "recall": 0.971,
+            "detect_recall": 1.0,
+            "precision": 0.412,
+            "fired": 80
+          },
+          "child": {
+            "n": 15,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.417,
+            "fired": 36
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.96,
+            "detect_recall": 0.96,
+            "precision": 0.414,
+            "fired": 58
+          },
+          "harm_to_others": {
+            "n": 11,
+            "recall": 0.909,
+            "detect_recall": 1.0,
+            "precision": 0.5,
+            "fired": 20
+          },
+          "medical": {
+            "n": 10,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.312,
+            "fired": 32
+          }
+        },
+        "any_crisis": {
+          "n": 181,
+          "recall": 0.961,
+          "precision": 0.853,
+          "n_calm": 132,
+          "false_alarm_rate": 0.227
+        }
+      },
+      "ur-roman": {
+        "labels": {
+          "suicidal": {
+            "n": 73,
+            "recall": 0.959,
+            "detect_recall": 0.959,
+            "precision": 0.479,
+            "fired": 146
+          },
+          "self_harm": {
+            "n": 47,
+            "recall": 0.957,
+            "detect_recall": 0.979,
+            "precision": 0.652,
+            "fired": 69
+          },
+          "abuse": {
+            "n": 33,
+            "recall": 0.97,
+            "detect_recall": 1.0,
+            "precision": 0.444,
+            "fired": 72
+          },
+          "child": {
+            "n": 11,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.344,
+            "fired": 32
+          },
+          "sexual_violence": {
+            "n": 25,
+            "recall": 0.96,
+            "detect_recall": 0.96,
+            "precision": 0.353,
+            "fired": 68
+          },
+          "harm_to_others": {
+            "n": 10,
+            "recall": 0.9,
+            "detect_recall": 1.0,
+            "precision": 0.31,
+            "fired": 29
+          },
+          "medical": {
+            "n": 11,
+            "recall": 1.0,
+            "detect_recall": 1.0,
+            "precision": 0.324,
+            "fired": 34
+          }
+        },
+        "any_crisis": {
+          "n": 180,
+          "recall": 0.972,
+          "precision": 0.833,
+          "n_calm": 138,
+          "false_alarm_rate": 0.254
+        }
+      }
+    }
+  },
+  "recall": {
+    "model": {
+      "recall": {
+        "all": {
+          "n": 713,
+          "detect": 0.972,
+          "exact": 0.933
+        },
+        "category:abuse": {
+          "n": 131,
+          "detect": 1.0,
+          "exact": 0.962
+        },
+        "category:child": {
+          "n": 51,
+          "detect": 1.0,
+          "exact": 1.0
+        },
+        "category:harm_to_others": {
+          "n": 43,
+          "detect": 1.0,
+          "exact": 0.86
+        },
+        "category:medical": {
+          "n": 41,
+          "detect": 0.951,
+          "exact": 0.927
+        },
+        "category:self_harm": {
+          "n": 189,
+          "detect": 0.984,
+          "exact": 0.91
+        },
+        "category:sexual_violence": {
+          "n": 103,
+          "detect": 0.981,
+          "exact": 0.971
+        },
+        "category:suicidal": {
+          "n": 297,
+          "detect": 0.953,
+          "exact": 0.949
+        },
+        "lang:en": {
+          "n": 179,
+          "detect": 0.983,
+          "exact": 0.95
+        },
+        "lang:mixed": {
+          "n": 173,
+          "detect": 0.983,
+          "exact": 0.942
+        },
+        "lang:ur": {
+          "n": 181,
+          "detect": 0.95,
+          "exact": 0.884
+        },
+        "lang:ur-roman": {
+          "n": 180,
+          "detect": 0.972,
+          "exact": 0.956
+        }
+      },
+      "false_alarm": {
+        "en": {
+          "n": 135,
+          "rate": 0.148
+        },
+        "mixed": {
+          "n": 124,
+          "rate": 0.097
+        },
+        "ur": {
+          "n": 132,
+          "rate": 0.159
+        },
+        "ur-roman": {
+          "n": 138,
+          "rate": 0.188
+        }
+      }
+    },
+    "keywords": {
+      "recall": {
+        "all": {
+          "n": 713,
+          "detect": 0.296,
+          "exact": 0.133
+        },
+        "category:abuse": {
+          "n": 131,
+          "detect": 0.412,
+          "exact": 0.26
+        },
+        "category:child": {
+          "n": 51,
+          "detect": 0.412,
+          "exact": 0.353
+        },
+        "category:harm_to_others": {
+          "n": 43,
+          "detect": 0.209,
+          "exact": 0.0
+        },
+        "category:medical": {
+          "n": 41,
+          "detect": 0.171,
+          "exact": 0.0
+        },
+        "category:self_harm": {
+          "n": 189,
+          "detect": 0.397,
+          "exact": 0.0
+        },
+        "category:sexual_violence": {
+          "n": 103,
+          "detect": 0.301,
+          "exact": 0.233
+        },
+        "category:suicidal": {
+          "n": 297,
+          "detect": 0.239,
+          "exact": 0.236
+        },
+        "lang:en": {
+          "n": 179,
+          "detect": 0.251,
+          "exact": 0.112
+        },
+        "lang:mixed": {
+          "n": 173,
+          "detect": 0.301,
+          "exact": 0.127
+        },
+        "lang:ur": {
+          "n": 181,
+          "detect": 0.337,
+          "exact": 0.149
+        },
+        "lang:ur-roman": {
+          "n": 180,
+          "detect": 0.294,
+          "exact": 0.144
+        }
+      },
+      "false_alarm": {
+        "en": {
+          "n": 135,
+          "rate": 0.037
+        },
+        "mixed": {
+          "n": 124,
+          "rate": 0.056
+        },
+        "ur": {
+          "n": 132,
+          "rate": 0.076
+        },
+        "ur-roman": {
+          "n": 138,
+          "rate": 0.08
+        }
+      }
+    },
+    "union": {
+      "recall": {
+        "all": {
+          "n": 713,
+          "detect": 0.975,
+          "exact": 0.94
+        },
+        "category:abuse": {
+          "n": 131,
+          "detect": 1.0,
+          "exact": 0.985
+        },
+        "category:child": {
+          "n": 51,
+          "detect": 1.0,
+          "exact": 1.0
+        },
+        "category:harm_to_others": {
+          "n": 43,
+          "detect": 1.0,
+          "exact": 0.86
+        },
+        "category:medical": {
+          "n": 41,
+          "detect": 0.951,
+          "exact": 0.927
+        },
+        "category:self_harm": {
+          "n": 189,
+          "detect": 0.984,
+          "exact": 0.91
+        },
+        "category:sexual_violence": {
+          "n": 103,
+          "detect": 0.981,
+          "exact": 0.971
+        },
+        "category:suicidal": {
+          "n": 297,
+          "detect": 0.96,
+          "exact": 0.956
+        },
+        "lang:en": {
+          "n": 179,
+          "detect": 0.983,
+          "exact": 0.95
+        },
+        "lang:mixed": {
+          "n": 173,
+          "detect": 0.983,
+          "exact": 0.948
+        },
+        "lang:ur": {
+          "n": 181,
+          "detect": 0.961,
+          "exact": 0.906
+        },
+        "lang:ur-roman": {
+          "n": 180,
+          "detect": 0.972,
+          "exact": 0.956
+        }
+      },
+      "false_alarm": {
+        "en": {
+          "n": 135,
+          "rate": 0.178
+        },
+        "mixed": {
+          "n": 124,
+          "rate": 0.145
+        },
+        "ur": {
+          "n": 132,
+          "rate": 0.227
+        },
+        "ur-roman": {
+          "n": 138,
+          "rate": 0.254
+        }
+      }
+    }
+  },
+  "int8_vs_fp32": null,
+  "thresholds": {
+    "none": 0.5,
+    "suicidal": 0.02,
+    "self_harm": 0.02,
+    "abuse": 0.02,
+    "child": 0.02,
+    "sexual_violence": 0.02,
+    "harm_to_others": 0.02,
+    "medical": 0.02
+  },
+  "latency_cpu": {
+    "machine": "12th Gen Intel Core i5-12450H, onnxruntime 1.30.0, uncontended",
+    "64_tokens": {
+      "1_thread_median_ms": 52,
+      "2_threads_median_ms": 31,
+      "4_threads_median_ms": 24
+    },
+    "128_tokens": {
+      "2_threads_median_ms": 63
+    }
+  },
+  "canaries_ok": true,
+  "files": {
+    "guardian.int8.onnx": {
+      "sha256": "c95d94e9f2bac330c44cbed22073dec1f9a482b279965fe9349a83df5bb91b49",
+      "bytes": 278239825
+    },
+    "spm_vocab.json": {
+      "sha256": "537151e842cb05af358ff633f8ad14341bad32c4c1ea6c78700336380cd34d24",
+      "bytes": 8853338
+    },
+    "config.json": {
+      "sha256": "d33bf17bc1ddad67dfe28cfd53c45cf5392e288bcc660df2eaa645732c271c8f",
+      "bytes": 302
+    },
+    "thresholds.json": {
+      "sha256": "95bde41e45cbde548ad68c9f1186ef592be3231334ce6697b5800b553bf8e824",
+      "bytes": 110
+    }
+  },
+  "dart_define": "TL_GUARDIAN_SHA256=guardian.int8.onnx:c95d94e9f2bac330c44cbed22073dec1f9a482b279965fe9349a83df5bb91b49,spm_vocab.json:537151e842cb05af358ff633f8ad14341bad32c4c1ea6c78700336380cd34d24,config.json:d33bf17bc1ddad67dfe28cfd53c45cf5392e288bcc660df2eaa645732c271c8f,thresholds.json:95bde41e45cbde548ad68c9f1186ef592be3231334ce6697b5800b553bf8e824",
+  "note": "int8_vs_fp32 is null: the fp32 checkpoint was deleted on Kaggle after export. Held-out labels are AI-assigned; MG-11 needs clinician adjudication."
+}

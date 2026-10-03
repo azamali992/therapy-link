@@ -1,0 +1,66 @@
+[
+  {
+    "text": "I want to end my life tonight",
+    "crisis": true,
+    "lang": "en",
+    "model_crisis": true,
+    "model_labels": [
+      "suicidal"
+    ],
+    "ok": true
+  },
+  {
+    "text": "I don't see any reason to keep living anymore",
+    "crisis": true,
+    "lang": "en",
+    "model_crisis": true,
+    "model_labels": [
+      "suicidal"
+    ],
+    "ok": true
+  },
+  {
+    "text": "I had lunch with my sister and we watched a film",
+    "crisis": false,
+    "lang": "en",
+    "model_crisis": false,
+    "model_labels": [],
+    "ok": true
+  },
+  {
+    "text": "main ab aur jeena nahi chahti, sab khatam karna hai",
+    "crisis": true,
+    "lang": "ur-roman",
+    "model_crisis": true,
+    "model_labels": [
+      "suicidal"
+    ],
+    "ok": true
+  },
+  {
+    "text": "aaj ammi ke saath bazaar gaye, bohat maza aaya",
+    "crisis": false,
+    "lang": "ur-roman",
+    "model_crisis": false,
+    "model_labels": [],
+    "ok": true
+  },
+  {
+    "text": "میں اب زندہ نہیں رہنا چاہتا",
+    "crisis": true,
+    "lang": "ur",
+    "model_crisis": true,
+    "model_labels": [
+      "suicidal"
+    ],
+    "ok": true
+  },
+  {
+    "text": "آج موسم بہت اچھا ہے، ہم پارک گئے",
+    "crisis": false,
+    "lang": "ur",
+    "model_crisis": false,
+    "model_labels": [],
+    "ok": true
+  }
+]

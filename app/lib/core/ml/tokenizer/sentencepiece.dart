@@ -14,7 +14,11 @@ class SentencePieceTokenizer {
     required this.unkId,
     required this.padId,
     required this.maxLen,
+    Map<String, String> normSingle = const {},
+    Map<String, String> normPairs = const {},
   })  : _scores = scores,
+        _normSingle = normSingle,
+        _normPairs = normPairs,
         _index = {for (var i = 0; i < pieces.length; i++) pieces[i]: i},
         _maxPieceChars = pieces.fold(0, (m, p) => math.max(m, p.length)),
         _unkScore = scores.reduce(math.min) - 10.0;
@@ -31,10 +35,18 @@ class SentencePieceTokenizer {
       unkId: special['unk'] as int,
       padId: special['pad'] as int,
       maxLen: data['max_len'] as int? ?? 128,
+      normSingle: Map<String, String>.from((data['normalizer'] as Map?)?['single'] ?? const {}),
+      normPairs: Map<String, String>.from((data['normalizer'] as Map?)?['pairs'] ?? const {}),
     );
   }
 
   final Map<String, int> _index;
+
+  /// SentencePiece's own normaliser (nmt_nfkc for XLM-R), exported by tokenizer_json.py. Without it
+  /// "…", presentation-form Arabic, full-width letters and ZWNJ read as unknown pieces, and the ids
+  /// the model sees stop matching the ids it was trained on.
+  final Map<String, String> _normSingle;
+  final Map<String, String> _normPairs;
   final List<double> _scores;
   final int _maxPieceChars;
   final double _unkScore;
@@ -132,6 +144,20 @@ class SentencePieceTokenizer {
   }
 
   String _normalise(String text) {
+    if (_normSingle.isNotEmpty || _normPairs.isNotEmpty) {
+      final chars = text.runes.map(String.fromCharCode).toList();
+      final out = StringBuffer();
+      for (var i = 0; i < chars.length; i++) {
+        final pair = i + 1 < chars.length ? _normPairs[chars[i] + chars[i + 1]] : null;
+        if (pair != null) {
+          out.write(pair);
+          i++;
+        } else {
+          out.write(_normSingle[chars[i]] ?? chars[i]);
+        }
+      }
+      text = out.toString();
+    }
     final collapsed = text.trim().replaceAll(RegExp(r'\s+'), ' ');
     if (collapsed.isEmpty) return '';
     return _space + collapsed.replaceAll(' ', _space);

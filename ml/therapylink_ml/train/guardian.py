@@ -36,6 +36,12 @@ MULTI_LABEL_TASKS = {"crisis", "emotion"}
 # alarm, which only shows the user a helpline. Emotion has no such asymmetry — forcing 0.6 recall
 # across 28 classes destroys precision on rare ones — so it gets F1-optimal thresholds instead.
 RECALL_TARGETS = {"crisis": 0.95}
+# Guardian v1 calibrates the crisis head per language: each label's threshold is the lowest that any
+# language needs to reach the target on validation, so no language is carried by another's recall.
+# Validation is written by the same authors as training and scores higher than new text will, so
+# the target here sits above the 0.95 the held-out gate asks for.
+LANG_RECALL_TARGET = 0.98
+MIN_LANG_POSITIVES = 5
 
 # Guardian v1's crisis head. Fixed, not derived from the data: the app maps each label to the help
 # it shows (abuse and child route to Madadgaar 1098), so a label missing from one corpus build must
@@ -67,14 +73,51 @@ CRISIS_SOURCE = (
     r'apne aap ko (hurt|nuqsan|khatam)|khud ko (khatam|maar|nuqsan)|zinda (nahi|nahin|na) rehna|'
     r'\b(apni|meri|khud ki) jaan (de|le)\b|\bjaan (de|le) (d|l)(u|oo|un|oon|unga|ungi|enge)\b|'
     r'zeh[ae]r (kha|pi|pee|le|la|de|mang|kharid)|goliyan|'
-    r'خودکشی|خود کشی|مرنا|جان دے|زہر (کھا|پی|لے|دے))'
+    r'خودکشی|خود کشی|مرنا|جان دے|زہر (کھا|پی|لے|دے)'
+    # Wishing not to wake up or to vanish for good (passive ideation, guide S1, S2, S8).
+    r'|\bdisappear (for good|forever|permanently)|(never|not) wake up|(don.?t|do not|didn.?t) want to wake up(?! (early|at|for|so|before|on time))|(wish|hope|pray) i (didn.?t|don.?t|wouldn.?t|won.?t|never) wake|sleep (forever|and never wake)'
+    r'|better off (without me|if i (was|were)n.?t|if i (was|were) (gone|dead)|if i die)|(if|when|once) i.?m (gone|dead|not around|no longer around)|after i.?m gone|if i (wasn.?t|weren.?t|was not|were not) (around|here|alive|in the picture)|relieved if i died'
+    r'|(reason|point) (to|in|of) (keep )?(living|live|going on|go on|being alive|be alive|existing)|tired of (living|being alive)|don.?t want to (be here|keep living|keep going)|i (don.?t want to|won.?t) be (here|around|alive) (anymore|much longer|for long|tomorrow)|to not be here|not to be here'
+    # A time, a decision or a goodbye (acuity plan_or_intent / imminent).
+    r'|end (it|things|everything|my life)( all)? (tonight|today|tomorrow|soon|this week)|tonight.?s the night|tonight is the night|(this is|it was|it.?s been) nice knowing (you|everyone|y.?all)|goodbye (everyone|forever|world)|(my )?(last|final) (salaam|goodbye|words)|forgive me for everything'
+    # Preparation for death with no death word (red line R1, guide rule 4): letters just in case, giving
+    # things or pets away, passwords and bank details handed over, nothing left to sort.
+    r'|(letters?|notes?|khat)\b.{0,60}\bjust in case|just in case\b.{0,30}\b(letters?|notes?)|(letters?|notes?) for (after|when i|if anything)|who (gets|will get|should get) my|(gave|give|giving|given) away (all my|all of my|everything|my (things|stuff|belongings|savings|books|laptop|phone|cat|dog|pets?))|(gave|giving|given) my (dog|cat|pets?|birds?|parrot|rabbit|fish)\b|(passwords?|logins?|pins?|bank details) (to|for) my|wrote down (all )?my passwords|nothing left to (do|sort|live for|say)|won.?t (need|be needing) (it|them|this|these|those|anything|my \w+) (much longer|where i.?m going|after)'
+    # Self-harm in general words, and hiding the marks (guide H3, H8, H10).
+    r'|(burn|burned|burnt|burning|harm|harming|harmed|starve|starving) myself|(hurting|harming|cutting) (herself|himself|themselves|yourself)|(hide|hiding|cover|covering) (the |my |these |those )?(marks|cuts|scars)|(fresh|new) (marks|cuts)'
+    # Roman Urdu: every spelling of khudkushi, ending everything, not wanting to live (MODEL_REVIEW item 5).
+    r'|khud[ -]?k(h)?(u|a)shi|sab (kuch )?(khatam|khtm) (kar|kr) ?(d|l)(u|oo|un|oon|unga|ungi|enge)\b|(sab|zindagi|khud ko|apne aap ko) (kuch )?(khatam|khtm) (karna|krna|karne|krne) (hai|h|ka|ki|chah)|jee?n(a|e) (hi )?(nahi|nahin|nai|nhi|ni)\b|jeene (ka|ki|ko) (koi )?(faida|fayda|maqsad|wajah|dil nahi|dil nai|dil nhi|mann nahi|man nahi)|zindagi (nahi|nahin|nai|nhi) chahiye|zinda (nahi|nahin|nai|nhi|na) (rehna|rehena|rahna)'
+    # Roman Urdu passive wishes, timing and goodbyes. A bare 'aakhri dafa' is also "I'm telling you for the last
+    # time", so it needs a goodbye after it.
+    r'|mar(ne|ny|nay) (ka|ki|ko) (dil|man|mann|jee|soch|khayal|khwahish|irada|faisla)|(allah|khuda|rab) (mujhe |mjhe |muje )?(utha|bula) le|(kabhi|phir|dobara) na uth|na uth(ti|ta) to (acha|behtar)|kash (main |mai )?na uth|(subah|kal) (na|nahi|nai|nhi) dekhn|(main|mai|mein) na (rahun|rahoon|rahu|hun|hoon|hoti|hota) to|jab (main|mai) na (rahun|rahoon|rahu|rahi|raha)|mere (jaane|jane|marne) (ke )?baad|hamesha (ke liye|k liye) (so |chala ja|chali ja|alvida)|aakhri (khat|salaam|alvida)|aakhri (dafa|baar|bar) (baat|mil|dekh)|sab ko alvida'
+    # Roman Urdu self-harm. 'khud ko takleef' is left out: it is also the polite "don't trouble yourself".
+    r'|(khud|apne aap) ko (hurt|nuqsaan|nuksan|nuksaan|nukhsan|zakhmi|dard de|saza de|kaat|jala)|(nishaan|nishan|nishanat|zakhm|zakham) (chhupa|chupa|chhup|chup)'
+    # Urdu script: the same, written as people type it.
+    r'|جینا نہیں|جینے کا (کوئی )?(فائدہ|مقصد)|زندہ نہیں رہنا|مر جاؤں|مرجاؤں|مر جانا|(اللہ|خدا) (مجھے )?(اٹھا|بلا) لے|سب ختم کر (دوں|لوں)|(خود|اپنے آپ) کو (ختم|نقصان|مار|زخمی|تکلیف دے|سزا دے)|نہ رہوں|میرے (جانے|مرنے) (کے )?بعد|آخری (خط|سلام)|آخری (بار|دفعہ) بات|(نشان|زخم) (چھپا|چھپ)|کبھی نہ اٹھ|صبح نہ دیکھ'
+    # Ending or killing in other tenses (QA CR-001), method and dose questions (guide rule 3), and a dose
+    # already taken, which is also a medical emergency (guide M1, M6, M10, M12).
+    r'|ending (it all|my life|my own life|everything)|killing myself|taking my (own )?life|my (own )?funeral|for if anything happens to me|(painless|easiest|quickest|fastest|surest) way to (die|go|do it|end)|(lethal|fatal) (dose|amount)|\boverdos|how many .{0,30}(pills|tablets) .{0,30}(take|kill|die|enough|would it)|(took|swallowed|taken|have taken) (all|about|like|\d+|twenty|ten|fifty|a lot of|a bunch of|a handful of|the whole|half) .{0,25}(pills|tablets)|(count(ed|ing)|saving|saved|stockpil\w*) .{0,15}(pills|tablets)|(pills|tablets)\b.{0,30}\bcounted|(bleach|phenyl|poison|tezaab|acid|keeray maar \w+) (pee|pi|pii|kha|khaa|drank|swallowed)'
+    # Self-harm said plainly (guide H1, H2, H6, H7, H9, H10). 'khud ko takleef' counts only in the first
+    # person, because "aap khud ko takleef na dein" is a courtesy.
+    r'|\bi (cut|burned|burnt) (again|last night|today|myself|my (arm|wrist|thigh|leg)s?)|(until|till) (it|they|i|my \w+) bleeds?|blade (utha|uthaya|liya|li)|(khud|apne aap) ko (maar(ti|ta|te)|takleef dene (ka|ki)|takleef de(ti|ta|te) (hun|hoon|hu))|(nishaan|nishan|nishanat|zakhm|zakham|marks?)\b.{0,40}(chhupa|chupa|chhup|chup|dikh)|na (hoti|hota|hote) to (acha|behtar)|maafi (ka|ke) (message|msg|messages)'
+    # Urdu script: not wanting to live on (QA CR-003), self-harm, pills taken.
+    r'|نہیں رہنا چاہت|کٹ لگا|خود کو تکلیف دینے|(نشان|زخم).{0,40}چھپا|گولیاں (کھا لی|جمع)|زہر (پی|کھا) لیا'
+    # Urdu script: more ways people say it, from the written training batches.
+    r'|نہیں جی (سکت|سکو|پا)|مزید نہیں جی|مرنے کا (طریقہ|سوچ|دل|خیال|ارادہ)|جان خود لے|اپنی جان (لے|دے)|آخری (ملاقات|کال)|آخری بار سب|الوداع|خود کو تکلیف دی(تا|تی|نا)|مر ہی جاؤں|جانے کا وقت|ختم کر (لوں|دوں) گ|ختم کر لوں گ|ہمیشہ کا (سکون|نیند)|اٹھا (کیوں )?نہیں لیتا|ایسی زندگی کا|کر بیٹھوں|(بازو|کلائی) (کے|پر|پہ) (نشان|کٹ)|کوشش کی تھی)'
 )
 
 SEXUAL_SOURCE = (
     r'(\braped?\b|sexual(ly)? (assault|abuse|harass)|molest|zabardasti|zyadati|'
     r'\b' + SOMEONE + r'\b( \w+)? touch(ed|es|ing)? me\b|'
     r'touch(ed|es|ing)? me (there|inappropriately|without)|inappropriately touch|'
-    r'\b(mujhe|mujhko|muje) (\w+ )?chhu(a|aa|ya|ta|te|ne)\b|galat (tareeqe|tarah|jagah) (se )?chhu|زیادتی)'
+    r'\b(mujhe|mujhko|muje) (\w+ )?chhu(a|aa|ya|ta|te|ne)\b|galat (tareeqe|tarah|jagah) (se )?chhu|زیادتی'
+    # Force, groping, sextortion and "I said no" as people describe them; 'forcing me' alone is also
+    # "forcing me to study medicine", so force needs a reflexive or 'kiya'.
+    r'|forc(ed|es|ing) (himself|herself)|force (kiya|kia|karta|krta)|\bgrop(e|ed|es|ing)\b|assault(ed|s|ing)? me\b|harass(es|ed|ing)? me\b|\bharassment\b|\bnudes\b|(asking|asked|asks) (me )?for (pics|pictures|photos)|(pics|pictures|photos|videos|tasveer\w*|tasvir\w*)\b.{0,40}\b(unless|viral|leak\w*|send (them )?to (everyone|my))|(viral|leak) (kar|kr) (de|du|dun|dega|denge|doon|dungi)|even (though|after|when) i said (no|stop)|i said (no|stop)\W+(and|but) (he|she|they) (didn.?t|did not|wouldn.?t|kept|still|forced|carried|did it)|(ghalat|galat) (harkat\w*|kaam)|zabrdasti|zbrdsti|ziadti|ziyadti|زبردستی|غلط (حرکت|طریقے|جگہ)|ہراساں|ہراسانی'
+    # Grooming, image-based abuse and unwanted touch as they are described (guide C3, C10, C13, V2, V3, V16).
+    r'|(comes?|came) (in)?to my room (at night|when)|(it.?s|its) our (little )?secret|(post|share|send|leak|upload)\w* my (private |intimate |nude )?(photos|pics|pictures|videos)|(photos|pics|pictures|videos)\b.{0,40}\bif i (don.?t|do not|won.?t)|touch(es|ing|ed)? my (waist|body|chest|breasts?|thighs?|legs?|bum|butt)|spiked my drink|تصویریں مانگ'
+    # Urdu script: rape, abuse in a madrasa or at home, image threats.
+    r'|ریپ|غلط کام کر|چھیڑ|ویڈیوز بنا|تصویریں.{0,30}(بھیج|دکھا|ڈال)|انٹرنیٹ (پہ|پر) ڈال)'
 )
 
 ABUSE_SOURCE = (
@@ -84,12 +127,31 @@ ABUSE_SOURCE = (
     r'abusive (husband|wife|partner|boyfriend|girlfriend|father|dad|mother|mom|parents|relationship|marriage|home)|'
     r'\b(husband|wife|partner|boyfriend|girlfriend|father|dad|mother|mom|parents|in-?laws) (is|are|was|were|has been|gets) (\w+ )?abusive|'
     r'maar(ta|ti|te) (hai|hain|hy)|mujhe maar(a|ta|ti|te)|mujhe peet|pit(a|aa)i|thappar|'
-    r'ghar (mein|me) band|تشدد|مارتا)'
+    r'ghar (mein|me) band|تشدد|مارتا'
+    # More of what a person does to the user, threats to kill or 'make me disappear', honour threats. A
+    # parent who "will kill me" over a result is an idiom (guide N3), so a threat needs 'says' or 'threatened'.
+    r'|(threaten\w*|swore|swears|says|said|told me)( that)? (he|she|they)?(.?ll| will| would| is going to| are going to)? ?(kill|finish|bury|burn) (me|us|her|him|my)\b|(kill|murder|bury) (me|her|him|us|my \w+) (for|over) (honou?r|izzat|ghairat)|honou?r (killing|threat)|make me disappear|(no one|nobody) will (ever )?find my body'
+    # Roman Urdu: a raised hand, beating with a belt or stick, death threats, being locked in.
+    r'|(haath|hath) (uthata|uthaata|uthati|uthate|uthaya|uthaaya|utha chuka)|(belt|danda|dande|dando|chhari|chappal|joot\w*) (se|say) (maar|mara|maara|peet|pita)|(mujhe|mjhe|muje|mujhko|humein|hume|ammi ko|amma ko) (bohat |roz |phir |bht |bohot |bura )?(maara|mara|maarta|marta|maarti|marti|maarte|peeta|peet(a|e|i|ta|te|ti)|pitai)\b|jaan se (maar|mar) (de|da|dal|daal)|(zinda|jeeta|jeeti) (nahi|nahin|nai|nhi) (chho?r|chor)|(kamre|kamray|ghar) (mein|me|main|mai) band (kar|kr|rakh)|ghairat (ke|ki|k) (naam|khatir|wajah)|(jaan|maarne|qatal|tezaab|jalane|jala) (se maarne )?ki (dhamki|dhamkiyan|dhamky)|(maar|mar) (ke|kar|kr) (ghar se )?nikal'
+    # Urdu script.
+    r'|مار(تی|تے) (ہے|ہیں)|مار پیٹ|تھپڑ|ہاتھ اٹھا|جان سے مار|(کمرے|گھر) میں بند|غیرت کے نام|پیٹتا|پیٹتے|پٹائی|مارنے کی دھمکی'
+    # A person close to the user doing more than hitting: pushing, strangling, locking in (guide A1, A2, A10).
+    r'|\b' + SOMEONE + r'\b( \w+)? (pushed|pushes|shoved|shoves|punched|punches|strangled|strangles|dragged|drags|burned|burns|locked|locks|lock|threw|throws) me\b'
+    r'|\b(slaps|slapped|punched|punches|shoved|shoves|strangled|choked|chokes) me\b|(brother|husband|father|abbu|bhai|uncle|chacha|ex|in-?laws)\b.{0,40}\b(kill|finish|bury) (me|us|her)\b|gala (dabaya|dabata|dabati|dabate|daba diya)|jala (dein|denge|dega|degi|dalenge|daalenge|dein ge|den ge|de ga|de gi)|maar kha(ta|ti|te|ya|yi)\b|peet.?te (hain|hai)|گلا دبا|جلا (دیں|دے) گ'
+    # Risk to someone other than the user (harm_to_others, guide O1-O15). The floor has no kind of its own for
+    # it, and this route shows Rescue 1122 as well as Madadgaar.
+    r'|make (him|her|them) pay|i.?m going to (kill|hurt|stab|shoot) (him|her|them)|jaan se maar (doon|dun|dunga|dungi|dalunga|daalunga)|(chaaku|chaku|churi|chhuri|knife|pistol|gun|bandook|bandooq)\b.{0,40}(rakha|rakh li|intezam|mil gay|mil gai|ready|in my bag)|(hurt|shake|harm) (my|the) baby|(bachon|bachay|bache|bachey) ko .{0,20}maar (deti|deta)|بچے کو نقصان|پستول'
+    # Urdu script: threats to kill or bury, breaking bones, a push.
+    r'|(مار|قتل|جان).{0,30}دھمکی|دھمکی.{0,30}(مار|قتل|جان)|لاش بن|قبر یہیں|دفنا دوں|کام تمام کر|ہڈیاں توڑ (دوں|دے گا|دیں گے)|ہاتھ پاؤں توڑ|بازو توڑ|دھکا دیا|بہت مارا|مار دوں گا|سبق سکھاؤں)'
 )
 
 MINOR_SOURCE = (
     r"(\b(i am|i'm|im|main|meri umar) ([5-9]|1[0-7])\b|\b([5-9]|1[0-7]) (years? old|saal)\b|\bschool\b|class \d|"
-    r'\bstep ?(dad|father|mom|mother)\b|sautel[aie])'
+    r'\bstep ?(dad|father|mom|mother)\b|sautel[aie]'
+    # "14 ki hun", "class 7", "9th", madrasa, and Urdu-script school words.
+    r'|\b([5-9]|1[0-7]) (ki|ka) (hun|hoon|hu|hn)\b|\b(class|grade) ?([1-9]|1[0-2])\b|\b([5-9]|1[0-2])(th|st|nd|rd)\b|\bmatric\b|madrass?a|madrasse|سکول|اسکول|مدرس|کلاس'
+    # An age written in Urdu script, in either digits or words.
+    r'|(^|[^0-9۰-۹])([5-9]|1[0-7]|[۵-۹]|۱[۰-۷]) (سال|کا ہوں|کی ہوں|کا ہے|کی ہے)|(پانچ|چھ|سات|آٹھ|نو|دس|گیارہ|بارہ|تیرہ|چودہ|پندرہ|سولہ|سترہ) سال)'
 )
 
 # re.ASCII because Dart's RegExp is JavaScript's: \b and \w are ASCII there too.
@@ -209,13 +271,16 @@ def authored_extras(with_authored: bool) -> tuple[dict[str, list[LabeledText]], 
 # --- Held-out recall report ----------------------------------------------------------------------
 
 
-def read_heldout(path: Path, tuning_probes: Path) -> list[dict]:
+def read_heldout(path: Path, tuning_probes: Path | None) -> list[dict]:
     """Held-out rows {id, text, lang, labels}; refuses any row that is one of the tuning probes.
 
-    Thresholds are tuned against the 24 safety probes, so a recall number measured on them is a
-    number the tuning already saw.
+    When thresholds are tuned against the 24 safety probes, a recall number measured on them is a
+    number the tuning already saw. Guardian v1 tunes on its validation split instead and keeps the
+    probes in its held-out set; pass `tuning_probes=None` for that.
     """
-    probes = {json.loads(line)["text"].strip().lower() for line in tuning_probes.read_text(encoding="utf-8").splitlines() if line.strip()}
+    probes = set()
+    if tuning_probes is not None:
+        probes = {json.loads(line)["text"].strip().lower() for line in tuning_probes.read_text(encoding="utf-8").splitlines() if line.strip()}
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     for r in rows:
         if r["text"].strip().lower() in probes:
@@ -262,6 +327,50 @@ def recall_report(rows: list[dict], predicted: list[set[str]]) -> dict:
         "recall": {k: {"n": len(v["n"]), "detect": rate(v["detect"]), "exact": rate(v["exact"])} for k, v in sorted(groups.items())},
         "false_alarm": {lang: {"n": len(v), "rate": rate(v)} for lang, v in sorted(calm_by_lang.items())},
     }
+
+
+def class_lang_report(rows: list[dict], predicted: list[set[str]], labels: tuple[str, ...] = CRISIS_LABELS) -> dict:
+    """Recall and precision per crisis label within each language, and over all languages.
+
+    Recall: of the rows carrying the label, the share the label fired on. Precision: of the rows the
+    label fired on, the share that carry it. `detect_recall` counts a row caught when any crisis
+    label fires, which is what puts the helpline in front of the person.
+    """
+
+    def crisis(labels_) -> set[str]:
+        return set(labels_) - {"none"}
+
+    out: dict[str, dict] = {}
+    for lang in ["all", *sorted({r["lang"] for r in rows})]:
+        idx = [i for i, r in enumerate(rows) if lang == "all" or r["lang"] == lang]
+        per = {}
+        for lab in labels:
+            if lab == "none":
+                continue
+            pos = [i for i in idx if lab in rows[i]["labels"]]
+            fired = [i for i in idx if lab in predicted[i]]
+            tp = len(set(pos) & set(fired))
+            per[lab] = {
+                "n": len(pos),
+                "recall": round(tp / len(pos), 3) if pos else None,
+                "detect_recall": round(sum(1 for i in pos if crisis(predicted[i])) / len(pos), 3) if pos else None,
+                "precision": round(tp / len(fired), 3) if fired else None,
+                "fired": len(fired),
+            }
+        pos = [i for i in idx if crisis(rows[i]["labels"])]
+        calm = [i for i in idx if not crisis(rows[i]["labels"])]
+        flagged = [i for i in idx if crisis(predicted[i])]
+        out[lang] = {
+            "labels": per,
+            "any_crisis": {
+                "n": len(pos),
+                "recall": round(sum(1 for i in pos if crisis(predicted[i])) / len(pos), 3) if pos else None,
+                "precision": round(len(set(flagged) & set(pos)) / len(flagged), 3) if flagged else None,
+                "n_calm": len(calm),
+                "false_alarm_rate": round(sum(1 for i in calm if crisis(predicted[i])) / len(calm), 3) if calm else None,
+            },
+        }
+    return out
 
 
 def below(report: dict, min_recall: float) -> list[str]:
@@ -393,6 +502,70 @@ def _calibrate(probs: np.ndarray, y: np.ndarray, target_recall: float | None) ->
     return thresholds
 
 
+def calibrate_by_lang(
+    probs: np.ndarray, y: np.ndarray, langs: list[str], labels: list[str], target_recall: float = LANG_RECALL_TARGET,
+    min_positives: int = MIN_LANG_POSITIVES,
+) -> list[float]:
+    """Per-label thresholds that reach `target_recall` on the positives of every language.
+
+    A language with fewer than `min_positives` positives for a label does not set that label's
+    threshold on its own (one row is not a recall estimate); the pooled positives still do. 'none'
+    is not a crisis output and keeps 0.5.
+    """
+    langs_arr = np.asarray(langs)
+    out = []
+    for c, lab in enumerate(labels):
+        pos_all = probs[y[:, c] == 1, c]
+        if lab == "none" or len(pos_all) == 0:
+            out.append(0.5)
+            continue
+        # method="lower" picks an observed score, so at least target_recall of the positives reach it.
+        cands = [np.quantile(pos_all, 1 - target_recall, method="lower")]
+        for lang in sorted(set(langs)):
+            pos = probs[(y[:, c] == 1) & (langs_arr == lang), c]
+            if len(pos) >= min_positives:
+                cands.append(np.quantile(pos, 1 - target_recall, method="lower"))
+        out.append(float(np.clip(min(cands), 0.02, 0.98)))
+    return out
+
+
+def calibrate_routing(
+    probs: np.ndarray, y: np.ndarray, langs: list[str], labels: list[str], target_recall: float = 0.97,
+) -> list[float]:
+    """One threshold for every crisis label: the highest that still routes `target_recall` of each
+    language's crisis rows (any crisis label set) on validation, so the lowest across languages.
+
+    The app routes to help when any crisis label clears its threshold, so routing is the unit worth
+    calibrating. Per-label, per-language quantiles on validation sets of 10-40 positives just pick
+    each set's single worst example (Guardian v1a: every threshold landed on the 0.02 floor and the
+    model flagged a third of calm messages). 'none' keeps 0.5.
+    """
+    crisis_cols = [i for i, lab in enumerate(labels) if lab != "none"]
+    score = probs[:, crisis_cols].max(1)
+    is_crisis = y[:, crisis_cols].max(1) == 1
+    langs_arr = np.asarray(langs)
+    points = []
+    for lang in sorted(set(langs)):
+        pos = score[is_crisis & (langs_arr == lang)]
+        if len(pos):
+            points.append(float(np.quantile(pos, 1 - target_recall, method="lower")))
+    t = float(np.clip(min(points), 0.02, 0.98)) if points else 0.5
+    return [0.5 if lab == "none" else t for lab in labels]
+
+
+def pos_weights(items: list[LabeledText], labels: list[str], cap: float = 10.0) -> torch.Tensor:
+    """BCE pos_weight per label: sqrt(negatives / positives), between 1 and `cap`.
+
+    Rare crisis labels (medical, harm_to_others) would otherwise be learnt as 'never'; the square
+    root keeps the push without turning every sad message into a crisis."""
+    n = len(items)
+    counts = {lab: 0 for lab in labels}
+    for it in items:
+        for lab in it.labels:
+            counts[lab] += 1
+    return torch.tensor([float(np.clip(np.sqrt((n - counts[lab]) / max(counts[lab], 1)), 1.0, cap)) for lab in labels])
+
+
 def _best_f1_threshold(prob: np.ndarray, y: np.ndarray) -> float:
     candidates = np.unique(np.quantile(prob, np.linspace(0.01, 0.99, 99)))
     best_t, best_f1 = 0.5, -1.0
@@ -451,6 +624,8 @@ def train(
     freeze_embeddings: bool = typer.Option(True, help="XLM-R's 250k×768 embedding table is ~70% of its parameters; freezing it keeps AdamW state inside 4 GB"),
     limit: int = typer.Option(0, help="Debug: cap train items per task"),
     with_authored: bool = typer.Option(True, help="Add the authored rows to the crisis head's train and val data (Roman Urdu, abuse, child, sexual violence)"),
+    class_weights: bool = typer.Option(True, help="BCE pos_weight per label (sqrt of negatives/positives, capped at 10)"),
+    lang_recall: float = typer.Option(0.0, help="If > 0, calibrate the crisis thresholds per language to this recall on validation (Guardian v1 uses 0.98)"),
 ) -> None:
     random.seed(seed)
     torch.manual_seed(seed)
@@ -482,7 +657,13 @@ def train(
         for t, td in task_data.items()
         if td.val
     }
-    losses = {t: nn.BCEWithLogitsLoss() if td.multi else nn.CrossEntropyLoss() for t, td in task_data.items()}
+    losses = {
+        t: (nn.BCEWithLogitsLoss(pos_weight=pos_weights(td.train, td.labels).to(device) if class_weights else None) if td.multi else nn.CrossEntropyLoss())
+        for t, td in task_data.items()
+    }
+    for t, td in task_data.items():
+        if td.multi and class_weights:
+            console.print(f"{t} pos_weight: " + ", ".join(f"{lab}={w:.2f}" for lab, w in zip(td.labels, losses[t].pos_weight.tolist(), strict=True)))
 
     steps_per_epoch = sum(len(ld) for ld in loaders.values())
     total = steps_per_epoch * epochs
@@ -519,7 +700,9 @@ def train(
         results, thresholds = {}, {}
         for t, ld in val_loaders.items():
             logits, y = _predict(model, ld, t, device)
-            if task_data[t].multi:
+            if t == "crisis" and lang_recall > 0:
+                thresholds[t] = calibrate_by_lang(1 / (1 + np.exp(-logits)), y, [it.lang for it in task_data[t].val], task_data[t].labels, lang_recall)
+            elif task_data[t].multi:
                 thresholds[t] = _calibrate(1 / (1 + np.exp(-logits)), y, RECALL_TARGETS.get(t))
             results[t] = _metrics(task_data[t], logits, y, thresholds.get(t))
             _print_metrics(t, results[t])
@@ -531,7 +714,8 @@ def train(
             (out / "config.json").write_text(
                 json.dumps(
                     {"base": base, "max_len": max_len, "tasks": {t: td.labels for t, td in task_data.items()},
-                     "multi_label": sorted(MULTI_LABEL_TASKS & set(tasks)), "with_authored": with_authored},
+                     "multi_label": sorted(MULTI_LABEL_TASKS & set(tasks)), "with_authored": with_authored,
+                     "class_weights": class_weights, "lang_recall": lang_recall},
                     indent=2,
                 ),
                 encoding="utf-8",
@@ -697,6 +881,7 @@ def heldout(
     file: Path = typer.Argument(..., help="Held-out JSONL {id, text, lang, labels}, written by a clinician and never used for tuning"),
     run: Path = ML_ROOT / "runs" / "guardian",
     tuning_probes: Path = ML_ROOT / "therapylink_ml" / "eval" / "probes" / "safety.jsonl",
+    probes_in_heldout: bool = typer.Option(False, help="The safety probes are part of the held-out set (thresholds were tuned on validation, not on them)"),
     batch: int = 16,
     min_recall: float = typer.Option(0.95, help="Fail unless every language and category reaches this detection recall"),
 ) -> None:
@@ -705,7 +890,7 @@ def heldout(
     Reported for the model alone, the keyword floor alone, and both together (what the app runs:
     the model with the keywords underneath). The gate applies to the union.
     """
-    rows = read_heldout(file, tuning_probes)
+    rows = read_heldout(file, None if probes_in_heldout else tuning_probes)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cfg = json.loads((run / "config.json").read_text(encoding="utf-8"))
     if "crisis" not in cfg["tasks"]:
@@ -741,7 +926,8 @@ def heldout(
     console.print(table)
     short = below(reports["union"], min_recall)
     out = run / "heldout_report.json"
-    out.write_text(json.dumps({"file": str(file), "rows": len(rows), "min_recall": min_recall, "below": short, **reports}, indent=2), encoding="utf-8")
+    by_class = {name: class_lang_report(rows, pred) for name, pred in (("model", model_pred), ("keywords", keyword_pred), ("union", union_pred))}
+    out.write_text(json.dumps({"file": str(file), "rows": len(rows), "min_recall": min_recall, "below": short, **reports, "by_class_lang": by_class}, indent=2), encoding="utf-8")
     console.print(f"[green]wrote[/] {out}")
     if short:
         console.print(f"[bold red]below {min_recall:.0%}:[/] " + "; ".join(short))

@@ -1,0 +1,120 @@
+{"text": "gussay mein hath utha leta hai bas", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "kisi ko bata nahi sakti, wo maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "na maike jaane deta hai na kisi se milne. kal sirf darwaze pe khari thi to baal pakar ke andar ghaseeta", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_control"}
+{"text": "mangetar ne shaadi se pehle hi thappar maar diya, ghar wale kehte hain shaadi ke baad theek ho jayega", "lang": "ur-roman", "labels": ["abuse"], "tag": "fiance_violence"}
+{"text": "21 ki hun. sauteli ammi ne abbu ko bhi mere khilaf kar diya hai, ab dono mil ke maarte hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "stepmother_adult"}
+{"text": "bas yahi kehna tha ke mujhe roz maara jata hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_disclosure"}
+{"text": "chhote bhai ne nashe ke liye paise maange, nahi diye to ammi ko dhakka diya aur mujhe moonh pe mukka mara", "lang": "ur-roman", "labels": ["abuse"], "tag": "brother_drugs"}
+{"text": "zameen ke jhagre mein chacha ke beton ne abbu ko ghair ke maara aur kaha agli dafa qatal hoga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "land_dispute_threat"}
+{"text": "abbu ammi ko maar rahe hain abhi", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "meri behen ka shohar usko maarta hai. wo hamare ghar bhaag ke ayi hai aur wo bahar khara dhamkiyan de raha hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "sister_dv"}
+{"text": "sasural walay qaid mein rakhte hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "gussa aaye to jo haath mein aaye phenk deta hai, kal kuch mere maathe pe laga", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_throwing"}
+{"text": "bahu ne bete ko mere khilaf kar diya, ab wo mujhe dhakke deta hai. bimar budha aadmi hun, kahan jaun", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_male"}
+{"text": "shohar ki maar se tang hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "aankh suji hui hai uske mukke se", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_short"}
+{"text": "kehta hai khula ka case kiya to bachay kabhi nahi dekh paogi aur tumhe bhi dekh lunga. pichli dafa bhi bohat maara tha jab maike gayi", "lang": "ur-roman", "labels": ["abuse"], "tag": "khula_threat"}
+{"text": "police ko call karne ki koshish ki thi to phone cheen ke mujhe zameen pe patakh diya", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_call_blocked"}
+{"text": "jism pe neel hi neel", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "roz ki maar kut", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "sasural se bhaagi hun, wo log dhoond rahe hain. keh rahe the wapas aayi to zinda dafna denge", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "fled_kill_threat"}
+{"text": "kamre mein band kar ke bijli bhi kaat di", "lang": "ur-roman", "labels": ["abuse"], "tag": "locked_in"}
+{"text": "shohar se darti hun, wo maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "bhai ghar mein band rakhta hai aur kehta hai job ki to qatal kar dunga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "brother_kill_threat"}
+{"text": "abu ne kaha dobara us larki se mila to aaq kar ke nikal dunga, aur kal unhone mujhe dande se maara bhi. 23 saal ka hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "father_son"}
+{"text": "mera gala dabaya aur kaha agli dafa chhorunga nahi", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "choking_threat"}
+{"text": "aaj bohot maara usne", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "abbu ne ammi ko talaq ki dhamki de ke ghar se nikal diya aur jaate hue thappar bhi maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "mother_kicked_out"}
+{"text": "rozana tashaddud", "lang": "ur-roman", "labels": ["abuse"], "tag": "short_formal"}
+{"text": "ghar mein maar peet hoti hai mere saath", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "husband violent hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short_english_word"}
+{"text": "kehta hai tu mar bhi jaye to kisi ko farq nahi parega, aur phir tab tak maarta hai jab tak mai chup na ho jaun", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_degradation"}
+{"text": "15 saal ho gaye shaadi ko, bachay bare ho gaye, ab bhi wo maarta hai aur sab dekhte hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_longterm"}
+{"text": "sas susar ne maar ke ghar se nikal diya aur mera zewar bhi rakh liya", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_kicked_out"}
+{"text": "ghar se nikalne ki dhamkiyan aur maar", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "gaon ke chaudhry ne abbu ko maara aur kaha zameen chhoro warna poore ghar ko khatam kar denge", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "landlord_threat"}
+{"text": "ammi abbu ne ghar mein band kiya hai kyun ke pasand ki shaadi karna chahti hun, aur bhai ne kaha bhaagi to zinda nahi bachogi", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_confinement"}
+{"text": "mere jism pe har jagah nishan hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_marks"}
+{"text": "khala ke ghar reh ke parhti hun, 20 saal ki. khalu ghar ka sara kaam karwate hain aur ghalti pe maarte hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "relative_household"}
+{"text": "ammi ko roz mamu maarte hain, wo unke ghar mein rehti hain kyun ke abbu nahi rahe. mai sirf sun sakti hun phone pe", "lang": "ur-roman", "labels": ["abuse"], "tag": "widow_relative"}
+{"text": "miyan ka nasha aur maar, dono roz ka kaam hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_drunk"}
+{"text": "mere saath zyadati hui hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "disclosure_short"}
+{"text": "usne zabardasti ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rape_short"}
+{"text": "boss ghalat chhoota hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "rishtedar ne zyadati ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "boss kehta hai promotion chahiye to raat ko dinner pe chalo, aur meeting mein table ke neeche taang pe haath rakhta hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "boss_quid_pro_quo"}
+{"text": "van wale uncle ajeeb tareeqe se chhoote hain jab utarti hun, university jaati hun usi van mein aur koi aur rasta nahi", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "van_driver"}
+{"text": "rickshaw mein driver ne haath peeche kar ke chua", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rickshaw_groping"}
+{"text": "van driver chhoota hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "ex ke paas meri tasveerein hain, keh raha hai milne nahi ayi to sab ko bhej dega", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "sextortion_ex"}
+{"text": "kisi ne meri edit ki hui tasveerein bana ke dhamki di hai ke viral kar dega agar paise nahi diye", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "sextortion_morphed"}
+{"text": "tasveerein viral karne ki dhamki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "video call record kar li thi usne, ab blackmail kar raha hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "sextortion_videocall"}
+{"text": "cousin ne shaadi wale ghar mein kamre mein band kar ke zabardasti ki. kisi ko bataya to khandan toot jayega", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rape_cousin"}
+{"text": "pics se blackmail ho rahi hun", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "har raat zabrdasti hoti hai. kisi se keh nahi sakti kyun ke wo mera shohar hai, log kahenge is mein kya ghalat hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "marital_rape"}
+{"text": "dewar ghar mein akela dekh ke kamre mein aa jata hai aur chhune ki koshish karta hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "inlaw_dewar"}
+{"text": "shohar zabardasti karta hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "professor ne kaha thesis pass karwani hai to akele office mein milo, aur pichli dafa darwaza band kar ke qareeb aa gaye the", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "professor"}
+{"text": "supervisor ne raat ko ghalat messages bheje, ignore kiya to warning letter thama diya", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "office_harassment"}
+{"text": "factory ka supervisor larkiyon ko chhoota hai, kal mere saath bhi kiya, sab ne dekha aur kisi ne kuch nahi kaha", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "factory_supervisor"}
+{"text": "cousin ne ghalat kaam kiya", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "makan malik kehta hai kiraya maaf kar dunga badle mein... aap samajh gaye na. aur ab bina bataye ghar mein aa jata hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "landlord"}
+{"text": "bachpan mein mamu ne ghalat harkatein ki thi. ab 30 ki hun aur ab bhi raaton ko neend nahi aati", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "csa_adult_disclosure"}
+{"text": "jab 9 saal ka tha madrasse mein ek ustad ne ghalat kaam kiya. ab 25 ka hun, aaj tak kisi ko nahi bataya", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "csa_adult_male"}
+{"text": "date pe gayi thi, drink mein kuch mila diya. subah kuch yaad nahi tha bas pata tha kuch ghalat hua hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "drugged"}
+{"text": "rape hua hai mere saath", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rape_short"}
+{"text": "kal raat jo hua uske baad naha naha ke bhi ganda mehsoos ho raha hai. wo dost tha mera", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "acquaintance_rape"}
+{"text": "fiance ne shaadi ka keh ke zabardasti ki aur ab shaadi se inkaar kar raha hai, tasveerein bhi le li thi", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "fiance_rape"}
+{"text": "jis ghar mein kaam karti hun wahan sahib ka beta raat ko kamre mein aa jata hai, darwaza andar se band nahi hota", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "domestic_worker"}
+{"text": "hostel ke chowkidar ne raat ko kamre ka darwaza khola, andar aaya aur mujhe pakarne ki koshish ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "hostel_guard"}
+{"text": "chacha ne zabardasti ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "HR ko harassment ki complaint ki thi, ulta mujhe hi nikal diya aur wo banda ab bhi messages bhejta hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "office_harassment"}
+{"text": "mard hun aur mere saath ek aadmi ne zyadati ki thi, kisi ko bata bhi nahi sakta", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "male_victim"}
+{"text": "office mein jinsi harassment", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "whatsapp groups mein meri morph ki hui photos ghoom rahi hain, ghar wale bhi mujhe hi qasoorwar samajh rahe hain", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "image_abuse"}
+{"text": "rishte ke chacha jab bhi aate hain gale lagne ke bahane chhoote hain. 20 ki hun aur ab bhi kuch keh nahi pati", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "relative_touching"}
+{"text": "ghalat jagah chua usne", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "touching_short"}
+{"text": "zabardasti hui", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rape_short"}
+{"text": "usne pakar ke jabardasti ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rape_short"}
+{"text": "us raat ke baad jab usne zabardasti ki, mera jism mujhe apna nahi lagta", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "rape_aftermath"}
+{"text": "video leak karne ki dhamky", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "mere shohar mujhe aisi cheezon pe majboor karte hain jo mai nahi chahti, mana karun to kehte hain doosri le aunga", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "marital_coercion"}
+{"text": "mana kiya to maara aur phir zabardasti ki", "lang": "ur-roman", "labels": ["sexual_violence", "abuse"], "tag": "marital_rape_violence"}
+{"text": "bus stop pe roz wahi aadmi peecha karta hai, kal haath pakar ke kheencha aur ganday alfaz bole", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "street_harassment"}
+{"text": "dewar ghalat chhoota hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "zabrdasti hui thi kal", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "call center mein night shift hai, team lead akela bula ke chhoota hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "call_center"}
+{"text": "school mein parhati hun, principal sahab bar bar ghalat ishare karte hain aur kal store room mein haath pakar liya", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "workplace_principal"}
+{"text": "mana karne pe bhi nahi ruka", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "peer sahab ne dam ke bahane kamre mein akela bulaya aur ghalat harkat ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "spiritual_healer"}
+{"text": "sasur ki ghalat harkatein", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "boyfriend kehta hai milne nahi ayi to hamari private videos upload kar dega", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "sextortion_partner"}
+{"text": "mujhe chhua bina ijazat", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "fake account bana ke meri tasveerein ghalat captions ke saath daal di hain aur dm mein kehta hai aur bhi hain", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "image_abuse"}
+{"text": "shaadi mein ek rishtedar ne nashe mein zabardasti chua, sab samjhe mazak hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "relative_wedding"}
+{"text": "teen larkon ne zabardasti gaari mein bitha liya tha. us raat ka sochti hun to saans ruk jati hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "gang_assault"}
+{"text": "meri videos se blackmail", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "kaam ki jagah pe sahib zabardasti karta hai, naukri chhori to ghar mein faqa", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "employer_rape"}
+{"text": "mai ne no bola tha", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "said_no_short"}
+{"text": "professor harass karta hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "husband ne zabardasti ki aur video bana li, kehta hai talaq maangi to sab ko dikhaunga", "lang": "ur-roman", "labels": ["sexual_violence", "abuse"], "tag": "marital_sextortion"}
+{"text": "harassment ho rahi hai office mein", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "office_short"}
+{"text": "class fellow ne meri pics photoshop ki hain, kehta hai baat nahi ki to university ke group mein daal dega", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "university_sextortion"}
+{"text": "ex mangetar ke paas meri videos hain aur wo naye rishte walon ko bhejne ki dhamki de raha hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "sextortion_ex"}
+{"text": "bahnoi ne raat ko kamre mein aa ke... aapa ko kaise bataun", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "brother_in_law"}
+{"text": "bara bhai raat ko mere kamre mein aata hai. 19 ki hun. ammi ko bataya to unhone thappar maar diya", "lang": "ur-roman", "labels": ["sexual_violence", "abuse"], "tag": "incest_adult"}
+{"text": "raat ko kisi ne zyadati ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "saas ka bhai ghar aata hai to zabardasti gale lagata hai aur haath idhar udhar", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "inlaw_relative"}
+{"text": "nudes maang raha hai dhamki de ke", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "kal dost ki party mein ek larke ne washroom mein band kar ke chhua, ab tak kaanp rahi hun", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "party_assault"}
+{"text": "nurse hun, ward mein ek senior doctor night duty pe ghalat jagah chhoota hai aur kehta hai report kharab kar dunga", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "hospital_workplace"}
+{"text": "shohar ka dost aya tha jab wo ghar pe nahi the, zabardasti andar aa gaya aur...", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "husband_friend"}
+{"text": "ghalat jagah haath lagaya", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "22 saal ka larka hun. hostel mein seniors ne ragging ke naam pe kapre utarwaye aur video banai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "hostel_ragging_male"}
+{"text": "ghar mein koi nahi tha, chacha ne darwaza band kar diya. us din ke baad unki shakal nahi dekh sakti", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "relative_assault"}
+{"text": "boss mere jism pe ganday comments karta hai aur ab kehta hai weekend pe farmhouse chalo, mana kiya to job khatam", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "boss_coercion"}
+{"text": "kal raat mai so rahi thi aur wo kamre mein aa gaya, mai ne dhakka diya par wo nahi ruka", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "night_assault"}
+{"text": "sextortion ho rahi hai", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "boss ne zabardasti ki", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}
+{"text": "ganday messages aur dhamkiyan", "lang": "ur-roman", "labels": ["sexual_violence"], "tag": "short"}

@@ -106,6 +106,57 @@ def test_keyword_floor_leaves_idioms_alone(text):
     assert keyword_kind(text) is None
 
 
+# The phrasings the clinical model review and QA found the floor missing (MODEL_REVIEW.md, CRISIS_ACCEPTANCE.md).
+# app/test/crisis_keywords_test.dart pins the same list, so both copies of the floor are held to it.
+@pytest.mark.parametrize(
+    "text, kind",
+    [
+        ("I've written letters to my parents and my little brother, just in case. I don't really see the point of anything anymore.", 'suicidal'),
+        ('ab jeene ka koi faida nazar nahi aata. soch raha hoon aaj raat sab khatam kar doon…', 'suicidal'),
+        ("I've been sorting out who gets my books and my laptop after I'm gone.", 'suicidal'),
+        ('Gave my dog to my cousin and my bank logins to my wife. Nothing left to sort.', 'suicidal'),
+        ("I've been thinking about ending my life. I don't see a point anymore.", 'suicidal'),
+        ('Aaj raat sab khatam kar doon.', 'suicidal'),
+        ('مجھے لگتا ہے میں اب نہیں رہنا چاہتا', 'suicidal'),
+        ('My husband beats me every night. I am scared to go home.', 'abuse'),
+        ('kal subah tak sab khatam kar dungi', 'suicidal'),
+        ('bas aaj sab ko alvida, maafi ka message bhej diya', 'suicidal'),
+        ('jab main na rahun to ammi ka khayal rakhna', 'suicidal'),
+        ('Allah mujhe utha le bas', 'suicidal'),
+        ("tonight's the night. bye", 'suicidal'),
+        ('it was nice knowing you all', 'suicidal'),
+        ('I keep imagining my funeral and feeling relieved.', 'suicidal'),
+        ('khud ko hurt kiya phir se, nishaan chhupa rahi hoon', 'suicidal'),
+        ('آج سب دوستوں سے مل آیا، ان کو پتا نہیں کہ آخری ملاقات تھی', 'suicidal'),
+        ('bhai ne kaha shaadi ki to jaan se maar dega', 'abuse'),
+        ('shohar roz mujh par haath uthata hai', 'abuse'),
+        ("My ex says he'll post my photos if I don't meet him.", 'sexual_violence'),
+        ("Main 13 ki hoon and my uncle says it's our secret. Mujhe dar lagta hai.", 'child'),
+    ],
+)
+def test_keyword_floor_routes_the_review_and_acceptance_prompts(text, kind):
+    assert keyword_kind(text) == kind
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "I don't want to wake up early tomorrow, I'm so tired",
+        'Gave away my old clothes to the masjid donation box today',
+        'a guy at work asked me out, I said no and he was completely fine about it',
+        'aakhri dafa keh raha hoon, kamra saaf karo',
+        'aap khud ko takleef na dein, main kar leta hoon',
+        'my mum is going to kill me when she sees this phone bill',
+        'Canada shift ho raha hoon, bike cousin ko de di aur books library ko.',
+        'اففف اس ہفتے نے تو ہڈیاں توڑ دیں',
+        'parents are forcing me to do medicine',
+        'assignment sab khatam kar diya finally',
+    ],
+)
+def test_keyword_floor_widening_leaves_these_alone(text):
+    assert keyword_kind(text) is None
+
+
 # --- Guardian v1 data and report ---------------------------------------------------------------------
 
 

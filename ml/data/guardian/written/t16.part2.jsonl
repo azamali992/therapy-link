@@ -1,0 +1,100 @@
+{"text": "میں ٹھیک ہوں ویسے، بس اب زیادہ دن کسی کے لیے مسئلہ نہیں بنوں گا", "lang": "ur", "labels": ["suicidal"], "tag": "not_a_problem_long"}
+{"text": "جب میں نہیں رہوں گی تو کوئی یاد بھی کرے گا؟ شاید جلدی پتا چل جائے", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "سوچ رہا ہوں نیند میں ہی چلا جاؤں", "lang": "ur", "labels": ["suicidal"], "tag": "not_wake_up"}
+{"text": "میری امی کا خیال رکھنا بھائی، میں نہیں رکھ سکا", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "دل چاہتا ہے کہیں ایسی جگہ چلی جاؤں جہاں سے واپسی ہی نہ ہو", "lang": "ur", "labels": ["suicidal"], "tag": "disappear"}
+{"text": "باجی کو میسج کیا کہ میرے کپڑے غریبوں میں بانٹ دینا، وہ ہنس رہی تھیں، ان کو کیا پتا", "lang": "ur", "labels": ["suicidal"], "tag": "prep_belongings"}
+{"text": "پچھلے مہینے کوشش کی تھی، بچ گئی، اب پھر وہی خیال آ رہے ہیں", "lang": "ur", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "سب کچھ تیار ہے میرے پاس، بس رات کا انتظار ہے", "lang": "ur", "labels": ["suicidal"], "tag": "plan_timing"}
+{"text": "خود کشی کے علاوہ کوئی راستہ نظر نہیں آتا", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "سارے گھر کا خرچہ میرے سر پہ ہے اور میں ناکام ہوں۔ میرے ہونے سے ان کا کچھ نہیں بنتا، نہ ہونے سے شاید بن جائے", "lang": "ur", "labels": ["suicidal"], "tag": "burden"}
+{"text": "یار میں اب مزید یہ زندگی نہیں کھینچ سکتا، ختم کرنی ہے", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "آج ابو کی برسی ہے، سوچ رہی ہوں ان کے پاس ہی چلی جاؤں", "lang": "ur", "labels": ["suicidal"], "tag": "grief_intent"}
+{"text": "مجھے دفنانا گاؤں میں، امی کے پاس", "lang": "ur", "labels": ["suicidal"], "tag": "prep_after"}
+{"text": "میری بیٹی 15 سال کی ہے، آج اس کے کمرے سے ایک خط ملا جس میں اس نے سب سے معافی مانگی ہے اور لکھا ہے کہ وہ تھک گئی ہے", "lang": "ur", "labels": ["suicidal", "child"], "tag": "parent_minor_risk"}
+{"text": "خدا کی قسم اب برداشت نہیں ہوتا، دل کرتا ہے خود کو ختم کر لوں", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "اکیلا ہوں، بوڑھا ہوں، بیٹے باہر ہیں، فون بھی نہیں کرتے۔ اب جی کے کیا کرنا، اللہ اٹھا لے تو احسان ہو", "lang": "ur", "labels": ["suicidal"], "tag": "elderly_passive_wish"}
+{"text": "ہر کوئی کہتا ہے صبر کرو۔ کتنا؟ میں نے فیصلہ کر لیا ہے کہ اب صبر نہیں کروں گی، جا رہی ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "لوگ سمجھیں گے بزدل تھا، سمجھتے رہیں، مجھے اب جانا ہے", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "مجھے اب کسی چیز کی پرواہ نہیں، مرنے کی بھی نہیں۔ بلکہ انتظار ہے", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "کلاس 10 میں ہوں اور دل کرتا ہے غائب ہو جاؤں ہمیشہ کے لیے، کسی کو پتا بھی نہ چلے", "lang": "ur", "labels": ["suicidal", "child"], "tag": "minor_disappear"}
+{"text": "کیا اللہ اس کو معاف کرتا ہے جو اپنی جان خود لے لے؟ پوچھ رہا ہوں کیونکہ مجھے ضرورت ہے", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "ہسپتال والوں نے کہا ٹھیک ہو جاؤ گے، پر میں ٹھیک نہیں ہونا چاہتا، میں جانا چاہتا ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "مجھے خودکشی کے خیال آتے ہیں", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "کب تک؟ کب تک ایسے جیؤں؟ نہیں جینا", "lang": "ur", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "میری وجہ سے امی ابو کی لڑائی ہوتی ہے، میں ہی نہ رہوں تو گھر میں سکون ہو جائے گا۔ میں چھٹی جماعت میں ہوں", "lang": "ur", "labels": ["suicidal", "child"], "tag": "minor_burden"}
+{"text": "دوست کو کہا ہے میرا PS5 لے جائے، اسے حیرت ہوئی پر میں نے کہا بس مجھے اب نہیں چاہیے", "lang": "ur", "labels": ["suicidal"], "tag": "prep_belongings"}
+{"text": "آپ لوگ بس میرے گھر والوں کو بتا دینا کہ میں نے ان سے پیار کیا تھا", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "زندگی سزا لگتی ہے اور میں رہائی چاہتی ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "سوچا تھا شادی کے بعد سب بہتر ہوگا، نہیں ہوا۔ اب ایک ہی راستہ بچا ہے اور وہ میں جانتی ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "عمر 67 سال ہے، بیوی گزر گئی، اب میں بھی جانا چاہتا ہوں، جلدی", "lang": "ur", "labels": ["suicidal"], "tag": "elderly_passive_wish"}
+{"text": "بھائی، میری کمیٹی کے پیسے نکلوا کے امی کو دے دینا، میرے بعد", "lang": "ur", "labels": ["suicidal"], "tag": "prep_arrangements"}
+{"text": "میں اب سونا چاہتی ہوں اور اٹھنا نہیں چاہتی، یہ تھکاوٹ والی نیند نہیں ہے", "lang": "ur", "labels": ["suicidal"], "tag": "not_wake_up"}
+{"text": "میرا روم میٹ دو دن سے کہہ رہا ہے کہ اس ویک اینڈ کے بعد وہ نہیں ہوگا، اس نے اپنا سامان پیک کر کے سب میں بانٹ دیا ہے", "lang": "ur", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "کچھ نہیں ہو سکتا میرا، میں ختم ہو جاؤں یہی بہتر ہے", "lang": "ur", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "اگر کل صبح میرا میسج نہ آئے تو سمجھ لینا", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye_indirect"}
+{"text": "اب تو آئینے میں خود کو دیکھ کر بھی نفرت ہوتی ہے، دل کرتا ہے اپنا وجود ہی مٹا دوں ہمیشہ کے لیے", "lang": "ur", "labels": ["suicidal"], "tag": "wish_not_exist"}
+{"text": "بیوی کہہ رہی ہے چھوڑ دے گی، اگر اس نے چھوڑا تو جی کے کیا کروں گا، ختم کر لوں گا خود کو", "lang": "ur", "labels": ["suicidal"], "tag": "conditional_intent"}
+{"text": "یہ سب لکھ رہی ہوں تاکہ بعد میں کوئی پوچھے تو وجہ پتا ہو", "lang": "ur", "labels": ["suicidal"], "tag": "prep_letter"}
+{"text": "ہر رات یہی سوچ کے سوتا ہوں کہ کل نہ آئے", "lang": "ur", "labels": ["suicidal"], "tag": "not_wake_up"}
+{"text": "کوئی میری بات نہیں سنتا، شاید جب میں چلی جاؤں تب سنیں", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "میرے شوہر کہہ رہے ہیں کہ وہ خود کو مار لیں گے، کاروبار ڈوب گیا ہے، آج کمرے سے نکلے ہی نہیں", "lang": "ur", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "چھوٹے بھائی کو اپنا موبائل دے دیا اور بولا پڑھائی کرنا۔ وہ پوچھ رہا تھا تم کہاں جا رہے ہو۔ کیا بتاتا اسے", "lang": "ur", "labels": ["suicidal"], "tag": "prep_belongings"}
+{"text": "اب نہیں لڑ سکتا اس اندھیرے سے، ہار مان لی، جا رہا ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "جینے کی خواہش ختم", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "ھر روز مرنے کو دل کرتا ھے", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "مجھے پتا ہے یہ گناہ ہے مگر میں مزید نہیں جی سکتی", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "میرے ساتھ ہی کیوں ہوتا ہے سب برا؟ اب بس، میں خود کو ہٹا رہا ہوں اس کہانی سے", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "دو سال سے بے روزگار ہوں، ہر انٹرویو میں ریجیکٹ۔ ابا کی آنکھوں میں شرمندگی دیکھتا ہوں۔ آج سوچا ان کی یہ شرمندگی بھی ختم کر دوں اور اپنا آپ بھی", "lang": "ur", "labels": ["suicidal"], "tag": "burden_intent"}
+{"text": "میری دوست کہہ رہی تھی اس نے کچھ چیزیں جمع کی ہیں 'کسی دن کے لیے'، مجھے لگتا ہے وہ سنجیدہ ہے", "lang": "ur", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "میرے جانے سے کسی کا کیا جائے گا", "lang": "ur", "labels": ["suicidal"], "tag": "burden"}
+{"text": "17 سال کا ہوں، ابو کہتے ہیں انجینئر بنو، میں نہیں بن سکتا۔ اس سے اچھا ہے میں رہوں ہی نہ", "lang": "ur", "labels": ["suicidal", "child"], "tag": "minor_wish_not_exist"}
+{"text": "پچھلے ہفتے سے روز اپنی وصیت سوچ رہا ہوں کہ کس کو کیا دینا ہے، 26 سال کی عمر میں", "lang": "ur", "labels": ["suicidal"], "tag": "prep_will"}
+{"text": "lol زندگی بھی کیا مذاق ہے، جلد ختم کر دوں گا یہ مذاق", "lang": "ur", "labels": ["suicidal"], "tag": "masked_intent"}
+{"text": "اپنے بچوں کے لیے بھی نہیں رک پا رہی، یہ کیسی ماں ہوں میں۔ وہ میرے بغیر بہتر رہیں گے", "lang": "ur", "labels": ["suicidal"], "tag": "burden"}
+{"text": "سب سو گئے ہیں، میں آخری بار سب کے کمرے میں جا کے دیکھ آیا", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye_indirect"}
+{"text": "سکون صرف قبر میں ملے گا، اور میں وہاں جانا چاہتا ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "ہمت جواب دے گئی ہے، اب جان دینی ہے", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "سب کہتے ہیں موٹی ہو، کالی ہو، رشتہ نہیں آئے گا۔ امی روز روتی ہیں میری وجہ سے۔ ان کا یہ دکھ ختم کرنا ہے، اپنے ساتھ", "lang": "ur", "labels": ["suicidal"], "tag": "burden_intent"}
+{"text": "چاہتی ہوں کوئی حادثہ ہو جائے اور میں نہ بچوں", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "یونیورسٹی میں سب کو لگتا ہے میں ٹھیک ہوں۔ کسی کو نہیں پتا کہ ہر رات سوچتا ہوں کہ کل اس دنیا میں نہیں ہونا", "lang": "ur", "labels": ["suicidal"], "tag": "hidden_ideation"}
+{"text": "امی، معافی چاہتی ہوں، آپ کی اچھی بیٹی نہیں بن سکی ❤️ خیال رکھیے گا اپنا", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "فیصلہ کر لیا ہے، کوئی مجھے روکنے کی کوشش نہ کرے", "lang": "ur", "labels": ["suicidal"], "tag": "intent"}
+{"text": "بیٹا جرمنی سے فون پہ عجیب باتیں کر رہا تھا، کہہ رہا تھا ابو مجھے معاف کر دینا، میرا انتظار مت کرنا۔ اب فون بند ہے", "lang": "ur", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "زندہ لاش ہوں بس، دفن ہونا رہ گیا ہے", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "میں ساتویں کلاس میں ہوں، اپنے سارے کھلونے کزنز کو دے دیے ہیں کیونکہ میں جا رہا ہوں", "lang": "ur", "labels": ["suicidal", "child"], "tag": "minor_prep"}
+{"text": "آج بہت برا لگ رہا ہے، خود کو ختم کرنے کا دل کر رہا ہے، کچھ کرنا ہے", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "آج سب دوستوں سے مل آیا، ان کو پتا نہیں کہ آخری ملاقات تھی", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye_indirect"}
+{"text": "سکون چاہیے اور مجھے پتا ہے سکون کہاں ملے گا، موت میں", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "جس دن کرایہ نہیں دے پایا اس دن خود کو بھی ختم کر دوں گا، اگلے ہفتے ہے وہ دن", "lang": "ur", "labels": ["suicidal"], "tag": "intent_timing"}
+{"text": "اللہ سے روز موت مانگتی ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "لگتا ہے گھر والوں کے لیے میں ایک ٹیکس ہوں، روز کا خرچہ، روز کی ٹینشن، اور یہ ٹیکس ختم ہونا چاہیے", "lang": "ur", "labels": ["suicidal"], "tag": "burden"}
+{"text": "کوئی ایسی جگہ ہو جہاں جا کے بندہ ہمیشہ کے لیے کھو جائے، واپس ہی نہ آئے", "lang": "ur", "labels": ["suicidal"], "tag": "disappear"}
+{"text": "اب جینے کا کوئی ارادہ نہیں", "lang": "ur", "labels": ["suicidal"], "tag": "intent"}
+{"text": "جو بھی یہ پڑھے، میرے گھر والوں کو بتا دے کہ ان کی غلطی نہیں تھی", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "ماموں کے بیٹے نے فیس بک پر لکھا ہے 'الوداع دنیا' اور اب فون آف ہے، وہ 16 سال کا ہے", "lang": "ur", "labels": ["suicidal", "child"], "tag": "relative_minor_risk"}
+{"text": "رات کو چھپ کے روتا ہوں اور سوچتا ہوں کہ بس ایک بار ہمت کر لوں تو سب ختم", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "نہیں رہنا", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "پچھلی بار ہسپتال سے واپس آئی تو سب نے کہا ڈرامہ ہے۔ اس بار ڈرامہ نہیں ہوگا", "lang": "ur", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "بس کچھ دیر کا سکون چاہیے تھا، اب لگتا ہے ہمیشہ کا چاہیے", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "شادی کو 10 سال ہو گئے، اولاد نہیں ہوئی۔ ساس کہتی ہیں منحوس ہو۔ اب میں بھی مان گئی ہوں اور سوچتی ہوں کہ چلی ہی جاؤں تاکہ شوہر دوسری شادی کر لے", "lang": "ur", "labels": ["suicidal"], "tag": "burden"}
+{"text": "اپنا قرآن پاک خالہ کو دے آئی، کہا آپ پڑھا کرنا میرے لیے", "lang": "ur", "labels": ["suicidal"], "tag": "prep_belongings"}
+{"text": "سارا دن دکان پہ بیٹھا یہی سوچتا رہا کہ اب اور نہیں جینا، گاہک آیا تو پتا بھی نہیں چلا", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "بچپن سے آج تک کچھ اچھا نہیں ہوا، تو آگے کیا ہوگا؟ کچھ نہیں۔ اسی لیے بس، میں رک رہی ہوں یہیں", "lang": "ur", "labels": ["suicidal"], "tag": "hopeless_life"}
+{"text": "میرے نہ ہونے سے کچھ بھی نہیں بدلے گا، تو کیوں نہ", "lang": "ur", "labels": ["suicidal"], "tag": "intent_indirect"}
+{"text": "اسلام آباد میں میرا ایک دوست ہے، اس نے آج گاڑی اور فلیٹ کی چابیاں مجھے بھیج دی ہیں اور کہا ہے کہ اب اسے ان کی ضرورت نہیں", "lang": "ur", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "سچی بات ہے، روز صبح افسوس ہوتا ہے کہ پھر سے اٹھ گئی", "lang": "ur", "labels": ["suicidal"], "tag": "not_wake_up"}
+{"text": "اس بار مجھے کوئی نہیں روک سکتا", "lang": "ur", "labels": ["suicidal"], "tag": "intent"}
+{"text": "پانچ سال سے بیمار ہوں، علاج پہ گھر بک گیا، اب مزید بوجھ نہیں بنوں گا، فیصلہ کر لیا", "lang": "ur", "labels": ["suicidal"], "tag": "burden_intent"}
+{"text": "اپنی بیٹی کو آج بہت دیر تک گلے لگایا، وہ سمجھ نہیں سکتی کیوں", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye_indirect"}
+{"text": "سب لڑکے مجھے موٹا موٹا کہتے ہیں، کلاس 8 میں ہوں، اب سکول نہیں جانا، کہیں بھی نہیں، بس سو جانا ہے ہمیشہ کے لیے", "lang": "ur", "labels": ["suicidal", "child"], "tag": "minor_not_wake_up"}
+{"text": "دل بہت بھاری ہے، لگتا ہے آج کچھ کر بیٹھوں گی اپنے ساتھ", "lang": "ur", "labels": ["suicidal"], "tag": "active_ideation"}
+{"text": "کوئی فرق نہیں پڑتا میں جیوں یا مروں، تو مرنا ہی ٹھیک ہے", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "خود کو ختم کرنے کا plan بنا لیا ہے", "lang": "ur", "labels": ["suicidal"], "tag": "plan_general"}
+{"text": "گڈ بائے دوستو، اچھے رہنا", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye"}
+{"text": "ہر چیز سے تھک گیا ہوں، اپنے آپ سے بھی۔ مجھے بس ختم ہونا ہے", "lang": "ur", "labels": ["suicidal"], "tag": "wish_not_exist"}
+{"text": "پڑوسن کی بیٹی آج امی کو کہہ رہی تھی کہ آج رات کے بعد وہ کسی کو تنگ نہیں کرے گی، اور اپنے کپڑے بانٹ رہی تھی", "lang": "ur", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "سوچتا ہوں مر جاؤں تو کم از کم یہ درد تو ختم ہو جائے گا", "lang": "ur", "labels": ["suicidal"], "tag": "passive_wish"}
+{"text": "تمہیں میری وجہ سے بہت تکلیف ہوئی، اب نہیں ہوگی، وعدہ", "lang": "ur", "labels": ["suicidal"], "tag": "goodbye_indirect"}
+{"text": "جوان بیٹا چلا گیا، اب میرا یہاں کیا کام، میں بھی اس کے پاس جاؤں گی", "lang": "ur", "labels": ["suicidal"], "tag": "grief_intent"}
+{"text": "بس اتنا بتا دو کہ مرنے کے بعد سکون ملتا ہے نا؟ کیونکہ میں جا رہا ہوں", "lang": "ur", "labels": ["suicidal"], "tag": "intent"}

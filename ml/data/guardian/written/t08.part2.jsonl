@@ -1,0 +1,120 @@
+{"text": "meri best friend ne abhi text kiya ke she's going to kill herself tonight. what do I do, main Lahore mein hun aur wo Islamabad", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_tonight"}
+{"text": "bhai ne kamre ka darwaza lock kar liya hai aur keh raha tha mujhe nahi jeena. please help kya karun", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "my roommate keeps saying ke wo mar jaye gi, aur aaj usne apni saari cheezein baant di", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_prep"}
+{"text": "ammi keh rahi hain wo jaan de dengi agar abbu ne doosri shaadi ki. she's serious, I've never seen her like this", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_parent"}
+{"text": "colleague ne whatsapp status pe 'goodbye everyone' lagaya hai aur phone off hai uska", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_farewell"}
+{"text": "husband kal raat bol rahe the 'main tum logon ko aur takleef nahi dunga'. aaj subah se ghar nahi aaye, I'm terrified", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_spouse"}
+{"text": "my cousin from Multan just posted 'sorry everyone' and isn't picking up", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_farewell"}
+{"text": "dost ne bola he took pills to end it, ab reply nahi kar raha", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "third_party_attempt"}
+{"text": "abbu ne kaha 'main bojh hun, chala jaunga', and he's been sitting alone upstairs for hours, darwaza nahi khol rahe", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_parent"}
+{"text": "my gf says agar maine breakup kiya to she'll end her life. she's not the type to bluff", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_conditional"}
+{"text": "Hamza ka msg aaya 'take care of my dog'. what does that even mean, I'm worried sick", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_prep"}
+{"text": "wife ki search history dekhi, sab khudkushi ke baare mein. aur wo mujh se baat bhi nahi kar rahi", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_spouse"}
+{"text": "dadi keh rahi hain mujhe maut de do, khana bilkul chor diya hai aur dawai bhi phenk deti hain", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_elderly"}
+{"text": "one of my uni students told me after class ke wo ghar ja ke khud ko khatam kar degi. how do I handle this, I'm just a lecturer", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_student"}
+{"text": "uska last voice note sun ke dar lag raha hai, keh raha tha 'bas ab nahi'. should I call his family?", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_farewell"}
+{"text": "friend ka plan hai, date bhi bata di mujhe. she made me promise not to tell. but I can't sit on this", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_plan"}
+{"text": "my brother tried last year aur aaj phir wahi baatein kar raha hai, same exact words", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_past_attempt"}
+{"text": "bhabhi ne aaj kaha ke wo is ghar se zinda nahi niklengi, khud hi sab khatam kar lengi. bhai ko koi parwah nahi", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_inlaw"}
+{"text": "office mein ek larka hai, he said 'kal se main nahi aunga, kabhi nahi', aur apni sari files mujhe hand over kar di. am I overthinking?", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_colleague"}
+{"text": "khala ka beta phone pe ro raha tha ke usse jeena nahi, phir line kat gayi aur ab number band hai", "lang": "mixed", "labels": ["suicidal"], "tag": "third_party_now"}
+{"text": "pichle saal try kiya tha, survive kar gayi. aaj phir wahi feeling hai, stronger", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "2 attempts ho chuke hain. third time I'll make sure", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "last time hospital le gaye the. this time kisi ko nahi bataunga", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "i survived once and honestly mujhe regret hai ke survive kiya", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "3 mahine hue attempt ko, and the thoughts are back. kal raat bohat close tha", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "ammi samajhti hain I'm better now since the attempt. I'm not. phir se sab jama kar raha hun", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "pehli dafa ghalti hui. ab pata hai kya sahi karna hai", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "jab se attempt kiya sab mujhe pagal samajhte hain. sometimes lagta hai us din kaam ho jata toh acha tha", "lang": "mixed", "labels": ["suicidal"], "tag": "past_attempt_current"}
+{"text": "ammi ki goliyan le li hain. ab aankhen band ho rahi hain", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_overdose"}
+{"text": "kuch pee liya tha marne ke liye, ab ulti ho rahi hai bar bar", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_ingested"}
+{"text": "meds zyada le liye on purpose. ab pasina aa raha hai aur kaanp raha hun", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_overdose"}
+{"text": "abhi tak koi nahi aya. I did it 1 hour ago. ab hilna mushkil ho raha hai", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_indirect"}
+{"text": "I swallowed everything I had. room ghoom raha hai", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_overdose"}
+{"text": "they think it was an accident. it wasn't. ab bohat ajeeb feel ho raha hai, sar ghoom raha hai aur hosh ja raha hai", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_disguised"}
+{"text": "ghar wale bahar gaye hain. I took the pills an hour ago aur ab khari nahi ho pa rahi", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_overdose"}
+{"text": "sorry. maine kar liya. ab neend aa rahi hai bohat", "lang": "mixed", "labels": ["suicidal", "medical"], "tag": "attempt_indirect"}
+{"text": "kisi ko bata nahi sakti but har din jaana chahti hun is dunya se", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_secret"}
+{"text": "honestly main thak gayi hoon of everything. of breathing even", "lang": "mixed", "labels": ["suicidal"], "tag": "passive"}
+{"text": "MBBS final year, sab expect karte hain doctor banun. main bas mar jana chahta hun", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_academic"}
+{"text": "nikkah ke 2 saal baad bhi saas ke taane aur shohar ki khamoshi. dil karta hai sab chor ke hamesha ke liye so jaun", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_marriage"}
+{"text": "ab kisi cheez mein dil nahi lagta. khana, namaz, kuch nahi. bas maut ka intezar", "lang": "mixed", "labels": ["suicidal"], "tag": "passive"}
+{"text": "is it haram if I just stop wanting to live? kyunki main already stop kar chuki hun", "lang": "mixed", "labels": ["suicidal"], "tag": "religious_framing"}
+{"text": "boys don't cry they said. so I won't. I'll just leave quietly ek din", "lang": "mixed", "labels": ["suicidal"], "tag": "masked_male"}
+{"text": "jab se business doob gaya main ghar walon se nazar nahi mila pata. sochta hun mere jaane se sab ka bojh halka ho jaye ga", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_financial"}
+{"text": "sab khatam karna hai 😶", "lang": "mixed", "labels": ["suicidal"], "tag": "very_short"}
+{"text": "zinda rehna ek saza lagti hai", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_short"}
+{"text": "uthne ka mann nahi, jeene ka bhi nahi", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_short"}
+{"text": "please don't tell me to be strong. main bohat der strong rahi. ab bas jaana hai", "lang": "mixed", "labels": ["suicidal"], "tag": "readiness"}
+{"text": "i'm 70, meri biwi chali gayi, bachay abroad. what am I living for. ab toh bas apni baari ka intezar hai aur jaldi aaye", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_elderly"}
+{"text": "kal Jumma hai. that's the day. bas.", "lang": "mixed", "labels": ["suicidal"], "tag": "active_date"}
+{"text": "mujhse ab yeh sab handle nahi hota yaar, I'm thinking of ending things. like ending ending", "lang": "mixed", "labels": ["suicidal"], "tag": "active_euphemism"}
+{"text": "sab ne kaha it gets better. it didn't. 8 saal ho gaye. main ab ruk nahi sakta, jaana hi hai", "lang": "mixed", "labels": ["suicidal"], "tag": "chronic_intent"}
+{"text": "maut se darr khatam ho gaya hai. mujhe ab koi rok nahi sakta", "lang": "mixed", "labels": ["suicidal"], "tag": "active_indirect"}
+{"text": "agar main aaj raat chali gayi to please ammi ko batana I loved her", "lang": "mixed", "labels": ["suicidal"], "tag": "farewell_message"}
+{"text": "aaj saari raat goodbye notes likhti rahi. ek ammi ke liye, ek Zara ke liye, ek apne liye bhi", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_letters"}
+{"text": "transferred all my savings to choti behen today. she thinks it's for her wedding", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_financial"}
+{"text": "apni almari saaf kar di, kapre charity ko. ammi pooch rahi thi why, maine kaha spring cleaning", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_giving_away"}
+{"text": "Dear future me, sorry there won't be one. bas itna hi", "lang": "mixed", "labels": ["suicidal"], "tag": "farewell_note"}
+{"text": "maine apna Instagram password Ayesha ko bhej diya hai, kehna ke account memorial bana de baad mein", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_passwords"}
+{"text": "mere tote ka khayal rakhna Saad, roz paani dena. main ab nahi rahunga dekhne ko", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_pet"}
+{"text": "khud ko maarne ka khayal ab daily aata hai, pehle kabhi kabhi aata tha", "lang": "mixed", "labels": ["suicidal"], "tag": "escalating"}
+{"text": "zehen mein ek awaz hai jo kehti hai 'khatam karo', and lately I've been agreeing with it", "lang": "mixed", "labels": ["suicidal"], "tag": "intrusive_agreeing"}
+{"text": "i don't want help. I just want someone to know ke main koshish karne wali hun before I do", "lang": "mixed", "labels": ["suicidal"], "tag": "active_disclosure"}
+{"text": "is hafte ke andar. bas itna bata rahi hun", "lang": "mixed", "labels": ["suicidal"], "tag": "active_timing"}
+{"text": "mere bachay bare ho gaye, shohar ko meri parwah nahi. my job here is done. ab chalna chahiye", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_mother"}
+{"text": "beta America mein, beti Dubai mein. sab ko video call pe khuda hafiz keh diya. they don't know it was the last one", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_goodbye"}
+{"text": "trying to write my last post. kya likhun? nothing sounds right", "lang": "mixed", "labels": ["suicidal"], "tag": "prep_digital"}
+{"text": "har cheez se door bhaagna chahti hun, even from myself. permanently", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_escape"}
+{"text": "khoon ke rishton ne hi tor diya. ab is jism ko bhi chhorna hai", "lang": "mixed", "labels": ["suicidal"], "tag": "poetic"}
+{"text": "nobody gets it yaar. I'm not sad, I'm finished. there's a difference. main jaane ka soch rahi hun seriously", "lang": "mixed", "labels": ["suicidal"], "tag": "active_indirect"}
+{"text": "pls dua karna meri maut aasan ho", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_prayer"}
+{"text": "sach kahun to mujhe ab mar jane se darr nahi lagta, zinda rehne se lagta hai", "lang": "mixed", "labels": ["suicidal"], "tag": "passive"}
+{"text": "ghar wale shaadi pe gaye hain aur main akeli hun. good timing honestly. aaj kar lungi", "lang": "mixed", "labels": ["suicidal"], "tag": "active_tonight"}
+{"text": "😭😭 bas ab maut hi solution hai", "lang": "mixed", "labels": ["suicidal"], "tag": "very_short"}
+{"text": "I literally have nothing. no job, no wife, no izzat. agar main gaya to kisi ka kuch nahi jaye ga", "lang": "mixed", "labels": ["suicidal"], "tag": "passive_worthless"}
+{"text": "already said bye to ammi on phone. aaj raat", "lang": "mixed", "labels": ["suicidal"], "tag": "active_tonight"}
+{"text": "mujhe lagta hai main is saal ki Eid nahi dekhunga. and not because I'm sick", "lang": "mixed", "labels": ["suicidal"], "tag": "indirect_intent"}
+{"text": "Jahanzeb ki shaadi ke baad main uski zindagi se bhi nikal jaungi aur is dunya se bhi", "lang": "mixed", "labels": ["suicidal"], "tag": "conditional_intent"}
+{"text": "kitni dafa socha khatam karne ka. aaj sochna nahi, karna hai", "lang": "mixed", "labels": ["suicidal"], "tag": "active_now"}
+{"text": "agar kal ka sooraj dekh liya to miracle samjhna", "lang": "mixed", "labels": ["suicidal"], "tag": "active_indirect"}
+{"text": "relapse ho gaya yaar. 4 months clean tha, aaj phir khud ko hurt kiya", "lang": "mixed", "labels": ["self_harm"], "tag": "relapse"}
+{"text": "I hurt myself again last night. ammi ko pata nahi chalna chahiye", "lang": "mixed", "labels": ["self_harm"], "tag": "hiding"}
+{"text": "garmi mein bhi full sleeves pehenti hun, sab poochte hain kyun. I can't tell them", "lang": "mixed", "labels": ["self_harm"], "tag": "hiding_scars"}
+{"text": "urge bohat strong hai abhi. I keep looking at the drawer", "lang": "mixed", "labels": ["self_harm"], "tag": "urge"}
+{"text": "jab bohat gussa aata hai main apna sar deewar pe maarta hun. aaj bhi kiya, ab tak dard hai", "lang": "mixed", "labels": ["self_harm"], "tag": "head_banging"}
+{"text": "cut kiya aaj phir. I don't even feel bad anymore", "lang": "mixed", "labels": ["self_harm"], "tag": "cutting_general"}
+{"text": "ghalti hoti hai to khud ko thappar maarti hun, bar bar, jab tak sab sun na ho jaye", "lang": "mixed", "labels": ["self_harm"], "tag": "hitting_self"}
+{"text": "mehndi pe sab ne nishaan dekh liye. khala ne poocha, maine kaha billi ne nocha tha", "lang": "mixed", "labels": ["self_harm"], "tag": "hiding_scars"}
+{"text": "i scratch myself jab anxiety hoti hai. aaj khoon nikal aaya", "lang": "mixed", "labels": ["self_harm"], "tag": "scratching"}
+{"text": "khud ko nuksan pohanchana is the only thing that helps. pata hai ghalat hai", "lang": "mixed", "labels": ["self_harm"], "tag": "coping"}
+{"text": "self harm kar raha hun since I was 15, ab 23 ka hun. koi nahi jaanta", "lang": "mixed", "labels": ["self_harm"], "tag": "long_term_secret"}
+{"text": "urges wapas aa gaye hain after the breakup. aaj raat tak resist kar paungi? don't think so", "lang": "mixed", "labels": ["self_harm"], "tag": "urge"}
+{"text": "zakhm chupane ke liye gym jana chhor diya, can't change in front of others", "lang": "mixed", "labels": ["self_harm"], "tag": "hiding_scars"}
+{"text": "jab andar ka dard bardasht nahi hota to bahar ka dard better lagta hai. I did it again", "lang": "mixed", "labels": ["self_harm"], "tag": "coping"}
+{"text": "aaj phir kar liya. sorry Ayan, promise toot gaya", "lang": "mixed", "labels": ["self_harm"], "tag": "relapse"}
+{"text": "hostel bathroom mein lock kar ke khud ko hurt karta hun. roommate ko shak ho gaya hai", "lang": "mixed", "labels": ["self_harm"], "tag": "hiding"}
+{"text": "mujhe khud ko saza deni hoti hai, warna chain nahi aata", "lang": "mixed", "labels": ["self_harm"], "tag": "self_punishment"}
+{"text": "maine khud ko jalaya aaj. it's the only way I feel something", "lang": "mixed", "labels": ["self_harm"], "tag": "burning_general"}
+{"text": "walima ka dress sleeveless hai and I have scars. please help, kya karun", "lang": "mixed", "labels": ["self_harm"], "tag": "hiding_scars"}
+{"text": "my hands are shaking, khud ko hurt karne ka itna mann kar raha hai right now", "lang": "mixed", "labels": ["self_harm"], "tag": "urge_now"}
+{"text": "bas ek baar aur, phir chhor dunga. har dafa yahi kehta hun", "lang": "mixed", "labels": ["self_harm"], "tag": "relapse_cycle"}
+{"text": "teen saal se clean thi. tonight I broke it", "lang": "mixed", "labels": ["self_harm"], "tag": "relapse"}
+{"text": "ammi ne mere arm pe nishaan dekh liye aur bola pagal ho kya. ab main aur zyada karti hun", "lang": "mixed", "labels": ["self_harm"], "tag": "discovered"}
+{"text": "self harm ke baad guilt hota hai, phir guilt ki wajah se aur karti hun. it's a cycle", "lang": "mixed", "labels": ["self_harm"], "tag": "cycle"}
+{"text": "khud ko punch karta hun, deewar ko bhi. haath sooj gaya hai aaj", "lang": "mixed", "labels": ["self_harm"], "tag": "hitting_self"}
+{"text": "kuch tez cheez dhoond rahi hun, urge rok nahi pa rahi", "lang": "mixed", "labels": ["self_harm"], "tag": "urge_now"}
+{"text": "khud ko zakhmi karna bura hai na? par mujhe chahiye. I need it", "lang": "mixed", "labels": ["self_harm"], "tag": "ambivalence"}
+{"text": "SH again 😞", "lang": "mixed", "labels": ["self_harm"], "tag": "very_short"}
+{"text": "office washroom mein ja ke khud ko hurt kiya between meetings. I'm 31, this is so embarrassing", "lang": "mixed", "labels": ["self_harm"], "tag": "adult_workplace"}
+{"text": "nishaan purane ho gaye the. ab naye bana diye", "lang": "mixed", "labels": ["self_harm"], "tag": "relapse"}
+{"text": "cut karti hun to lagta hai shayad kabhi itna kar dun ke wapas hi na aun. and I'm okay with that", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "aaj khud ko hurt kiya aur socha kaash ye last time ho, kaash main hi na rahun", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "self harm se ab kaam nahi chalta. I think I need to go all the way", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_escalating"}
+{"text": "khud ko nuksan pohanchati hun roz, aur raat ko dua karti hun ke subah na ho", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "this time I didn't stop. I wanted it to be the end, wapas aana hi nahi tha", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_intent"}
+{"text": "hurt kar rahi thi aur socha why stop. why not just end everything", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "marna chahta hun. abhi ke liye khud ko hurt karke rok raha hun. kab tak?", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_substitute"}
+{"text": "zakhm bhi ab kaafi nahi. I want to die", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_escalating"}
+{"text": "jab bhi cut karta hun a part of me hopes I go too far", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}
+{"text": "ek taraf self harm, doosri taraf khudkushi ke khayal. dono roz, dono strong", "lang": "mixed", "labels": ["suicidal", "self_harm"], "tag": "sh_with_ideation"}

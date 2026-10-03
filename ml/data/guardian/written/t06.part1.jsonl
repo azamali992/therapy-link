@@ -1,0 +1,120 @@
+{"text": "shohar roz maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_husband"}
+{"text": "kal raat phir thappar mara usne", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_slap"}
+{"text": "aaj belt se mara", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_belt"}
+{"text": "mujhe kamre mein band kr diya hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "locked_in"}
+{"text": "mere husband gussay mein ho jatay hain bas. kal bachon ke saamne bohat maara. subah aise behave kar rahe the jaise kuch hua hi nahi", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_minimise"}
+{"text": "ghar ka masla hai kisi ko bata nahi sakti. bas itna samjho ke baazu pe neel hain aur garmi mein bhi poori aasteen pehenti hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_minimise"}
+{"text": "roz pitai hoti hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "sasural wale 3 din se kamre mein band rakhe hue hain, khana bhi ek waqt milta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_locked"}
+{"text": "miyan kehta hai maike gayi to tangein tor dunga, aur pichli dafa sach mein dhakka de ke gira diya tha", "lang": "ur-roman", "labels": ["abuse"], "tag": "threat_violence"}
+{"text": "abbu ne ammi ko itna mara ke wo uth nahi paayin. mai 22 saal ka ho kar bhi kuch nahi kar saka, wo ab bhi kamre mein ro rahi hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "witness_mother"}
+{"text": "wo phir maarega aaj", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "mera beta pension ke paise cheen leta hai aur mana karun to dhakka de deta hai. 72 saal ki hun, ghutne bhi kharab hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_money"}
+{"text": "bahu beta khana nahi dete aur kal chhari se mara mujhe. budhapay mein ye din dekhna tha", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_abuse"}
+{"text": "wo kehta hai talaq ka naam bhi liya to tujhe zinda nahi chorunga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "kill_threat"}
+{"text": "usne gala dabaya tha kal", "lang": "ur-roman", "labels": ["abuse"], "tag": "choking"}
+{"text": "miyan ne aaj phir peeta", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "pichli dafa aadhi raat ko maar ke ghar se nikal diya tha, ab phir dhamki de raha hai ke job ki baat ki to bahar", "lang": "ur-roman", "labels": ["abuse"], "tag": "kicked_out_threat"}
+{"text": "jethani ke saamne saas ne joote se maara mujhe", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_shoe"}
+{"text": "sasur ne dhakka diya aur jab hospital gaye to sab ne kaha doctor ko bolna gir gayi thi", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_push"}
+{"text": "abba kehte hain agar us larke se shaadi ki to dono ko maar ke dafna denge", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_threat"}
+{"text": "bhai ne pistol dikha ke kaha khandan ki izzat ka sawal hai, agli dafa goli chalegi", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_gun"}
+{"text": "chacha log keh rahe hain karo kari ka faisla jirga karega. mujhe pata hai iska matlab kya hota hai", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_karokari"}
+{"text": "meri shaadi zabardasti khala ke bete se kar rahe hain, mana kiya to abbu ne thappar mare aur phone tor diya", "lang": "ur-roman", "labels": ["abuse"], "tag": "forced_marriage"}
+{"text": "kehte hain nikah ke liye haan nahi ki to jaan se maar denge, ammi bhi unke saath hain", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "forced_marriage_kill"}
+{"text": "sasural mein maar padti hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "paise cheen liye aur thappar maar ke gali mein dhakel diya", "lang": "ur-roman", "labels": ["abuse"], "tag": "money_snatch"}
+{"text": "factory mein kaam karti hun. tankhwah wale din wo darwaze pe khara hota hai, paise na doon to maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "money_violence"}
+{"text": "husband ne thappar maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "malik ne kaha bhaagi to tere bhai ko jhooti chori mein andar karwa dunga. kal chhari se bhi maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "domestic_worker"}
+{"text": "bht marta h", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_short"}
+{"text": "wo aaj phir nasha kar ke aya hai, pichli dafa bohat bura maara tha, mai bathroom mein chupi hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_drunk"}
+{"text": "usne meri kalai marod di aur dhakka de ke chala gaya", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_twist"}
+{"text": "maike walon ko batati hun to kehte hain sabar karo, shohar hai tumhara. roz maar kha ke kitna sabar karun", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_family_dismiss"}
+{"text": "baal pakar ke aangan mein ghaseeta", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_hair"}
+{"text": "abbu ne belt se peeta", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "kehta hai kisi ko bataya to tera chehra bigaad dunga", "lang": "ur-roman", "labels": ["abuse"], "tag": "acid_threat"}
+{"text": "mangni tooti to uske bhai ne dhamki di hai ke sabak sikhayega, college jate hue bhi darti hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "acid_threat"}
+{"text": "bhai ne mukka mara", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "roz kehta hai tu kisi kaam ki nahi. ab haath bhi uthane laga hai aur uski bike ki awaz sun ke meri dhadkan tez ho jati hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_fear"}
+{"text": "mera shohar mujhe ghar walon se milne nahi deta, phone check karta hai, aur kal kaha zyada boli to gardan kaat dunga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "kill_threat"}
+{"text": "saas ke kehne pe mujhe maara jata hai, wo bas dekhti rehti hain aur kehti hain aur maaro", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_instigate"}
+{"text": "sas ne bal kheeche", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "jahez ke taane ab taane nahi rahe, ab haath bhi uthate hain sab", "lang": "ur-roman", "labels": ["abuse"], "tag": "dowry_violence"}
+{"text": "19 saal ki hun. abbu ne ammi ko kamre mein band kar ke maara, cheekhen aa rahi thi aur mai darwaza peet rahi thi", "lang": "ur-roman", "labels": ["abuse"], "tag": "witness_mother"}
+{"text": "shohar ne kamre mein band kiya", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "bhai kehta hai university chhorni paregi warna tangen tor dega. pichle hafte maara bhi tha", "lang": "ur-roman", "labels": ["abuse"], "tag": "brother_control"}
+{"text": "mujhe darr hai wo kisi din mujhe maar dalega, aaj bhi itna mara ke uth nahi pa rahi", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_fear_kill"}
+{"text": "phir se maar pari", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_short"}
+{"text": "kamre mein qaid hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "locked_short"}
+{"text": "dhamki di hai ke maar dega", "lang": "ur-roman", "labels": ["abuse"], "tag": "threat_short"}
+{"text": "mujhe ghar mein qaid kar rakha hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "biwi aur uske bhaiyon ne mil ke peeta, ab tak uth nahi pa raha", "lang": "ur-roman", "labels": ["abuse"], "tag": "male_victim"}
+{"text": "wo mujhe maar dega kisi din", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "sotele abbu bachpan mein jootay se marte thay. ab 28 ka hun aur ab bhi unki awaz se kaanp jata hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "childhood_physical_adult"}
+{"text": "bachpan mein roz pitai hoti thi, kabhi kabhi itni ke school nahi ja pata tha. aaj tak kisi ko nahi bataya", "lang": "ur-roman", "labels": ["abuse"], "tag": "childhood_physical_adult"}
+{"text": "shohar dubai mein hai aur uske ghar wale yahan mujhe maarte hain. phone pe batao to kehta hai wahi karo jo ammi kahen", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_husband_abroad"}
+{"text": "dewar ne dhakka de ke kaha bhabhi apni aukat mein raho", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_dewar"}
+{"text": "maar maar ke neela kar diya", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "pait pe laat maari thi jab mai paanch mahine pregnant thi", "lang": "ur-roman", "labels": ["abuse"], "tag": "pregnancy_violence"}
+{"text": "mere naseeb mein yahi likha hai shayad, maar khana aur chup rehna", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_resigned"}
+{"text": "wo gussay mein ho jate hain bas... phir maafi bhi maang lete hain. lekin is dafa bohat zyada tha", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_cycle"}
+{"text": "Aap log kuch kar sakte hain? mere abbu meri ammi ko roz maarte hain aur ab mujhe bhi maarne lage hain kyun ke mai beech mein aati hun. mai 24 ki hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "father_violence"}
+{"text": "jethani aur saas dono maarti hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "sasural mein mera khana band kar diya hai, kehte hain jab tak maike se paisay nahi laogi kuch nahi milega, aur kal maara bhi", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_starve"}
+{"text": "husband ne mera shanakhti card aur phone le liya hai, bahar jaane nahi deta aur awaaz uthaun to maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "control_violence"}
+{"text": "wo kehta hai bachay cheen lunga aur tujhe aisa maarunga ke koi pehchan na sake", "lang": "ur-roman", "labels": ["abuse"], "tag": "threat_violence"}
+{"text": "dewar ne haath uthaya", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "ammi jaan ko bhai ne dhakka diya wo gir gayin, unki umar 65 hai. wo zameen ke kaghzaat pe angootha lagwana chahta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_property"}
+{"text": "beta zameen apne naam karwane ke liye abbu ko dhamkiyan deta hai, kal unka gireban pakar ke deewar se lagaya", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_property"}
+{"text": "budhi hun, bahu ne kamre mein band kar diya aur dawai bhi nahi deti", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_neglect"}
+{"text": "mujhe maarte hain ye log", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "usne phir haath uthaya", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "beta mujhe maarta hai, budhi hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "ghar mein roz larai hoti hai lekin kal pehli baar usne chaaku dikhaya aur kaha agli baar istemal karunga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "knife_threat"}
+{"text": "mere bhai ne kaha agar mai ne divorce li to wo mujhe khud maar dega, khandan mein koi talaq yafta nahi", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_divorce"}
+{"text": "mamu kehte hain bhag ke shaadi ki hai to ab dono ki laashen aayengi gaon", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_elopement"}
+{"text": "court marriage ki thi, ab mere ghar wale dhoond rahe hain. bhai ne message kiya hai jahan milegi wahin goli maarunga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_court_marriage"}
+{"text": "biradri ne faisla kiya hai ke larki ko wapas lao ya khatam karo. mai wahi larki hun", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_jirga"}
+{"text": "abbu ne qasam khayi hai mujhe zinda nahi chorenge agar mai uske saath gayi", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "honour_threat"}
+{"text": "rishta mana karne pe mamu ke larke ne kaha uthwa lunga, aur kal raat ghar ke bahar khara tha", "lang": "ur-roman", "labels": ["abuse"], "tag": "forced_marriage_threat"}
+{"text": "watta satta ki shadi hai, meri bhabhi ne maike mein shikayat ki to yahan mujhe saza milti hai, roz ki maar", "lang": "ur-roman", "labels": ["abuse"], "tag": "watta_satta"}
+{"text": "vani mein de rahe hain mujhe, 18 ki hun, mana kiya to chacha ne thappar maare", "lang": "ur-roman", "labels": ["abuse"], "tag": "vani_forced"}
+{"text": "shaadi ke liye haan bulwaane ke liye 2 din se bhooka rakha hai aur raat ko abbu belt le ke aate hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "forced_marriage"}
+{"text": "mujhe mere shohar ne aaj subah phir maara. mai ne bas itna kaha tha ke bijli ka bill de do", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_trivial"}
+{"text": "hum log pindi mein joint family mein rehte hain. jab bhi miyan ghar aate hain jethani kuch na kuch laga deti hai aur phir wo mujhe kamre mein le ja ke maarte hain. kisi ko pata nahi chalta kyun ke chehre pe nahi maarte", "lang": "ur-roman", "labels": ["abuse"], "tag": "joint_family"}
+{"text": "mere jism pe uske diye hue nishan hain, kehta hai ye mohabbat ki nishani hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "burn_cigarette"}
+{"text": "kya ye normal hai ke shohar har chhoti baat pe thappar maare? ammi kehti hain sab ke saath hota hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_normalising"}
+{"text": "bahu ne dhakka diya, 70 saal ki hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "pichle hafte usne bohat maara aur aaj kaha agli dafa isse bhi bura hoga", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_escalation"}
+{"text": "paise cheen ke maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "bete ne old home chorne ki baat ki, mana kiya to mere moonh pe thappar maara. 68 saal ka hun", "lang": "ur-roman", "labels": ["abuse"], "tag": "elder_slap"}
+{"text": "ammi ko abbu ne itna maara ke wo behosh ho gayi thi pichle mahine. ab phir chillana shuru hai. mai hostel mein hun aur kuch nahi kar sakta", "lang": "ur-roman", "labels": ["abuse"], "tag": "witness_remote"}
+{"text": "larai mein jo haath aya usi se maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_wire"}
+{"text": "mere jism ke neel dekh ke doctor ne pucha to mai ne jhoot bola ke gir gayi thi", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_hiding"}
+{"text": "tankhwah cheen leta hai aur peet ta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "darr lagta hai ghar jaane se, wo phir maarega", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_fear_short"}
+{"text": "kal us ne mujhe seerhi se dhakka diya", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_push"}
+{"text": "abbu ka gussa bohot bura hai. aaj phir chappal se maara aur kaha nikal jao mere ghar se. mai 20 ki hun, kahan jaun", "lang": "ur-roman", "labels": ["abuse"], "tag": "father_violence"}
+{"text": "chhoti si baat pe bhai ne kursi utha ke maari", "lang": "ur-roman", "labels": ["abuse"], "tag": "brother_violence"}
+{"text": "begum sahiba maarti hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "shohar ne dhamki di hai ke mujhe khatam kar dega aur kisi ko pata bhi nahi chalega", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "stove_burning_threat"}
+{"text": "kal raat kehne laga aaj tera kissa khatam karta hun, mai padosi ke ghar bhaag gayi", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "kill_threat"}
+{"text": "Mujhe meri sas ne aaj bohat bura maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_burn"}
+{"text": "mera miyan mujhe maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "husband ka haath bohat bhaari hai, har dusre din uthta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_hint"}
+{"text": "tang aa gayi hun maar kha kha ke", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_short"}
+{"text": "nashe mein maarta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "short"}
+{"text": "beti hone pe sasural walon ne maara, kehte hain beta kyun nahi diya", "lang": "ur-roman", "labels": ["abuse"], "tag": "son_preference"}
+{"text": "do betiyan hain is liye sasural mein peet te hain. ab teesri dafa pregnant hun aur kehte hain beta na hua to ghar se bahar", "lang": "ur-roman", "labels": ["abuse"], "tag": "son_preference"}
+{"text": "mere shohar ne mere maa baap ko bhi dhamki di hai ke unhe bhi dekh lega, aur mujhe kal raat chhat pe le ja ke maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "threat_family"}
+{"text": "abbu ne bhai ko kamre mein band kar ke bohat maara, wo 25 saal ka hai lekin abbu se kaanpta hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "father_violence"}
+{"text": "gaon mein hun, phone chupa ke likh rahi hun. shohar ne kal maar ke kamre mein band kiya. yahan koi madad nahi karega", "lang": "ur-roman", "labels": ["abuse"], "tag": "rural_hidden"}
+{"text": "dukaan ke malik ne paisay maangne pe mujhe aur mere bhai ko dande se maara aur kaha phir aaye to haath pair tor dunga", "lang": "ur-roman", "labels": ["abuse"], "tag": "employer_violence"}
+{"text": "bhatta pe kaam karte hain, maalik ne qarz ke naam pe roka hua hai aur abbu ko sab ke saamne maara", "lang": "ur-roman", "labels": ["abuse"], "tag": "bonded_labour"}
+{"text": "hostel ki warden ne mujhe aur ek larki ko maara aur raat bhar bathroom mein band rakha", "lang": "ur-roman", "labels": ["abuse"], "tag": "hostel_violence"}
+{"text": "ex husband ne naye number se message kiya hai ke tujhe dhoond lunga aur khatam kar dunga", "lang": "ur-roman", "labels": ["abuse", "harm_to_others"], "tag": "ex_kill_threat"}
+{"text": "sasural wale maarte hain", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_short"}
+{"text": "chehre pe mukka mara aaj", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_punch"}
+{"text": "jism neela par gaya hai uski maar se", "lang": "ur-roman", "labels": ["abuse"], "tag": "dv_bruise"}
+{"text": "saas maarti hai", "lang": "ur-roman", "labels": ["abuse"], "tag": "inlaws_short"}
