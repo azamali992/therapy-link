@@ -177,11 +177,13 @@ def read_conversations(
 
     Authored rows still pending clinician review are dropped even when the corpus has them (a
     `tl-data build --include-pending`), so a model can't be trained on them by pointing at the
-    wrong directory.
+    wrong directory. Rows passed only by the AI clinical review are dropped the same way unless
+    TL_ACCEPT_AI_CLINICAL_REVIEW=1 is set for the training run as well as the build.
     """
-    from therapylink_ml.data.loaders.authored import PENDING
+    from therapylink_ml.data.loaders.authored import held_back_tags
 
-    pending_tag = f"review:{PENDING}"
+    # Pending rows, and AI-reviewed rows unless TL_ACCEPT_AI_CLINICAL_REVIEW=1 is set here too.
+    held_back = held_back_tags()
     kept: list[Conversation] = []
     dropped: Counter[str] = Counter()
     with path.open(encoding="utf-8") as f:
@@ -189,7 +191,7 @@ def read_conversations(
             if not line.strip():
                 continue
             conv = Conversation.model_validate_json(line)
-            if not include_pending and pending_tag in conv.tags:
+            if not include_pending and held_back & set(conv.tags):
                 dropped[f"{conv.source}:pending_review"] += 1
                 continue
             if exclude_nc and not registry.get(conv.source).commercial_ok:
