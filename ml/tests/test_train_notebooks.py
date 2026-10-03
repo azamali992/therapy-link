@@ -35,21 +35,24 @@ def test_every_notebook_parses():
         assert nb["cells"] and all("source" in c for c in nb["cells"]), path.name
 
 
-def test_v16_clean_is_commercial_clean_with_the_new_flags():
-    clean = _flags(_cells("eve_sft_kaggle.ipynb")["v16-clean"], "therapylink_ml.train.eve_sft")
+def test_v17_clean_is_commercial_clean_with_the_v16_flags():
+    clean = _flags(_cells("eve_sft_kaggle.ipynb")["v17-clean"], "therapylink_ml.train.eve_sft")
     assert len(clean) == 1
     assert {"--exclude-nc", "--min-quality", "--mentalchat-max-words", "--val-size", "--epochs", "--notes-frac", "--no-gguf"} <= clean[0]
-    text = _cells("eve_sft_kaggle.ipynb")["v16-clean"]
-    assert "--epochs 2" in text and "tl_authored=5" in text
+    text = _cells("eve_sft_kaggle.ipynb")["v17-clean"]
+    # More data, not more epochs (v16-clean's val loss rose in epoch 2).
+    assert "--epochs 2" in text and "tl_authored=" in text and "eve-sft-e2b-v17-clean" in text
     assert not re.search(r"esconv|counselchat|empathetic", text.split("-m therapylink_ml")[1])
+    # The red-line rows passed only by the AI clinical review train only with the explicit opt-in.
+    assert "TL_ACCEPT_AI_CLINICAL_REVIEW=1 python" in text
 
 
-def test_v16_full_control_keeps_the_nc_sources_and_never_decides_the_version():
-    # On for this round (SHIP_PLAN row 1b). It trains the non-commercial sources back in, so it may
-    # inform a decision but never ships: only the clean run's gate fails the version.
+def test_full_control_is_off_keeps_the_nc_sources_and_never_decides_the_version():
+    # Off since v17 (it cost 4.6 h in v16 and can't ship). It trains the non-commercial sources back
+    # in, so it may inform a decision but never ships: only the clean run's gate fails the version.
     cells = _cells("eve_sft_kaggle.ipynb")
-    text = cells["v16-full"]
-    assert "RUN_FULL_CONTROL = True" in text
+    text = cells["full-control"]
+    assert "RUN_FULL_CONTROL = False" in text
     (flags,) = _flags(text, "therapylink_ml.train.eve_sft")
     assert "--exclude-nc" not in flags and "esconv=0.5" in text and "counselchat=1.5" in text
     final = [t for t in cells.values() if "raise RuntimeError" in t and "GATES" in t]

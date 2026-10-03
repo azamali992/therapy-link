@@ -143,7 +143,7 @@ def generate(
     dtype: str = typer.Option("auto", help="hf backend only: bf16, fp32, or auto (bf16 where the GPU supports it). Never fp16 for Gemma 4"),
     thinking: bool = typer.Option(False, help="Let the model emit reasoning tokens (Gemma 4 defaults to on; Eve is trained without)"),
     notes_file: Path = typer.Option(None, help="Memory/summary notes to fold in after the system prompt, as the app does"),
-    system: str = typer.Option("training", help="System prompt: 'training' (EVE_SYSTEM_PROMPT) or 'served' (what the app sends)"),
+    system: str = typer.Option("training", help="System prompt: 'training' (EVE_SYSTEM_PROMPT), 'served' (what the app sends), or a prompt id: v1, v2, v3"),
     notes_layout: str = typer.Option("fold", help="Where notes go: 'fold' (after the system prompt, before the message) or 'exchange' (a prior user turn + short model acknowledgement, then the message as its own turn)"),
 ) -> None:
     """Generate replies per probe and record latency and what produced them."""
@@ -154,7 +154,9 @@ def generate(
     notes = notes_file.read_text(encoding="utf-8").strip() if notes_file else None
     if notes_layout not in ("fold", "exchange"):
         raise typer.BadParameter(notes_layout)
-    base = prompts.SERVED_SYSTEM_PROMPT if system == "served" else prompts.EVE_SYSTEM_PROMPT
+    if system not in ("training", "served", *prompts.PROMPTS):
+        raise typer.BadParameter(f"--system {system}")
+    base = {"served": prompts.SERVED_SYSTEM_PROMPT, "training": prompts.EVE_SYSTEM_PROMPT}.get(system) or prompts.PROMPTS[system]
     kwargs = {"n_gpu_layers": n_gpu_layers} if backend.startswith("llamacpp:") else {}
     if backend.startswith("hf:"):
         kwargs["dtype"] = dtype
@@ -184,6 +186,7 @@ def generate(
         "greedy": greedy,
         "system": system,
         "prompt_sha256": _sha256(base) if fold_system else None,
+        "prompt_id": next((f"eve-{k}" for k, v in prompts.PROMPTS.items() if v == base), None) if fold_system else None,
         "notes": bool(notes),
         "notes_file": str(notes_file) if notes_file else None,
         "notes_sha256": _sha256(notes),
@@ -227,6 +230,8 @@ SAFETY_KEYS = {
     "acknowledge_on_crisis": ("acknowledge", "crisis"),
     "explore_on_crisis": ("explore", "crisis"),
     "no_endorse_on_crisis": ("no_endorse", "crisis"),
+    "no_softened_question_on_crisis": ("no_softened_question", "crisis"),
+    "no_unverified_claim": ("no_unverified_claim", None),
     "no_method": ("no_method", None),
     "no_comparison": ("no_comparison", None),
     "no_blame": ("no_blame", None),
@@ -234,7 +239,7 @@ SAFETY_KEYS = {
     "no_foreign_number": ("no_foreign_number", None),
     "language_match": ("language_match", None),
 }
-REPLY_KEYS = ("no_foreign_number", "no_medication", "no_list", "no_stacked_questions")
+REPLY_KEYS = ("no_foreign_number", "no_medication", "no_list", "no_stacked_questions", "no_unverified_claim")
 
 
 def _rate(passed: int, of: int) -> dict:
@@ -571,6 +576,9 @@ def _report(names: list[str], markdown: Path | None = None) -> None:
         ("crisis: acknowledges", _safety_metric("acknowledge_on_crisis")),
         ("crisis: asks about safety (explore)", _safety_metric("explore_on_crisis")),
         ("crisis: no endorsement", _safety_metric("no_endorse_on_crisis")),
+        ("crisis: safety question not undercut", _safety_metric("no_softened_question_on_crisis")),
+        ("no unverified helpline claim (R11)", _safety_metric("no_unverified_claim")),
+        ("all replies: no unverified helpline claim", _block_metric("reply_checks", "no_unverified_claim")),
         ("no method details", _safety_metric("no_method")),
         ("no foreign numbers", _safety_metric("no_foreign_number")),
         ("no victim-blaming", _safety_metric("no_blame")),
