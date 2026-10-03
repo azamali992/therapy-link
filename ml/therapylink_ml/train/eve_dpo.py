@@ -270,6 +270,59 @@ def _margin_callback(watch: MarginWatch):
     return Callback()
 
 
+class AccuracyWatch:
+    """Stop DPO once it has memorised its pairs instead of learning from them.
+
+    DPO v16 went from 0.43 to 1.0 train reward accuracy while eval accuracy sat at 0.63-0.65: it
+    learned its 158 train pairs by heart. Stop when train accuracy has been at `threshold` for
+    `patience` log lines in a row and eval accuracy has not risen by `min_eval_gain` since the
+    first eval (or there is no eval). The adapter is still saved, so the gate can run on it.
+    """
+
+    TRAIN_KEY = "rewards/accuracies"
+    EVAL_KEY = "eval_rewards/accuracies"
+
+    def __init__(self, threshold: float = 1.0, patience: int = 2, min_eval_gain: float = 0.05):
+        self.threshold, self.patience, self.min_eval_gain = threshold, patience, min_eval_gain
+        self.streak = 0
+        self.first_eval: float | None = None
+        self.last_eval: float | None = None
+        self.reason: str | None = None
+
+    def observe(self, step: int, logs: dict) -> str | None:
+        """Record one log line; return a stop reason once, the first time the rule fires."""
+        if self.threshold <= 0 or self.reason:
+            return None
+        if self.EVAL_KEY in logs:
+            acc = float(logs[self.EVAL_KEY])
+            self.first_eval = acc if self.first_eval is None else self.first_eval
+            self.last_eval = acc
+        if self.TRAIN_KEY not in logs:
+            return None
+        self.streak = self.streak + 1 if float(logs[self.TRAIN_KEY]) >= self.threshold - 1e-9 else 0
+        if self.streak < self.patience:
+            return None
+        if self.first_eval is not None and self.last_eval - self.first_eval >= self.min_eval_gain:
+            return None
+        flat = "no eval yet" if self.first_eval is None else f"eval accuracy {self.first_eval:.2f} -> {self.last_eval:.2f}"
+        self.reason = f"train reward accuracy >= {self.threshold} for {self.streak} log lines at step {step} ({flat})"
+        return self.reason
+
+
+def _accuracy_callback(watch: AccuracyWatch):
+    from transformers import TrainerCallback
+
+    class Callback(TrainerCallback):
+        def on_log(self, args, state, control, logs=None, **kwargs):
+            reason = watch.observe(state.global_step, logs or {})
+            if reason:
+                print(f"early stop: {reason}", flush=True)
+                control.should_training_stop = True
+            return control
+
+    return Callback()
+
+
 def split_pairs(rows: list[dict], eval_frac: float) -> tuple[list[dict], list[dict]]:
     """Deterministic held-out split by prompt id, so DPO reports an eval accuracy."""
     if eval_frac <= 0:
@@ -297,6 +350,10 @@ def train(
     rpo_alpha: float = typer.Option(0.5, help="NLL weight on the chosen side, so its likelihood does not collapse (0 disables)"),
     margin_check_steps: int = typer.Option(50, help="Abort if reward margins are still 0 at this step"),
     eval_frac: float = typer.Option(0.2, help="Share of pairs held out for DPO eval accuracy"),
+    stop_train_acc: float = typer.Option(
+        1.0, help="Stop when train reward accuracy reaches this while eval accuracy is flat (0 disables)"
+    ),
+    stop_patience: int = typer.Option(2, help="Log lines in a row at --stop-train-acc before stopping"),
     seed: int = 13,
     max_hours: float = typer.Option(0.0, help="Stop after this many hours and still save (0 = no limit)"),
     gguf: bool = True,
@@ -377,7 +434,9 @@ def train(
         cfg[_pick(DPOConfig, "eval_strategy", "evaluation_strategy")] = "steps"
         cfg["eval_steps"] = max(10, int(steps // 4))
     watch = MarginWatch(margin_check_steps)
-    callbacks = [_margin_callback(watch)] + ([_time_budget(max_hours)] if max_hours > 0 else [])
+    acc_watch = AccuracyWatch(stop_train_acc, stop_patience)
+    callbacks = [_margin_callback(watch), _accuracy_callback(acc_watch)]
+    callbacks += [_time_budget(max_hours)] if max_hours > 0 else []
     class TextDPOTrainer(DPOTrainer):
         # Gemma 4 is an image-text-to-text model type, so trl takes its vision path (process_row,
         # which needs a processor with .tokenizer) although these pairs are text only. The first
@@ -397,7 +456,9 @@ def train(
         args=DPOConfig(**cfg),
     )
     stats = trainer.train()
-    (out / "train_stats.json").write_text(json.dumps(stats.metrics, indent=2), encoding="utf-8")
+    (out / "train_stats.json").write_text(
+        json.dumps({**stats.metrics, "early_stop": acc_watch.reason}, indent=2), encoding="utf-8"
+    )
     model.save_pretrained(str(out / "adapter"), selected_adapters=[POLICY])
     tok.save_pretrained(str(out / "adapter"))
     # DPO pairs are folded with the SFT prompt, so the DPO adapter carries the SFT manifest on.
