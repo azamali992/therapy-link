@@ -3,6 +3,7 @@
 # Needs: Blender 4.5 LTS at D:\dev\blender, ffmpeg at D:\dev\tools\ffmpeg-*,
 # OpenEXR + Pillow in D:\dev\tools\pylibs (pip install --target).
 # Usage: bash build.sh [eve|breath|hero|sheet|all]
+#        bash build.sh brand <repo>   (launcher icon, splash, store art; not part of "all")
 set -euo pipefail
 cd "$(dirname "$0")"
 export TMP='D:\dev\tmp' TEMP='D:\dev\tmp' PYTHONPATH='D:\dev\tools\pylibs'
@@ -37,6 +38,13 @@ if [[ $what == sheet || $what == all ]]; then
     "eve thinking 3s" "$S/thinking_3.png" \
     "breath box 2s (inhaling)" "$T/sheet/breath-box_060.png" \
     "breath box 6s (hold, full)" "$T/sheet/breath-box_180.png"
+fi
+if [[ $what == brand ]]; then
+  repo=${2:?usage: build.sh brand D:\therapylink-v3-wt\brand-assets}
+  run icon.py -- bud
+  run icon.py -- feature
+  "$PY" brand.py all "$repo"
+  exit 0
 fi
 python inspect_glb.py $(ls ../*.glb)
 ls -la ..

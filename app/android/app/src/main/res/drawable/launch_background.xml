@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Light-mode splash background. The design team will add the brand mark here. -->
+<!--
+    Launch window before Android 12, and the window behind the Android 12+ splash: the Eve bud
+    centred on night. splash_eve is the same 288 dp image the Android 12+ splash uses, so the bud
+    sits at the same size and place on every version.
+-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/ic_launcher_background" />
+    <item android:drawable="@color/night" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/splash_eve" />
+    </item>
 </layer-list>

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Launcher icon adaptive background. Matches the night palette token (#1D1E2C). -->
-    <color name="ic_launcher_background">#1D1E2C</color>
+    <!--
+        Jugnu ground. `night` must stay identical to Jugnu.night (#1D1E2C) in the Flutter theme:
+        the splash, the window background and the first Flutter frame all use it, so a cold start
+        never flashes a different colour.
+    -->
+    <color name="night">#1D1E2C</color>
+    <color name="plum">#34063F</color>
 </resources>
