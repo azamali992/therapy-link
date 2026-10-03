@@ -576,6 +576,22 @@ def build(out: Path = BUILD, seed: int = SEED, augment_copies: int = 1) -> None:
     typer.echo(f"\ndropped {len(splits['_leaked'])} train/val rows that nearly duplicate a test row")
 
 
+@app.command()
+def fetch(out: Path = RAW) -> None:
+    """Download mh_text (crisis rows) and urdu_mh into data/raw/guardian/ through the registry loaders."""
+    from therapylink_ml.data.loaders import mh_text, urdu_mh
+
+    out.mkdir(parents=True, exist_ok=True)
+    with (out / "mh_text.crisis.jsonl").open("w", encoding="utf-8") as f:
+        for r in mh_text.load():
+            if r.task == "crisis":
+                f.write(r.model_dump_json() + "\n")
+    with (out / "urdu_mh.jsonl").open("w", encoding="utf-8") as f:
+        for r in urdu_mh.load():
+            f.write(r.model_dump_json() + "\n")
+    typer.echo(f"wrote {out}")
+
+
 @app.command("stats")
 def show_stats(out: Path = BUILD) -> None:
     typer.echo((out / "stats.json").read_text(encoding="utf-8"))
