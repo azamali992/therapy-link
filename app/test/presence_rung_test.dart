@@ -2,7 +2,7 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:therapylink/ui/presence/presence_assets.dart' show EveState;
+import 'package:therapylink/ui/presence/presence_assets.dart' show EvePresenceState;
 import 'package:therapylink/ui/presence/presence_rung.dart';
 
 void main() {
@@ -96,27 +96,27 @@ void main() {
 
   group('video asset path selection', () {
     test('idle HD returns the HD mp4', () {
-      expect(_videoFor(EveState.idle, VideoQuality.hd), contains('eve-idle.mp4'));
+      expect(_videoFor(EvePresenceState.idle, VideoQuality.hd), contains('eve-idle.mp4'));
     });
 
     test('idle low returns the 360 mp4', () {
-      expect(_videoFor(EveState.idle, VideoQuality.low), contains('eve-idle-360.mp4'));
+      expect(_videoFor(EvePresenceState.idle, VideoQuality.low), contains('eve-idle-360.mp4'));
     });
 
     test('listening HD', () {
-      expect(_videoFor(EveState.listening, VideoQuality.hd), contains('eve-listening.mp4'));
+      expect(_videoFor(EvePresenceState.listening, VideoQuality.hd), contains('eve-listening.mp4'));
     });
 
     test('listening low', () {
-      expect(_videoFor(EveState.listening, VideoQuality.low), contains('eve-listening-360.mp4'));
+      expect(_videoFor(EvePresenceState.listening, VideoQuality.low), contains('eve-listening-360.mp4'));
     });
 
     test('thinking HD', () {
-      expect(_videoFor(EveState.thinking, VideoQuality.hd), contains('eve-thinking.mp4'));
+      expect(_videoFor(EvePresenceState.thinking, VideoQuality.hd), contains('eve-thinking.mp4'));
     });
 
     test('thinking low', () {
-      expect(_videoFor(EveState.thinking, VideoQuality.low), contains('eve-thinking-360.mp4'));
+      expect(_videoFor(EvePresenceState.thinking, VideoQuality.low), contains('eve-thinking-360.mp4'));
     });
   });
 
@@ -138,14 +138,14 @@ void main() {
 }
 
 /// Mirrors EveAssets.videoFor without importing the full asset class.
-String _videoFor(EveState state, VideoQuality quality) {
+String _videoFor(EvePresenceState state, VideoQuality quality) {
   const base = 'assets/3d/';
   final low = quality == VideoQuality.low;
   return switch (state) {
-    EveState.idle => '${base}eve-${low ? 'idle-360' : 'idle'}.mp4',
-    EveState.listening =>
+    EvePresenceState.idle => '${base}eve-${low ? 'idle-360' : 'idle'}.mp4',
+    EvePresenceState.listening =>
       '${base}eve-${low ? 'listening-360' : 'listening'}.mp4',
-    EveState.thinking =>
+    EvePresenceState.thinking =>
       '${base}eve-${low ? 'thinking-360' : 'thinking'}.mp4',
   };
 }

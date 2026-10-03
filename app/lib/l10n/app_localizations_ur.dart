@@ -42,7 +42,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get welcomeBody =>
-      'Eve English ya Roman Urdu mein sunti hai. Aam tor par woh isi phone par chalti hai, is liye us se aap ki baatein yahin rehti hain.';
+      'Eve English ya Roman Urdu mein sunti hai. Us se aap ki baatein isi phone par save hoti hain. Har message jawab ke liye TherapyLink server ko bheja jata hai, aur wahan store nahi hota.';
 
   @override
   String get welcomeLanguage => 'Aap zyada kis mein likhte hain?';
@@ -101,7 +101,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get evePrivacy =>
-      'Isi device par chalti hai. Aap ke alfaaz yahin rehte hain.';
+      'Isi phone par save hota hai. Har message jawab ke liye TherapyLink server ko jata hai.';
 
   @override
   String get evePrivacyCloud =>
@@ -132,7 +132,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get guardianHeuristic =>
-      'Abhi built-in keyword check istemal ho raha hai. Behtar detection ke liye trained model download karein (English aur Roman Urdu).';
+      'Abhi built-in keyword check istemal ho raha hai.';
 
   @override
   String get guardianReady =>
@@ -396,7 +396,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get journalEmptyBody =>
-      'Chand sachi lines kaafi hain. Entries private rehti hain jab tak aap khud kisi clinician se share na karein.';
+      'Chand sachi lines kaafi hain. Entries aap ke account mein save hoti hain, aur clinician unhein sirf tab dekhta hai jab aap khud share karein.';
 
   @override
   String get journalTitleHint => 'Title (optional)';
@@ -430,7 +430,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get youDataBody =>
-      'Eve se baatein aur us ke memory notes isi phone par rehte hain; cloud mode mein messages jawab ke liye TherapyLink server ko jaate hain. Check-in scores, mood trend aur journal entries aap ke account par store hote hain taake aap ke saath rahein, aur clinician unhein sirf tab dekhta hai jab aap use link kar ke on karein.';
+      'Eve se baatein aur us ke memory notes isi phone par save hote hain. Jawab dene ke liye har message aur us se jure notes TherapyLink server ko jaate hain, jo unhein store nahi karta. Check-in scores, mood trend aur journal entries aap ke account par store hote hain taake aap ke saath rahein, aur clinician unhein sirf tab dekhta hai jab aap use link kar ke on karein.';
 
   @override
   String get settingsLanguage => 'Zabaan';
@@ -604,10 +604,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get eveGreetingSub =>
-      'Pehle main sunungi. Yahan sab kuch private rehta hai, aur aap kisi chhoti si baat se shuru kar sakte hain.';
+      'Pehle main sunungi. Kisi chhoti si baat se bhi shuru karna bilkul theek hai.';
 
   @override
-  String get eveSubtitleDevice => 'Isi device par · private';
+  String get eveSubtitleDevice => 'Isi phone par save';
 
   @override
   String get eveSubtitleCloud => 'Cloud mode · aap ke TherapyLink server se';
@@ -788,7 +788,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get welcomePointPrivate =>
-      'Eve se aap ki baatein isi phone par rehti hain. Journal entries aur check-ins aap ke account mein save hote hain.';
+      'Eve se aap ki baatein isi phone par save hoti hain, aur har message jawab ke liye TherapyLink server ko jata hai. Journal entries aur check-ins aap ke account mein save hote hain.';
 
   @override
   String get welcomePointLanguage =>
@@ -806,7 +806,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get memoryIntro =>
-      'Eve aap ki baaton se chand chhote notes rakhti hai, jaise aap ke liye kaun ahem hai aur aap ne kya try karne ka socha, taake har baar shuru se na batana pare. Yeh isi phone par rehte hain; cloud mode mein message se jure notes us ke saath bheje jaate hain.';
+      'Eve aap ki baaton se chand chhote notes rakhti hai, jaise aap ke liye kaun ahem hai aur aap ne kya try karne ka socha, taake har baar shuru se na batana pare. Yeh isi phone par save hote hain, aur message se jure notes us ke saath TherapyLink server ko jaate hain.';
 
   @override
   String get memoryToggle => 'Baaton ke darmiyan yaad rakhein';
@@ -961,7 +961,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get getHelpNow => 'Abhi madad lein';
 
   @override
-  String get youHelpSub => 'Helplines jin par abhi call kar sakte hain';
+  String get youHelpSub => 'Helplines aur un ke numbers';
 
   @override
   String get consentTitle => 'Shuru karne se pehle';
@@ -981,14 +981,14 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get consentEmergencyBody =>
-      'Agar aap khud ko ya kisi aur ko nuqsan pohncha sakte hain, ya khatre mein hain, to abhi 1122 ya kisi helpline par call karein. Eve aap ke liye kisi ko call nahi kar sakti.';
+      'Eve se aap ki baatein koi nahi dekhta, aur Eve ko khatre ka batane se kisi ko itla nahi hoti. Agar khud ko ya kisi aur ko nuqsan pohanchane ka khatra ho, ya aap khatre mein hon, to abhi 1122 ya \'Abhi madad lein\' mein di gayi kisi helpline par call karein. Eve kisi ko call nahi kar sakti.';
 
   @override
   String get consentDataTitle => 'Kya kahan store hota hai';
 
   @override
   String get consentDataBody =>
-      'Eve se aap ki baatein isi phone par rehti hain. Har message ka jawab dene ke liye woh hamare server ko bheja jaata hai; wahan store nahi hota. Check-in scores, mood points, journal entries aur account ki tafseel aap ke TherapyLink account par store hoti hain taake aap ke saath rahein. Clinician sirf woh dekhta hai jo aap link kar ke on karein.';
+      'Eve se aap ki baatein sirf isi phone par save hoti hain. Har message ka jawab dene ke liye woh, us se jure memory notes ke saath, TherapyLink server ko bheja jata hai, aur wahan store nahi hota. Check-in scores, mood points, journal entries aur account ki tafseel aap ke TherapyLink account par store hoti hain taake naye phone par bhi aap ke saath rahein. Clinician sirf woh dekhta hai jo aap link kar ke on karein.';
 
   @override
   String get consentAge => 'Meri umar 18 saal ya us se zyada hai';
@@ -1014,10 +1014,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get under18Body =>
-      'Yeh app 18 saal aur us se bare logon ke liye hai. Agar abhi kuch mushkil hai to aap asal madad ke haqdar hain. Kisi bharosemand bare se baat karein, ya in mein se kisi ko call karein:';
+      'Yeh app 18 saal aur us se bare logon ke liye hai, is liye Eve yahan aap se baat nahi kar sakti. Agar abhi kuch mushkil hai to aap asal madad ke haqdaar hain. Kisi bharosemand bare se baat karein, jaise teacher, koi rishtedaar ya parosi, ya in mein se kisi ko call karein:';
 
   @override
-  String get under18CallChild => 'Madadgaar child helpline · 1098';
+  String get under18CallChild => 'Madadgaar, bachon ki helpline · 1098';
 
   @override
   String get under18Back => 'Main ne umar ghalat chuni thi';
@@ -1152,7 +1152,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get clinicianUnvalidatedTranslationHelp =>
-      'App ke Roman Urdu alfaaz mein jawab diya gaya, jin ki asal questionnaire ke muqable mein tasdeeq nahi hui. Score aur us ki band ko ehtiyat se parhein.';
+      'App ke Roman Urdu alfaaz mein jawab diya gaya. Yeh jahan mumkin ho shaya shuda Urdu versions ke mutabiq hain, lekin Roman Urdu alfaaz ki apni tasdeeq asal questionnaire ke muqable mein nahi hui. Score aur us ki band ko ehtiyat se parhein.';
 
   @override
   String get accessLogTitle => 'Mera data kis ne dekha';
@@ -1192,7 +1192,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get eveSafetyNotReadyBody =>
-      'Eve har message ko jawab dene se pehle khatre ki alamaat ke liye check karti hai. Is phone par yeh check abhi tayyar nahi, is liye chat ruki hui hai. Aap exercise kar sakte hain, ya abhi madad le sakte hain.';
+      'Eve har message ko jawab dene se pehle khatre ki alamaat ke liye check karti hai. Is phone par yeh check abhi tayyar nahi, is liye chat ruki hui hai. Exercise ab bhi ki ja sakti hai, aur abhi madad bhi li ja sakti hai.';
 
   @override
   String get eveUnavailableTitle => 'Eve is version mein dastiyab nahi';

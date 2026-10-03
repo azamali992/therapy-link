@@ -1,0 +1,70 @@
+# Eve on CPU (the free Oracle Ampere A1 VM, or any arm64/x86_64 Linux box).
+#
+#   docker compose -f ops/free/docker-compose.yml build eve      # setup.sh does this
+#
+# Builds llama-server from source at the exact llama.cpp build the evals and the smoke test ran on
+# (b10955, commit 2f539596c). There is no prebuilt ghcr.io/ggml-org/llama.cpp image for b10955
+# (checked 2026-10-03: the nearest tags are b10951 and b10964), and building on the VM itself lets
+# GGML_NATIVE pick the host's own SIMD (NEON + dotprod on Neoverse N1). Because of that the image is
+# only meant to run on the machine that built it. A 2-OCPU A1 takes roughly 10 to 20 minutes.
+#
+# Like Dockerfile.gpu: no weights in the image. The GGUFs are mounted read-only at /models and
+# run-llama-server.sh checks both against ml/registry.json (size and sha256) before starting.
+
+ARG UBUNTU_IMAGE=ubuntu:noble-20260917@sha256:9bb148f8a4e622539bc24b0b312e66da1bafcceedebeb703dbbc183530ba2d7d
+
+FROM ${UBUNTU_IMAGE} AS build
+ARG LLAMA_TAG=b10955
+ARG LLAMA_COMMIT=2f539596c6e9a977e91b6bc6344650422c6bc3b0
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends build-essential cmake git ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch "${LLAMA_TAG}" https://github.com/ggml-org/llama.cpp /src \
+ && if [ "$(git -C /src rev-parse HEAD)" != "${LLAMA_COMMIT}" ]; then \
+      echo "llama.cpp ${LLAMA_TAG} is not commit ${LLAMA_COMMIT}" >&2; exit 1; fi
+# No web UI (the server runs with --no-webui), so nothing is fetched from the UI bucket at build
+# time; no OpenSSL (the server never downloads anything); static libs so one binary is copied.
+RUN cmake -S /src -B /src/build \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DGGML_NATIVE=ON \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DLLAMA_BUILD_TESTS=OFF \
+      -DLLAMA_BUILD_EXAMPLES=OFF \
+      -DLLAMA_BUILD_UI=OFF \
+      -DLLAMA_USE_PREBUILT_UI=OFF \
+      -DLLAMA_OPENSSL=OFF \
+ && cmake --build /src/build --target llama-server -j"$(nproc)" \
+ && /src/build/bin/llama-server --version
+
+FROM ${UBUNTU_IMAGE}
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends jq curl ca-certificates libgomp1 \
+ && rm -rf /var/lib/apt/lists/*
+COPY --from=build /src/build/bin/llama-server /app/llama-server
+
+WORKDIR /opt/tl
+COPY ml/registry.json ml/registry.json
+COPY ops/serving/run-llama-server.sh ops/serving/
+# LF endings even if a Windows checkout converted them.
+RUN sed -i 's/\r$//' ops/serving/run-llama-server.sh \
+ && chmod 0555 ops/serving/run-llama-server.sh \
+ && useradd --system --uid 10001 --home-dir /nonexistent --shell /usr/sbin/nologin eve
+
+USER eve
+# TL_LLM_CONTAINER=1 binds 0.0.0.0 inside the container, because the API reaches it from another
+# container. The compose file puts it on an internal-only network with no published port, so
+# nothing outside the VM (and nothing but the API inside it) can connect. The API key still applies.
+ENV TL_LLM_CONTAINER=1 \
+    TL_MODELS_DIR=/models \
+    TL_LLAMA_SERVER=/app/llama-server \
+    TL_LLM_NGL=0 \
+    TL_LLM_PARALLEL=2 \
+    TL_LLM_CTX_PER_SLOT=8192 \
+    PORT=8080
+EXPOSE 8080
+
+# /health answers without the key. Hashing 3.1 GB plus loading takes a minute or two on 2 OCPUs.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=600s --retries=3 \
+  CMD curl -fsS "http://127.0.0.1:${PORT}/health" || exit 1
+
+ENTRYPOINT ["/opt/tl/ops/serving/run-llama-server.sh"]

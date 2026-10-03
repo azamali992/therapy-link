@@ -125,3 +125,4 @@ mlruns/
 # --- Node (tooling only) ---
 node_modules/
 *.log
+app/test/failures/

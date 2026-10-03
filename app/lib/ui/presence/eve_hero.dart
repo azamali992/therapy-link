@@ -103,7 +103,7 @@ class _EveHeroState extends ConsumerState<EveHero>
 
   Future<void> _initVideo(VideoQuality quality) async {
     await _tearDownVideo();
-    final ctrl = VideoPlayerController.asset(EveAssets.videoFor(EveState.idle, quality));
+    final ctrl = VideoPlayerController.asset(EveAssets.videoFor(EvePresenceState.idle, quality));
     try {
       await ctrl.initialize();
       if (!mounted) {

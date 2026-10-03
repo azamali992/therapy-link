@@ -120,4 +120,4 @@ def test_a_pending_build_cannot_write_into_the_training_corpus(tmp_path):
     with pytest.raises(typer.BadParameter, match="--include-pending"):
         build(only=["tl_authored"], out=DEFAULT_OUT, include_pending=True)
     build(only=["tl_authored"], out=tmp_path, include_pending=True)
-    assert "review:pending_clinician" in (tmp_path / "conversations.train.jsonl").read_text(encoding="utf-8")
+    assert "review:ai_clinical_review" in (tmp_path / "conversations.train.jsonl").read_text(encoding="utf-8")

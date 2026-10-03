@@ -1,0 +1,46 @@
+# TLS in front of the API. Caddy gets and renews a Let's Encrypt certificate for TL_DOMAIN by itself
+# (ports 80 and 443 must be open in the VCN security list and on the VM, see setup.sh).
+#
+# Only the API is behind this. llama-server and Postgres are on an internal Docker network with no
+# route from here, so there is no public model endpoint at all.
+#
+# No access log on purpose: request paths carry patient uids (/clinician/patients/{uid}), and
+# SECURITY.md s4.9 says the API's own structured log is the only request log. Caddy's default is
+# already no access log; don't add a `log` directive to the site block.
+{
+	email {$ACME_EMAIL}
+	servers {
+		timeouts {
+			read_body 30s
+			idle 2m
+		}
+	}
+}
+
+{$TL_DOMAIN} {
+	request_body {
+		max_size 1MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	# FastAPI's interactive docs list every route; the app doesn't need them.
+	@docs path /docs /docs/* /redoc /openapi.json
+	respond @docs 404
+
+	reverse_proxy api:7860 {
+		# Stream Eve's SSE reply to the phone as each token arrives.
+		flush_interval -1
+		transport http {
+			dial_timeout 5s
+			# A queued reply on CPU can take minutes; the API's own upstream timeouts are the limit.
+			response_header_timeout 5m
+			read_timeout 10m
+		}
+	}
+}

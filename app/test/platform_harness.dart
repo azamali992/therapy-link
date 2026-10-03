@@ -28,9 +28,9 @@ Future<ProviderContainer> pumpApp(
       container: container,
       child: MaterialApp(
         locale: locale,
+        theme: buildTheme(Brightness.dark),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildTheme(brightness),
         home: child,
       ),
     ),

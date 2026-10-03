@@ -76,7 +76,8 @@ final _journals = [
   JournalEntry(
     id: 'j1',
     title: 'A good morning',
-    body: 'Went for a walk along the canal. The fog was thick but I felt '
+    body:
+        'Went for a walk along the canal. The fog was thick but I felt '
         'lighter than I have in weeks.',
     mood: 1,
     createdAt: DateTime(2026, 10, 2),
@@ -93,7 +94,8 @@ final _journals = [
   JournalEntry(
     id: 'j3',
     title: 'Hard day',
-    body: 'Nothing felt manageable today. Tried the breathing exercise and '
+    body:
+        'Nothing felt manageable today. Tried the breathing exercise and '
         'it helped a little.',
     mood: -1,
     createdAt: DateTime(2026, 9, 28),
@@ -270,12 +272,15 @@ Future<void> _loadFonts() async {
 
   // Material Icons (absolute path from Flutter SDK cache)
   final iconFont = FontLoader('MaterialIcons')
-    ..addFont(readBytes(
-        'D:/dev/flutter/bin/cache/artifacts/material_fonts/materialicons-regular.otf'));
+    ..addFont(
+      readBytes(
+        '${Platform.environment['FLUTTER_ROOT']}/bin/cache/artifacts/material_fonts/materialicons-regular.otf',
+      ),
+    );
   await iconFont.load();
 
   // App fonts (variable-weight TTF, loaded from the package asset directory)
-  const appDir = 'D:/therapylink-v3-wt/ui-journal-you/app';
+  final appDir = Directory.current.path; // flutter test runs from app/
   for (final entry in {
     'AtkinsonHyperlegibleNext': [
       '$appDir/assets/fonts/AtkinsonHyperlegibleNext/AtkinsonHyperlegibleNext[wght].ttf',
@@ -286,9 +291,7 @@ Future<void> _loadFonts() async {
     'NotoNastaliqUrdu': [
       '$appDir/assets/fonts/NotoNastaliqUrdu/NotoNastaliqUrdu[wght].ttf',
     ],
-    'Unbounded': [
-      '$appDir/assets/fonts/Unbounded/Unbounded[wght].ttf',
-    ],
+    'Unbounded': ['$appDir/assets/fonts/Unbounded/Unbounded[wght].ttf'],
   }.entries) {
     final loader = FontLoader(entry.key);
     for (final path in entry.value) {
@@ -336,7 +339,8 @@ Future<void> _pump(
   await expectLater(
     find.byType(MaterialApp),
     matchesGoldenFile(
-        '../../docs/design/screens/journal-you/${name}_$suffix.png'),
+      '../../docs/design/screens/journal-you/${name}_$suffix.png',
+    ),
   );
 }
 
@@ -352,9 +356,7 @@ void main() {
         'journal_list',
         const JournalScreen(),
         brightness: brightness,
-        overrides: [
-          journalProvider.overrideWithValue(AsyncData(_journals)),
-        ],
+        overrides: [journalProvider.overrideWithValue(AsyncData(_journals))],
       );
     });
 
@@ -364,9 +366,7 @@ void main() {
         'journal_editor',
         const JournalEditorScreen(),
         brightness: brightness,
-        overrides: [
-          journalProvider.overrideWithValue(const AsyncData([])),
-        ],
+        overrides: [journalProvider.overrideWithValue(const AsyncData([]))],
       );
     });
 
@@ -391,9 +391,7 @@ void main() {
         'settings',
         const SettingsScreen(),
         brightness: brightness,
-        overrides: [
-          devControlsProvider.overrideWithValue(false),
-        ],
+        overrides: [devControlsProvider.overrideWithValue(false)],
       );
     });
 
@@ -415,9 +413,7 @@ void main() {
         'access_log',
         const AccessLogScreen(),
         brightness: brightness,
-        overrides: [
-          accessLogProvider.overrideWithValue(AsyncData(_accessLog)),
-        ],
+        overrides: [accessLogProvider.overrideWithValue(AsyncData(_accessLog))],
       );
     });
 
@@ -428,8 +424,7 @@ void main() {
         const CareScreen(),
         brightness: brightness,
         overrides: [
-          careLinksProvider.overrideWithValue(
-              AsyncData([_activeCareLink])),
+          careLinksProvider.overrideWithValue(AsyncData([_activeCareLink])),
         ],
       );
     });
@@ -466,8 +461,7 @@ void main() {
         brightness: brightness,
         overrides: [
           meProvider.overrideWith((_) async => _clinicianMePending),
-          caseloadProvider
-              .overrideWithValue(const AsyncData([])),
+          caseloadProvider.overrideWithValue(const AsyncData([])),
         ],
       );
     });
@@ -479,8 +473,7 @@ void main() {
         const RequestsScreen(),
         brightness: brightness,
         overrides: [
-          clinicianRequestsProvider
-              .overrideWithValue(AsyncData(_requests)),
+          clinicianRequestsProvider.overrideWithValue(AsyncData(_requests)),
         ],
       );
     });
