@@ -113,7 +113,7 @@ class Sample(NamedTuple):
     truncated: bool = False
 
 
-def score_sample(route: str, lang: str, sample: Sample, *, rubric: bool = False) -> ReplyScore:
+def score_sample(route: str, lang: str, sample: Sample, *, rubric: bool = False, bucket: str = "") -> ReplyScore:
     """score_reply plus what only matters for a chosen side: long enough, and not cut off.
 
     `rubric` adds the v17 checks (train/dpo_rubric.py): R1 praise, the R5 safety question,
@@ -127,7 +127,7 @@ def score_sample(route: str, lang: str, sample: Sample, *, rubric: bool = False)
     if rubric:
         from therapylink_ml.train.dpo_rubric import rubric as v17_rubric
 
-        hard, soft = v17_rubric(route, lang, sample.text)
+        hard, soft = v17_rubric(route, lang, sample.text, bucket)
         score.failures.extend(hard)
         score.soft.extend(soft)
     return score
@@ -161,7 +161,7 @@ def make_pairs(
         raw = draw(folded, k) if draw else [generate(folded) for _ in range(k)]
         drawn = [_as_sample(d) for d in raw]
         samples = [d.text for d in drawn]
-        scores = [score_sample(p["route"], p["lang"], d, rubric=rubric) for d in drawn]
+        scores = [score_sample(p["route"], p["lang"], d, rubric=rubric, bucket=p.get("bucket", "")) for d in drawn]
         if on_samples:
             on_samples(p, drawn, scores)
         picked = pick_pair(samples, scores)
@@ -315,7 +315,7 @@ def pairs_from_logged(prompts: list[dict], logged: list[dict], *, rubric: bool =
         if p is None:
             continue
         samples = [Sample(s["text"], s.get("truncated", False)) for s in drawn]
-        scores = [score_sample(p["route"], p["lang"], s, rubric=rubric) for s in samples]
+        scores = [score_sample(p["route"], p["lang"], s, rubric=rubric, bucket=p.get("bucket", "")) for s in samples]
         picked = pick_pair([s.text for s in samples], scores)
         if picked is None:
             continue
@@ -344,7 +344,7 @@ def all_failing(prompts: list[dict], logged: list[dict], *, rubric: bool = True)
     out = []
     for pid, drawn in pooled.items():
         p = by_id.get(pid)
-        if p and not any(score_sample(p["route"], p["lang"], Sample(s["text"], s.get("truncated", False)), rubric=rubric).passed for s in drawn):
+        if p and not any(score_sample(p["route"], p["lang"], Sample(s["text"], s.get("truncated", False)), rubric=rubric, bucket=p.get("bucket", "")).passed for s in drawn):
             out.append(pid)
     return out
 
@@ -405,7 +405,7 @@ def rewrite_pairs(
             continue
         if any(not s["failures"] for s in drawn):
             continue  # the model produced a passing reply: that prompt pairs on-policy or not at all
-        score = score_sample(p["route"], p["lang"], Sample(rw["content"]), rubric=rubric)
+        score = score_sample(p["route"], p["lang"], Sample(rw["content"]), rubric=rubric, bucket=p.get("bucket", ""))
         if not score.passed:
             raise ValueError(f"{pid}: the rewrite itself fails {score.failures}")
         worst = max(drawn, key=lambda s: len(s["failures"]))
