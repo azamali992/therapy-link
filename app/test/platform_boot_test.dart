@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:therapylink/app/app.dart';
 import 'package:therapylink/core/auth/auth_providers.dart';
 import 'package:therapylink/core/settings/settings.dart';
+import 'package:therapylink/ui/components/jugnu_app_bar.dart' as ui;
 
 /// Pumps [TherapyLinkApp] with real provider overrides that keep the app at
 /// /welcome (empty prefs → not consented, not onboarded; auth stream → null).
@@ -48,16 +49,14 @@ void main() {
     testWidgets('Get help button is present on the welcome screen', (tester) async {
       await pumpApp(tester);
 
-      // GetHelpButton renders an IconButton with the getHelpNow tooltip.
-      // We find it by tooltip text after l10n resolves.
-      expect(
-        find.byWidgetPredicate(
-          (w) =>
-              w is IconButton &&
-              (w.tooltip?.toLowerCase().contains('help') ?? false),
-        ),
-        findsWidgets,
-      );
+      // The Jugnu GetHelpButton is a labelled pill, reachable before sign-in.
+      final help = find.byType(ui.GetHelpButton);
+      expect(help, findsOneWidget);
+
+      // Tapping it must open the crisis sheet with a real helpline number.
+      await tester.tap(help);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('1122'), findsWidgets);
     });
 
     testWidgets('welcome screen copy is rendered', (tester) async {
