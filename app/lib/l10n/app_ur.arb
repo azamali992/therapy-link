@@ -479,5 +479,9 @@
   "quickExitNeutral": "Abhi kuch khula nahi.",
   "dbMigrationFailed": "Is phone par aap ki chats is baar encrypt nahi ho sakin. Woh yahin maujood hain, aur app agli baar khulne par dobara koshish karegi.",
   "dbUnreadable": "Is phone par aap ki pichli chats khul nahi sakin, is liye nayi khaali jagah shuru ki gayi. Purani file rakh li gayi hai.",
-  "dbOpenFailed": "Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to 'Abhi madad lein' ab bhi kaam karta hai."
+  "dbOpenFailed": "Is waqt is phone par aap ki chats khul nahi rahin, is liye naya kuch save nahi ho raha. App band kar ke dobara kholein. Agar abhi kisi se baat karni hai to 'Abhi madad lein' ab bhi kaam karta hai.",
+  "eveBusyTitle": "Eve abhi kisi aur se baat kar rahi hai",
+  "eveBusyBody": "Server masroof hai. Thori dair ruk kar dobara koshish karein.",
+  "eveSlowTitle": "Eve araam kar rahi hai",
+  "eveSlowBody": "Connection time out ho gaya. Eve abhi dheere jawab de sakti hai. Thori dair baad dobara koshish karein."
 }

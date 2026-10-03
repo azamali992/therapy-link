@@ -624,5 +624,9 @@
   "dbOpenFailed": "Your chats on this phone can't be opened right now, so nothing new is being saved. Try closing and reopening the app. If you need to talk to someone now, Get help now still works.",
   "@dbOpenFailed": {
     "description": "PENDING CLINICIAN REVIEW: shown when the local database could not be opened (key store or encryption failure). The app retries on next use. Wording drafted by engineering, not yet approved."
-  }
+  },
+  "eveBusyTitle": "Eve is with someone else right now",
+  "eveBusyBody": "The server is busy. Wait a moment and try again.",
+  "eveSlowTitle": "Eve is resting",
+  "eveSlowBody": "The connection timed out. Eve may be slow to respond right now. Try again in a moment."
 }

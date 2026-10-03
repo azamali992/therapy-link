@@ -30,6 +30,34 @@ class EveRestingException implements Exception {
   String toString() => 'EveRestingException: Eve is resting (upstream unavailable)';
 }
 
+/// The server's inference queue is full (503 eve_busy SSE event or JSON).
+///
+/// Thrown by [ApiClient.cloudChatStream] when the server emits
+/// `data: {"error":"eve_busy"}`.  The [EveController] surfaces this as the
+/// calm "Eve is with someone else" state without saving a failure message to
+/// the conversation.
+class EveBusyException implements Exception {
+  const EveBusyException();
+
+  @override
+  String toString() => 'EveBusyException: Eve is busy (inference queue full)';
+}
+
+/// The streaming connection idle-timed-out before the first token arrived or
+/// mid-stream (i.e. even the keep-alive comments stopped).
+///
+/// Thrown by [ApiClient.cloudChatStream] when a [DioException] with type
+/// [DioExceptionType.receiveTimeout] or [DioExceptionType.connectionTimeout]
+/// occurs.  Unlike a generic [DioException], this is NEVER retried
+/// automatically with a non-streaming fallback — that would double the load on
+/// a slow CPU server.
+class EveTimedOutException implements Exception {
+  const EveTimedOutException();
+
+  @override
+  String toString() => 'EveTimedOutException: Eve timed out (slow inference)';
+}
+
 /// The server said too many requests (429). [retryAfter] is its Retry-After in seconds, when given.
 /// Still a [DioException], so existing handlers keep working.
 class RateLimitedException extends DioException {
@@ -60,7 +88,11 @@ int? retryAfterSeconds(String? header) {
 }
 
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(baseUrl: apiBaseUrl, connectTimeout: const Duration(seconds: 10), receiveTimeout: const Duration(seconds: 30)));
+  // connectTimeout: 15 s (time to establish the TCP connection to the API).
+  // receiveTimeout: 45 s idle — resets on every byte including SSE keep-alive
+  // comments (`: wait\n\n`), so the server's 10 s keep-alive interval prevents
+  // this from firing during normal 10-25 s CPU first-token latency.
+  final dio = Dio(BaseOptions(baseUrl: apiBaseUrl, connectTimeout: const Duration(seconds: 15), receiveTimeout: const Duration(seconds: 45)));
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
@@ -201,9 +233,33 @@ class ApiClient {
   Future<PatientOverview> patientOverview(String uid, {int days = 30}) async =>
       PatientOverview.fromJson((await _dio.get('/clinician/patients/$uid', queryParameters: {'days': days, 'tz': _timeZone()})).data);
 
-  /// Calls POST /inference/chat. Returns the full reply (non-streaming fallback).
+  /// Calls POST /inference/chat. Returns the full reply (non-streaming).
+  ///
+  /// Use [cloudChatBackground] instead for summaries / memory notes, which
+  /// run off the chat path and need a longer timeout.
   Future<String> cloudChat(List<Map<String, String>> messages, {int maxTokens = 450}) async =>
       (await _dio.post('/inference/chat', data: {'messages': messages, 'max_tokens': maxTokens})).data['reply'] as String;
+
+  /// POST /inference/chat for background tasks (summaries, memory notes, wrap-ups).
+  ///
+  /// Uses a 120 s receive timeout (vs. the default 45 s) because non-streaming
+  /// completions on a CPU server can take 40-60 s for up to 300 tokens.
+  /// Returns null instead of throwing when the server is busy, resting, or
+  /// offline, so callers can defer silently rather than crashing the background pass.
+  Future<String?> cloudChatBackground(List<Map<String, String>> messages, {int maxTokens = 300}) async {
+    try {
+      final resp = await _dio.post<Map<String, dynamic>>(
+        '/inference/chat',
+        data: {'messages': messages, 'max_tokens': maxTokens},
+        options: Options(receiveTimeout: const Duration(seconds: 120)),
+      );
+      return resp.data?['reply'] as String?;
+    } on ServiceUnavailableException {
+      return null; // busy — skip this pass
+    } on DioException {
+      return null; // offline or other transient error — skip
+    }
+  }
 
   /// Calls POST /inference/chat with stream=true and yields Eve's reply tokens.
   ///
@@ -214,25 +270,37 @@ class ApiClient {
   /// - `data: {"delta":"<text>"}` — one text piece; this method yields the delta.
   /// - `data: {"done":true,"finish_reason":"<reason>"}` — normal end of stream.
   /// - `data: [DONE]` — alternative normal-end marker.
+  /// - `: wait` — SSE keep-alive comment; ignored here, resets the idle timeout.
   /// - `data: {"error":"eve_resting"}` — upstream failure; throws [EveRestingException].
+  /// - `data: {"error":"eve_busy"}` — queue full; throws [EveBusyException].
   ///
-  /// Bytes are decoded with UTF-8 before line splitting, so multi-byte characters
-  /// (Urdu, emoji, smart quotes) are never corrupted by raw byte slicing.
+  /// ## Fallback policy
   ///
-  /// If the server does not support streaming (DioException), this method falls
-  /// back to [cloudChat] and trickles the reply word-by-word.
+  /// This method ONLY falls back to [cloudChat] (non-streaming) when the server
+  /// explicitly rejects the streaming request before any bytes were received
+  /// (HTTP 415 or 400).  A timeout ([EveTimedOutException]) is NEVER retried
+  /// with a non-streaming resend — that would double the load on a slow CPU server.
+  ///
+  /// Bytes are decoded with UTF-8 before line splitting, so multi-byte
+  /// characters (Urdu, emoji, smart quotes) are never corrupted by raw byte
+  /// slicing.
   Stream<String> cloudChatStream(List<Map<String, String>> messages, {int maxTokens = 450}) async* {
     try {
       final response = await _dio.post<ResponseBody>(
         '/inference/chat',
         data: {'messages': messages, 'max_tokens': maxTokens, 'stream': true},
-        options: Options(responseType: ResponseType.stream, headers: {'Accept': 'text/event-stream'}),
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {'Accept': 'text/event-stream'},
+          // Per-request idle timeout: longer than the server's 10 s keep-alive
+          // interval so `: wait` comments keep the connection alive during
+          // 10-25 s CPU first-token latency.
+          receiveTimeout: const Duration(seconds: 45),
+        ),
       );
-      // Decode bytes as UTF-8, then split on line boundaries.  Using utf8.decoder
+      // Decode bytes as UTF-8 then split on line boundaries.  Using utf8.decoder
       // instead of String.fromCharCodes prevents corruption of multi-byte sequences
       // (Urdu, emoji, smart quotes) when a chunk boundary falls mid-character.
-      // Cast to Stream<List<int>> so utf8.decoder's StreamTransformer<List<int>,String>
-      // signature is satisfied (Uint8List is a List<int> subtype but Dart requires the cast).
       final lines = response.data!.stream.cast<List<int>>().transform(utf8.decoder).transform(const LineSplitter());
       await for (final line in lines) {
         if (!line.startsWith('data: ')) continue;
@@ -245,20 +313,41 @@ class ApiClient {
           continue; // malformed event — skip
         }
         if (obj['done'] == true) return;
-        if (obj.containsKey('error')) throw const EveRestingException();
+        if (obj.containsKey('error')) {
+          final err = obj['error'] as String?;
+          if (err == 'eve_busy') throw const EveBusyException();
+          throw const EveRestingException();
+        }
         final delta = obj['delta'];
         if (delta is String && delta.isNotEmpty) yield delta;
       }
+    } on EveBusyException {
+      rethrow; // propagate typed exception to EveController
     } on EveRestingException {
-      rethrow; // propagate to EveController._generate where all engine errors are caught
-    } on DioException {
-      // Server does not support streaming; fall back to non-streaming path and trickle the words.
-      final text = await cloudChat(messages, maxTokens: maxTokens);
-      final words = text.split(' ');
-      for (var i = 0; i < words.length; i++) {
-        yield i == 0 ? words[i] : ' ${words[i]}';
-        if (i % 3 == 2) await Future<void>.delayed(const Duration(milliseconds: 35));
+      rethrow; // propagate to EveController._generate
+    } on DioException catch (e) {
+      // Timeout: the server's keep-alive stopped arriving.  Surface as
+      // EveTimedOutException — do NOT fall back to non-streaming (that would
+      // send another full inference request doubling load on the CPU server).
+      if (e.type == DioExceptionType.receiveTimeout || e.type == DioExceptionType.connectionTimeout) {
+        throw const EveTimedOutException();
       }
+      // Only fall back to non-streaming when the server explicitly rejects the
+      // streaming request before any bytes were read (HTTP 415 or 400).
+      final status = e.response?.statusCode;
+      if (status == 415 || status == 400) {
+        // Server does not support streaming; fall back once, trickle the words.
+        final text = await cloudChat(messages, maxTokens: maxTokens);
+        final words = text.split(' ');
+        for (var i = 0; i < words.length; i++) {
+          yield i == 0 ? words[i] : ' ${words[i]}';
+          if (i % 3 == 2) await Future<void>.delayed(const Duration(milliseconds: 35));
+        }
+        return;
+      }
+      // Any other Dio error (5xx, network, etc.) → surface as timeout so the
+      // controller shows the calm "Eve is slow" state.
+      throw const EveTimedOutException();
     }
   }
 }

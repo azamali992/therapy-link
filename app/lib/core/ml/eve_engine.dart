@@ -102,9 +102,16 @@ class ServerEveEngine implements EveEngine {
     return _api.cloudChatStream(folded, maxTokens: eveReplyTokens);
   }
 
+  /// Runs a plain-instruction completion (summary, memory notes, wrap-ups) in the background.
+  ///
+  /// Uses [ApiClient.cloudChatBackground] so the request gets a 120 s receive timeout
+  /// (CPU completions of 300 tokens can take 40-60 s) and returns '' silently when the
+  /// server is busy or offline, rather than throwing and blocking the caller.
   @override
-  Future<String> complete(List<Map<String, String>> messages, {int maxTokens = 300}) =>
-      _api.cloudChat(trimChatHistory(messages), maxTokens: maxTokens);
+  Future<String> complete(List<Map<String, String>> messages, {int maxTokens = 300}) async {
+    final result = await _api.cloudChatBackground(trimChatHistory(messages), maxTokens: maxTokens);
+    return result ?? '';
+  }
 }
 
 /// Stands in for tests: echoes a reflective placeholder so the UI flow is testable.
