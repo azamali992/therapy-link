@@ -113,12 +113,21 @@ class CrisisCopy {
       CrisisKind.abuse: "What's happening to you is not your fault",
       CrisisKind.child: 'You did the right thing by telling someone',
       CrisisKind.sexualViolence: 'What happened is not your fault',
+      CrisisKind.selfHarm: "I'm glad you told me, and I'm worried about you",
+      CrisisKind.harmToOthers: 'Thank you for telling me. Safety comes first',
+      CrisisKind.medical: "I'm worried about you. Please call Rescue now",
     },
     bodies: {
       CrisisKind.suicide: "You don't have to carry this alone. Are you safe right now? You can talk to someone at one of these numbers.",
       CrisisKind.abuse: "You deserve to be safe. Are you safe right now? If you are in danger, call Rescue. These lines can help.",
       CrisisKind.child: 'Are you safe right now? These lines help children, and a grown-up you trust, like a teacher or a relative, can help too.',
       CrisisKind.sexualViolence: 'You deserve support and to be safe. Are you safe right now? These lines can help.',
+      CrisisKind.selfHarm:
+          "You don't have to carry this alone. Are you hurt right now? Are you having thoughts of ending your life? If you are hurt, call Rescue. You can also talk to someone at one of these numbers.",
+      CrisisKind.harmToOthers:
+          'Is anyone in danger right now, you or someone else? If someone could get hurt, call Rescue or the Police now. If you feel you might hurt someone, move away from them now and talk to someone at one of these numbers.',
+      CrisisKind.medical:
+          "If you have taken something or you are hurt, call Rescue now. Don't wait to see if it passes. Is someone near you who can stay with you?",
     },
   );
 
@@ -139,12 +148,21 @@ class CrisisCopy {
       CrisisKind.abuse: 'Jo aap ke saath ho raha hai, us mein aap ka koi qasoor nahi',
       CrisisKind.child: 'Aap ne kisi ko bata kar bilkul theek kiya',
       CrisisKind.sexualViolence: 'Jo hua, us mein aap ka koi qasoor nahi',
+      CrisisKind.selfHarm: 'Acha kiya aap ne bataya, mujhe aap ki fikar hai',
+      CrisisKind.harmToOthers: 'Bataane ka shukriya. Sab se pehle hifazat',
+      CrisisKind.medical: 'Mujhe aap ki fikar hai. Abhi Rescue ko call karein',
     },
     bodies: {
       CrisisKind.suicide: 'Yeh bojh akele nahi uthana. Kya aap abhi mehfooz hain? In numbers par kisi se baat ho sakti hai.',
       CrisisKind.abuse: 'Aap mehfooz rehne ke haqdar hain. Kya aap abhi mehfooz hain? Agar khatra hai to Rescue ko call karein. Yeh lines madad kar sakti hain.',
       CrisisKind.child: 'Kya aap abhi mehfooz hain? Yeh lines bachon ki madad karti hain, aur koi bara jis par bharosa ho, jaise teacher ya rishtedaar, woh bhi madad kar sakta hai.',
       CrisisKind.sexualViolence: 'Aap sahara aur hifazat ke haqdar hain. Kya aap abhi mehfooz hain? Yeh lines madad kar sakti hain.',
+      CrisisKind.selfHarm:
+          'Yeh bojh akele nahi uthana. Kya aap ko abhi chot lagi hai? Kya aap ke dil mein apni jaan lene ka khayal aa raha hai? Agar chot lagi hai to Rescue ko call karein. In numbers par kisi se baat bhi ho sakti hai.',
+      CrisisKind.harmToOthers:
+          'Kya abhi kisi ki jaan ko khatra hai, aap ki ya kisi aur ki? Agar kisi ko nuqsan pohanch sakta hai to abhi Rescue ya Police ko call karein. Agar aap ko lagta hai ke aap kisi ko nuqsan pohancha sakte hain, to abhi un se door ho jayein aur in numbers par kisi se baat karein.',
+      CrisisKind.medical:
+          'Agar aap ne kuch kha ya pi liya hai, ya aap ko chot lagi hai, to abhi Rescue ko call karein. Intezar na karein ke khud theek ho jayega. Kya aap ke paas koi hai jo aap ke saath reh sake?',
     },
   );
 }

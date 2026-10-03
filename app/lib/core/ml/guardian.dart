@@ -1,10 +1,16 @@
 /// Which kind of danger a crisis is. The help offered depends on it: a person being hurt by someone
 /// else needs a different line from a person thinking of ending their life.
+///
+/// One kind per label of the trained Guardian's crisis head (docs/clinical/GUARDIAN_LABELS.md). The
+/// lines each kind shows are in app/lib/features/shared/helplines.dart.
 enum CrisisKind {
   suicide('suicidal'),
+  selfHarm('self_harm'),
   abuse('abuse'),
   child('child'),
-  sexualViolence('sexual_violence');
+  sexualViolence('sexual_violence'),
+  harmToOthers('harm_to_others'),
+  medical('medical');
 
   const CrisisKind(this.label);
 
@@ -19,16 +25,70 @@ enum CrisisKind {
   }
 }
 
+/// The order a message carrying several kinds of risk is routed in, most urgent first. A message
+/// gets one sheet, so it gets the help for the danger that can't wait:
+///
+/// 1. medical: something already taken, a serious injury, a collapse. Minutes matter, so Rescue
+///    comes before anything else, even when the reason behind it is suicidal (guide rule 7).
+/// 2. suicide: a life at risk. Its lines (Umang, Rescue) also cover self-harm.
+/// 3. harmToOthers: someone else's life at risk. Rescue and the police.
+/// 4. child: a minor being harmed. It is always labelled together with abuse or sexual violence,
+///    so it must outrank both or the child lines would never show.
+/// 5. sexualViolence, then 6. abuse: harm by another person. Same lines; the sexual violence words
+///    are the more specific when both fit.
+/// 7. selfHarm: hurting oneself without stated intent to die. Every route above it except child
+///    already shows Umang and Rescue, which are self-harm's lines.
+const crisisPriority = [
+  CrisisKind.medical,
+  CrisisKind.suicide,
+  CrisisKind.harmToOthers,
+  CrisisKind.child,
+  CrisisKind.sexualViolence,
+  CrisisKind.abuse,
+  CrisisKind.selfHarm,
+];
+
+/// The score at which a fired label is sure enough to take part in [crisisPriority].
+///
+/// The shipped thresholds are set for recall (Guardian v1b fires every crisis label at 0.02), so a
+/// real crisis message usually fires a few labels it doesn't carry: on the held-out set 'medical'
+/// fired 111 times for 41 true cases. Ranking every fired label by priority would send many people
+/// talking about suicide to the medical sheet on a 0.03. So the labels the model is sure of (this
+/// score or more) are ranked by priority, and when it is sure of none, its highest-scoring label
+/// routes. Whether to step in at all is still decided by the thresholds alone. A bundle can set its
+/// own value as `route_confidence` in config.json.
+const defaultRouteConfidence = 0.5;
+
+/// The kind to route [fired] labels to, given each label's [scores]. Null when nothing fired or no
+/// fired label is a known kind.
+CrisisKind? routeCrisis(Iterable<String> fired, Map<String, double> scores, {double confident = defaultRouteConfidence}) {
+  final kinds = {for (final l in fired) ?CrisisKind.fromLabel(l)};
+  if (kinds.isEmpty) return null;
+  final sure = kinds.where((k) => (scores[k.label] ?? 0) >= confident).toSet();
+  if (sure.isNotEmpty) return crisisPriority.firstWhere(sure.contains);
+  // Ties go to the more urgent kind.
+  return crisisPriority.where(kinds.contains).reduce((a, b) => (scores[b.label] ?? 0) > (scores[a.label] ?? 0) ? b : a);
+}
+
 /// What the on-device classifier says about one user message.
 class GuardianVerdict {
-  const GuardianVerdict({required this.crisis, required this.crisisScores, required this.valence, this.emotion, CrisisKind? kind})
-      : _kind = kind;
+  const GuardianVerdict({
+    required this.crisis,
+    required this.crisisScores,
+    required this.valence,
+    this.emotion,
+    CrisisKind? kind,
+    this.labels = const {},
+  }) : _kind = kind;
 
   final bool crisis;
   final Map<String, double> crisisScores;
   final int valence; // −2..2
   final String? emotion;
   final CrisisKind? _kind;
+
+  /// Every crisis label that fired, which may be several. [kind] is the one routed to.
+  final Set<String> labels;
 
   /// Null when there is no crisis. A crisis with no finer reading is treated as suicide risk, the
   /// route with the widest help.
@@ -37,22 +97,31 @@ class GuardianVerdict {
   static const none = GuardianVerdict(crisis: false, crisisScores: {}, valence: 0);
 }
 
+/// Each label's highest score across [scores].
+Map<String, double> maxScores(Iterable<Map<String, double>> scores) {
+  final out = <String, double>{};
+  for (final s in scores) {
+    s.forEach((k, p) => out[k] = p > (out[k] ?? double.negativeInfinity) ? p : out[k]!);
+  }
+  return out;
+}
+
 /// One verdict from several reads of the same text, as the windows of a long message are: a crisis
-/// in any window is a crisis, each score is its highest, and valence is the lowest seen.
-GuardianVerdict mergeVerdicts(List<GuardianVerdict> verdicts) {
+/// in any window is a crisis, each score is its highest, the labels are every window's, the route
+/// is chosen again from all of them, and valence is the lowest seen.
+GuardianVerdict mergeVerdicts(List<GuardianVerdict> verdicts, {double confident = defaultRouteConfidence}) {
   if (verdicts.isEmpty) return GuardianVerdict.none;
   if (verdicts.length == 1) return verdicts.single;
-  final scores = <String, double>{};
-  for (final v in verdicts) {
-    v.crisisScores.forEach((k, p) => scores[k] = p > (scores[k] ?? double.negativeInfinity) ? p : scores[k]!);
-  }
+  final scores = maxScores(verdicts.map((v) => v.crisisScores));
   final flagged = verdicts.where((v) => v.crisis).toList();
+  final labels = {for (final v in flagged) ...v.labels};
   return GuardianVerdict(
     crisis: flagged.isNotEmpty,
     crisisScores: scores,
     valence: verdicts.map((v) => v.valence).reduce((a, b) => a < b ? a : b),
     emotion: verdicts.first.emotion,
-    kind: flagged.isEmpty ? null : flagged.first.kind,
+    kind: flagged.isEmpty ? null : (routeCrisis(labels, scores, confident: confident) ?? flagged.first.kind),
+    labels: labels,
   );
 }
 
@@ -193,7 +262,7 @@ class HeuristicGuardian implements Guardian {
   Future<GuardianVerdict> classify(String text) async {
     final kind = kindOf(text);
     if (kind != null) {
-      return GuardianVerdict(crisis: true, crisisScores: {kind.label: 0.9}, valence: -2, kind: kind);
+      return GuardianVerdict(crisis: true, crisisScores: {kind.label: 0.9}, valence: -2, kind: kind, labels: {kind.label});
     }
     final low = _low.allMatches(text).length;
     final high = _high.allMatches(text).length;

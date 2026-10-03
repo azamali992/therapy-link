@@ -67,11 +67,14 @@ List<HelplineViewModel> _viewModels(CrisisKind kind) => [
     HelplineViewModel(name: h.name, number: h.display, scope: _scope(h, kind)),
 ];
 
-String _scope(Helpline h, CrisisKind kind) {
-  if (h.name == 'Rescue') return 'Emergency';
-  if (h.name == 'Madadgaar') return 'Abuse, children, sexual violence';
-  return 'Mental health support';
-}
+String _scope(Helpline h, CrisisKind kind) => switch (h.number) {
+  '1122' => 'Emergency',
+  '15' => 'Police emergency',
+  '1098' => 'Abuse, children, sexual violence',
+  '1043' => 'Women facing violence',
+  '1121' => 'Children at risk',
+  _ => 'Mental health support',
+};
 
 /// Calls [line]. If the phone can't, the number is shown large with a way to copy it, so nobody is
 /// left with a button that silently did nothing.

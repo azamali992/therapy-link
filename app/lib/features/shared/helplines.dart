@@ -24,7 +24,10 @@ class Helpline {
   bool get verified => verifiedOn != null;
 }
 
-const _all = {CrisisKind.suicide, CrisisKind.abuse, CrisisKind.child, CrisisKind.sexualViolence};
+final _all = CrisisKind.values.toSet();
+
+/// Kinds where the danger is to a body now, so the emergency line leads instead of closing the list.
+const _emergencyFirst = {CrisisKind.medical, CrisisKind.harmToOthers};
 
 // Verification basis (docs/clinical/helplines.md has the sources and what each service offers):
 // `verifiedOn` is the date a current public source (the operator's own site, WHO, UN Women, Child
@@ -33,6 +36,9 @@ const _all = {CrisisKind.suicide, CrisisKind.abuse, CrisisKind.child, CrisisKind
 // yet; a licensed clinician or the owner still has to confirm each one with the service itself
 // before the pilot (helplines.md "Still to do by phone"). Hours and cost stay out of the app until
 // then: no "free", no "24/7".
+//
+// Which kinds each line shows for follows docs/clinical/GUARDIAN_LABELS.md section 1: self-harm gets
+// Umang and Rescue, harm to others gets Rescue and the police, a medical emergency gets Rescue.
 //
 // Order matters for ties in [helplinesFor]: the specific abuse and child lines come before Umang.
 final _publicSourceCheck = DateTime(2026, 10, 3);
@@ -66,16 +72,24 @@ final helplines = [
     name: 'Umang',
     number: '03117786264',
     display: '0311 7786264',
-    kinds: {CrisisKind.suicide, CrisisKind.abuse, CrisisKind.sexualViolence},
+    kinds: {CrisisKind.suicide, CrisisKind.selfHarm, CrisisKind.abuse, CrisisKind.sexualViolence},
     verifiedOn: _publicSourceCheck,
   ),
+  // Danger from another person (helplines.md: police 15, verified-by-public-source). Only on the harm
+  // to others sheet, to keep the other sheets short; it is also Rescue's fallback in Balochistan.
+  Helpline(name: 'Police', number: '15', display: '15', kinds: {CrisisKind.harmToOthers}, verifiedOn: _publicSourceCheck),
   Helpline(name: 'Rescue', number: '1122', display: '1122', kinds: _all, verifiedOn: _publicSourceCheck),
 ];
 
-/// The lines for [kind], most specific first. Rescue fits every kind, so it always comes last; for
-/// abuse, child and sexual violence Madadgaar, the line made for those, leads.
+/// The lines for [kind], most specific first. Rescue fits every kind, so it comes last, except for a
+/// medical emergency or harm to others, where it leads; for abuse, child and sexual violence
+/// Madadgaar, the line made for those, leads.
 List<Helpline> helplinesFor(CrisisKind kind) {
-  int rank(Helpline h) => h.kinds.length == _all.length ? 2 : (h.number == '1098' && kind != CrisisKind.suicide ? 0 : 1);
+  int rank(Helpline h) {
+    if (h.kinds.length == _all.length) return _emergencyFirst.contains(kind) ? -1 : 2;
+    return h.number == '1098' ? 0 : 1;
+  }
+
   return [for (final h in helplines) if (h.kinds.contains(kind)) h]..sort((a, b) => rank(a).compareTo(rank(b)));
 }
 

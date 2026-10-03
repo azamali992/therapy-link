@@ -119,6 +119,20 @@ void main() {
       expect(parseCrisis((await h.messages()).last.content).kind, CrisisKind.child);
     });
 
+    for (final kind in [CrisisKind.selfHarm, CrisisKind.harmToOthers, CrisisKind.medical]) {
+      test('a ${kind.label} reading gets its own card, sheet and crisis mode, not the suicide route', () async {
+        final h = await Harness.create(engine: FakeEngine(failOnCall: true), guardian: FakeGuardian(null, kind));
+        addTearDown(h.dispose);
+
+        await h.eve.send('CRISIS something happened');
+
+        expect(h.state.crisisKind, kind);
+        expect(h.state.crisisPending, isTrue);
+        expect(parseCrisis((await h.messages()).last.content).kind, kind);
+        expect(h.prefs.getString('eveCrisisKind'), kind.label);
+      });
+    }
+
     test('risk split across turns is caught even after a long benign message', () async {
       // Reads only the head of a passage, the way the trained Guardian's 128 tokens do, and flags
       // the risk only when both halves of it are in view.

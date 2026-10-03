@@ -62,12 +62,13 @@ void main() {
   });
 
   group('helplines table', () {
-    test('child and abuse lead with Madadgaar 1098; suicide leads with Umang; Rescue is always last', () {
+    test('child and abuse lead with Madadgaar 1098; suicide leads with Umang; Rescue is last unless the danger is to a body now', () {
       expect(helplinesFor(CrisisKind.child).map((h) => h.number), ['1098', '1121', '1122']);
       expect(helplinesFor(CrisisKind.abuse).map((h) => h.number), ['1098', '1043', '03117786264', '1122']);
       expect(helplinesFor(CrisisKind.suicide).map((h) => h.number), ['03117786264', '1122']);
       for (final kind in CrisisKind.values) {
-        expect(helplinesFor(kind).last.number, '1122');
+        final first = kind == CrisisKind.medical || kind == CrisisKind.harmToOthers;
+        expect((first ? helplinesFor(kind).first : helplinesFor(kind).last).number, '1122', reason: '$kind');
       }
     });
 

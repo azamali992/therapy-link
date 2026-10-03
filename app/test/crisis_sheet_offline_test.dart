@@ -55,7 +55,7 @@ void main() {
     expect(find.text(CrisisCopy.en.keepTalking), findsOneWidget);
   });
 
-  testWidgets('all four crisis kinds open without error', (tester) async {
+  testWidgets('every crisis kind opens without error', (tester) async {
     for (final kind in CrisisKind.values) {
       await tester.pumpWidget(_bare(Builder(
         builder: (context) => Scaffold(
