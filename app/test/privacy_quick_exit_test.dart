@@ -164,7 +164,10 @@ void main() {
     expect(find.textContaining('someone might be looking at your screen'), findsOneWidget);
     expect(quickExit(), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(SwitchListTile, 'Quick exit'));
+    await tester.tap(find.ancestor(
+      of: find.text('Quick exit'),
+      matching: find.byType(InkWell),
+    ).first);
     await tester.pumpAndSettle();
     expect(container.read(privacySettingsProvider).quickExit, isFalse);
     expect(container.read(sharedPreferencesProvider).getBool('quickExit'), isFalse);

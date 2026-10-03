@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:therapylink/app/theme/theme.dart' show buildTheme;
 import 'package:therapylink/core/security/app_lock.dart';
 import 'package:therapylink/core/security/quick_exit.dart';
 import 'package:therapylink/core/settings/settings.dart';
@@ -48,6 +49,8 @@ class PrivacyFakes {
 }
 
 /// Pumps [home] the way the app does: inside the privacy gate, from MaterialApp.builder.
+///
+/// Includes the Jugnu theme so widgets that use [JugnuColors] work correctly.
 Future<ProviderContainer> pumpGated(
   WidgetTester tester,
   Widget home, {
@@ -69,6 +72,7 @@ Future<ProviderContainer> pumpGated(
         locale: const Locale('en'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildTheme(Brightness.dark),
         builder: (context, child) => PrivacyGate(onQuickExit: () => fakes.resets++, child: child!),
         home: home,
       ),
