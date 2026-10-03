@@ -67,9 +67,9 @@ class _ConsentScreenState extends ConsumerState<ConsentScreen> {
 
     return JugnuScaffold(
       appBar: JugnuAppBar(
-        title: _showUnder18
-            ? Text(l.under18Title)
-            : Text(l.consentTitle),
+        // Short bar title so it never truncates beside the Get help pill.
+        // The full "Before you start" heading appears inside the scroll body.
+        title: Text(l.consentBarTitle),
         onGetHelp: () => showCrisisSheet(context),
       ),
       body: _showUnder18
@@ -128,6 +128,14 @@ class _ConsentBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Full heading (the bar title is shorter to avoid truncation).
+          Text(
+            l.consentTitle,
+            style: t.headlineSmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface),
+          ),
+          const SizedBox(height: Jugnu.s8),
+
           // Version metadata
           Text(
             'Version $consentVersion',
@@ -143,7 +151,7 @@ class _ConsentBody extends StatelessWidget {
           ),
           const SizedBox(height: Jugnu.s12),
           _ConsentSection(
-            icon: Icons.warning_amber_rounded,
+            icon: JugnuIcons.warning,
             title: l.consentEmergencyTitle,
             body: l.consentEmergencyBody,
           ),
