@@ -1,5 +1,10 @@
 package com.therapylink.therapylink
 
+import android.app.ActivityManager
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED
+import android.os.PowerManager
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -8,12 +13,23 @@ import io.flutter.plugin.common.MethodChannel
 /**
  * MainActivity extends FlutterFragmentActivity (required for local_auth's biometric fragments).
  *
- * Exposes a "therapylink/privacy" MethodChannel so the Dart side can toggle FLAG_SECURE, which
- * prevents screenshots and hides the app in the recents switcher while app lock is on.
+ * Exposes two MethodChannels:
+ *
+ * 1. "therapylink/privacy" — toggles FLAG_SECURE so the screen is excluded from
+ *    screenshots and the system recents switcher while app lock is on.
+ *
+ * 2. "com.therapylink/power_info" — returns device power/RAM information so the
+ *    presence widgets can choose the correct render rung (video HD / video low /
+ *    poster). Invoked with getPowerInfo → map with keys:
+ *      - totalMemoryMb (Int)   : total device RAM in megabytes
+ *      - batterySaver (Boolean): whether Battery Saver / Low Power mode is active
+ *      - dataSaver (Boolean)   : whether Data Saver (background data restriction) is on
  */
 class MainActivity : FlutterFragmentActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+
+        // ── Privacy channel ──────────────────────────────────────────────────
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "therapylink/privacy")
             .setMethodCallHandler { call, result ->
                 if (call.method == "setSecure") {
@@ -25,6 +41,39 @@ class MainActivity : FlutterFragmentActivity() {
                     result.success(null)
                 } else {
                     result.notImplemented()
+                }
+            }
+
+        // ── Power-info channel ───────────────────────────────────────────────
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.therapylink/power_info")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getPowerInfo" -> {
+                        val am = getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+                        val pm = getSystemService(Context.POWER_SERVICE) as? PowerManager
+                        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+
+                        val memInfo = ActivityManager.MemoryInfo()
+                        am?.getMemoryInfo(memInfo)
+                        val totalMb = (memInfo.totalMem / (1024L * 1024L)).toInt()
+
+                        val batterySaver = pm?.isPowerSaveMode ?: false
+
+                        val dataSaver = if (cm != null) {
+                            cm.restrictBackgroundStatus == RESTRICT_BACKGROUND_STATUS_ENABLED
+                        } else {
+                            false
+                        }
+
+                        result.success(
+                            mapOf(
+                                "totalMemoryMb" to totalMb,
+                                "batterySaver" to batterySaver,
+                                "dataSaver" to dataSaver,
+                            )
+                        )
+                    }
+                    else -> result.notImplemented()
                 }
             }
     }
