@@ -415,7 +415,11 @@ def norm(text: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", " ", text.lower())).strip()
 
 
-def near_duplicates(rows: list[dict], reference: list[dict], threshold: float = 0.7) -> set[str]:
+# GUARDIAN_LABELS.md §5: the gate set is kept apart from training by word-overlap Jaccard < 0.35.
+LEAK_JACCARD = 0.35
+
+
+def near_duplicates(rows: list[dict], reference: list[dict], threshold: float = LEAK_JACCARD) -> set[str]:
     """Ids of `rows` whose word set overlaps some reference row by Jaccard ≥ `threshold`, or matches
     one exactly once punctuation and case are gone. Used to keep the test set out of training."""
     from sklearn.feature_extraction.text import CountVectorizer

@@ -104,6 +104,7 @@ def test_near_duplicates_catch_reworded_copies_but_not_new_text():
         _row("I have been writing letters to people, just in case!!"),
         _row("my exam is tomorrow and I have not studied"),
     ]
+    assert g.LEAK_JACCARD == 0.35  # the guide's separation rule
     found = g.near_duplicates(rows, test)
     assert rows[0]["id"] in found and rows[1]["id"] in found and rows[2]["id"] not in found
 
