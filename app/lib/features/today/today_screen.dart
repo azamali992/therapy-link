@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/tokens.dart';
 import '../shared/widgets.dart';
+import 'today_providers.dart';
 
 /// /today — mood check-in, trend chart and assessment links.
-///
-/// TODO(core-team): wire mood persistence (offline outbox + drift), chart data
-/// and assessment navigation.
-class TodayScreen extends StatelessWidget {
+class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
 
@@ -44,9 +43,7 @@ class TodayScreen extends StatelessWidget {
                           1 => l.moodGood,
                           _ => l.moodGreat,
                         },
-                        onTap: () {
-                          // TODO(core-team): persist mood check-in.
-                        },
+                        onTap: () => recordManualMood(ref, v),
                       ),
                   ],
                 ),
