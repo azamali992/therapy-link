@@ -102,7 +102,8 @@ def pick_pair(samples: list[str], scores: list[ReplyScore]) -> tuple[int, int] |
     failing = [i for i, s in enumerate(scores) if not s.passed]
     if not passing or not failing:
         return None
-    chosen = min(passing, key=lambda i: abs(len(samples[i].split()) - TARGET_WORDS))
+    # Fewer soft flags first (an unverified "free, 24/7" claim), then length.
+    chosen = min(passing, key=lambda i: (len(scores[i].soft), abs(len(samples[i].split()) - TARGET_WORDS)))
     rejected = max(failing, key=lambda i: len(scores[i].failures))
     return chosen, rejected
 
@@ -112,13 +113,23 @@ class Sample(NamedTuple):
     truncated: bool = False
 
 
-def score_sample(route: str, lang: str, sample: Sample) -> ReplyScore:
-    """score_reply plus what only matters for a chosen side: long enough, and not cut off."""
+def score_sample(route: str, lang: str, sample: Sample, *, rubric: bool = False) -> ReplyScore:
+    """score_reply plus what only matters for a chosen side: long enough, and not cut off.
+
+    `rubric` adds the v17 checks (train/dpo_rubric.py): R1 praise, the R5 safety question,
+    therapist talk, step plans, diagnosis, and unverified helpline claims as a soft flag.
+    """
     score = score_reply(route, lang, sample.text)
     if len(sample.text.split()) < MIN_WORDS:
         score.failures.append("too_short")
     if sample.truncated:
         score.failures.append("truncated")
+    if rubric:
+        from therapylink_ml.train.dpo_rubric import rubric as v17_rubric
+
+        hard, soft = v17_rubric(route, lang, sample.text)
+        score.failures.extend(hard)
+        score.soft.extend(soft)
     return score
 
 
@@ -129,10 +140,17 @@ def make_pairs(
     k: int = 4,
     done: set[str] | None = None,
     max_rewrite_share: float = 0.25,
+    rubric: bool = False,
+    rewrite_statuses: tuple[str, ...] = ("approved",),
+    draw: Callable[[list[dict], int], list[str | Sample]] | None = None,
+    on_samples: Callable[[dict, list[Sample], list[ReplyScore]], None] | None = None,
 ) -> Iterator[dict]:
     """Pair rows for `prompts`, sampling `k` replies each through `generate(messages)`.
 
     `generate` returns the text, or a Sample that also says whether the reply hit the token cap.
+    `draw(messages, k)`, when given, returns all k at once (build-pairs runs them concurrently).
+    `on_samples` sees every prompt's samples and scores, paired or not (the samples log).
+    A rewrite counts only when its review_status is in `rewrite_statuses`.
     """
     done = done or set()
     written = rewrites = 0
@@ -140,21 +158,26 @@ def make_pairs(
         if p["id"] in done or p["messages"][-1]["role"] != "user":
             continue
         folded = fold_system_into_first_user(p["messages"], notes=p.get("notes"))
-        drawn = [_as_sample(generate(folded)) for _ in range(k)]
+        raw = draw(folded, k) if draw else [generate(folded) for _ in range(k)]
+        drawn = [_as_sample(d) for d in raw]
         samples = [d.text for d in drawn]
-        scores = [score_sample(p["route"], p["lang"], d) for d in drawn]
+        scores = [score_sample(p["route"], p["lang"], d, rubric=rubric) for d in drawn]
+        if on_samples:
+            on_samples(p, drawn, scores)
         picked = pick_pair(samples, scores)
         chosen_source = "policy"
+        rewritten_by = None
         if picked is None:
             rewrite = p.get("rewrite") or {}
             all_fail = not any(s.passed for s in scores)
             under_cap = rewrites + 1 <= max_rewrite_share * (written + 1)
-            if not (all_fail and rewrite.get("review_status") == "approved" and under_cap):
+            if not (all_fail and rewrite.get("review_status") in rewrite_statuses and under_cap):
                 continue
             worst = max(range(k), key=lambda i: len(scores[i].failures))
             chosen_text, rejected = rewrite["content"], worst
             chosen_failures: list[str] = []
             chosen_source = "rewrite"
+            rewritten_by = rewrite.get("rewritten_by")
             rewrites += 1
         else:
             chosen, rejected = picked
@@ -166,6 +189,7 @@ def make_pairs(
             "route": p["route"],
             "lang": p["lang"],
             "chosen_source": chosen_source,
+            **({"rewritten_by": rewritten_by} if rewritten_by else {}),
             "prompt": folded,
             "chosen": [{"role": "assistant", "content": chosen_text}],
             "rejected": [{"role": "assistant", "content": samples[rejected]}],
@@ -199,7 +223,13 @@ def build_pairs(
     max_tokens: int = typer.Option(450, help="The app's reply cap"),
     include_pending: bool = typer.Option(False, help="Also use authored rows still pending clinician review"),
     max_rewrite_share: float = typer.Option(0.25, help="Cap on off-policy approved rewrites as the chosen side"),
+    rubric: bool = typer.Option(True, help="Also score with the v17 rubric (train/dpo_rubric.py): R1 praise, R5 safety question, therapist talk, step plans"),
+    workers: int = typer.Option(1, help="Samples of one prompt drawn concurrently (match llama-server -np)"),
+    samples_log: Path | None = typer.Option(None, help="Append every prompt's samples and failures here, paired or not"),
+    rewrite_status: str = typer.Option("approved", help="Comma-separated review statuses a rewrite may have to be the chosen side"),
 ) -> None:
+    from concurrent.futures import ThreadPoolExecutor
+
     from rich.progress import track
 
     from therapylink_ml.eval.backends import make_backend
@@ -210,20 +240,148 @@ def build_pairs(
         raise typer.BadParameter("sample pairs through a local OpenAI-compatible server (openai:<url>|<model>)")
     rows = load_prompts(prompts, include_pending)
     done = {r["prompt_id"] for r in map(json.loads, _read_jsonl(out))} if out.exists() else set()
+    if samples_log and samples_log.exists():
+        # A prompt already sampled (paired or not) is not sampled again on a resumed run.
+        done |= {r["prompt_id"] for r in map(json.loads, _read_jsonl(samples_log)) if r.get("k") == k}
     be = make_backend(backend)
 
     def generate(messages: list[dict]) -> Sample:
         g = be.generate(messages, max_tokens=max_tokens, temperature=temperature)
         return Sample(g.text, hit_cap(g.tokens, g.text, max_tokens))
 
+    pool = ThreadPoolExecutor(max(1, workers))
+
+    def draw(messages: list[dict], n: int) -> list[Sample]:
+        return list(pool.map(lambda _: generate(messages), range(n)))
+
+    log = samples_log.open("a", encoding="utf-8") if samples_log else None
+
+    def on_samples(p: dict, drawn: list[Sample], scores: list[ReplyScore]) -> None:
+        if log is None:
+            return
+        entry = {
+            "prompt_id": p["id"],
+            "route": p["route"],
+            "lang": p["lang"],
+            "bucket": p.get("bucket", ""),
+            "k": k,
+            "samples": [
+                {"text": d.text, "truncated": d.truncated, "failures": s.failures, "soft": s.soft} for d, s in zip(drawn, scores, strict=True)
+            ],
+        }
+        log.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        log.flush()
+
     out.parent.mkdir(parents=True, exist_ok=True)
     written: Counter[str] = Counter()
-    with out.open("a", encoding="utf-8") as f:
-        for row in make_pairs(list(track(rows, description="sampling")), generate, k=k, done=done, max_rewrite_share=max_rewrite_share):
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
-            f.flush()
-            written[row["bucket"]] += 1
+    statuses = tuple(s.strip() for s in rewrite_status.split(",") if s.strip())
+    try:
+        with out.open("a", encoding="utf-8") as f:
+            pairs = make_pairs(
+                list(track(rows, description="sampling")),
+                generate,
+                k=k,
+                done=done,
+                max_rewrite_share=max_rewrite_share,
+                rubric=rubric,
+                rewrite_statuses=statuses,
+                draw=draw if workers > 1 else None,
+                on_samples=on_samples,
+            )
+            for row in pairs:
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
+                f.flush()
+                written[row["bucket"]] += 1
+    finally:
+        pool.shutdown()
+        if log:
+            log.close()
     typer.echo(f"{sum(written.values())} new pairs from {len(rows)} prompts → {out}: {dict(written)}")
+
+
+def rewrite_pairs(
+    prompts: list[dict],
+    logged: list[dict],
+    rewrites: dict[str, dict],
+    *,
+    existing: int,
+    max_rewrite_share: float = 0.25,
+    rewrite_statuses: tuple[str, ...] = ("approved",),
+    rubric: bool = True,
+) -> Iterator[dict]:
+    """Pairs whose chosen side is a reviewed rewrite, for prompts where every logged sample failed.
+
+    The rejected side is the logged sample breaking the most rules, so it stays on-policy. A
+    rewrite must itself pass every rule it is meant to teach, and rewrites stay under
+    `max_rewrite_share` of all pairs (`existing` policy pairs plus these).
+    """
+    by_id = {p["id"]: p for p in prompts}
+    samples: dict[str, list[dict]] = {}
+    for entry in logged:
+        samples.setdefault(entry["prompt_id"], []).extend(entry["samples"])
+    budget = int(max_rewrite_share * existing / (1 - max_rewrite_share)) if max_rewrite_share < 1 else len(rewrites)
+    made = 0
+    for pid, rw in rewrites.items():
+        if made >= budget:
+            break
+        p, drawn = by_id.get(pid), samples.get(pid)
+        if p is None or not drawn or rw.get("review_status") not in rewrite_statuses:
+            continue
+        if any(not s["failures"] for s in drawn):
+            continue  # the model produced a passing reply: that prompt pairs on-policy or not at all
+        score = score_sample(p["route"], p["lang"], Sample(rw["content"]), rubric=rubric)
+        if not score.passed:
+            raise ValueError(f"{pid}: the rewrite itself fails {score.failures}")
+        worst = max(drawn, key=lambda s: len(s["failures"]))
+        made += 1
+        yield {
+            "prompt_id": pid,
+            "bucket": p.get("bucket", ""),
+            "route": p["route"],
+            "lang": p["lang"],
+            "chosen_source": "rewrite",
+            "rewritten_by": rw.get("rewritten_by"),
+            "prompt": fold_system_into_first_user(p["messages"], notes=p.get("notes")),
+            "chosen": [{"role": "assistant", "content": rw["content"].strip()}],
+            "rejected": [{"role": "assistant", "content": worst["text"]}],
+            "chosen_failures": [],
+            "rejected_failures": worst["failures"],
+        }
+
+
+@app.command("add-rewrites")
+def add_rewrites(
+    prompts: list[str] = typer.Option(..., "--prompts", help="Prompt JSONL files the samples came from"),
+    samples_log: list[Path] = typer.Option(..., "--samples-log", help="Samples logs written by build-pairs"),
+    rewrites: Path = typer.Option(..., help="JSONL of {prompt_id, content, review_status, rewritten_by}"),
+    out: Path = DATA / "dpo_pairs.jsonl",
+    max_rewrite_share: float = 0.25,
+    rewrite_status: str = typer.Option("approved", help="Comma-separated review statuses accepted"),
+) -> None:
+    """Append rewrite pairs for prompts where every logged sample failed."""
+    rows = [r for spec in prompts for r in load_prompts(spec)]
+    logged = [json.loads(line) for path in samples_log for line in _read_jsonl(path)]
+    rw = {r["prompt_id"]: r for r in map(json.loads, _read_jsonl(rewrites))}
+    have = [json.loads(line) for line in _read_jsonl(out)] if out.exists() else []
+    done = {r["prompt_id"] for r in have}
+    policy = sum(r["chosen_source"] == "policy" for r in have)
+    already = len(have) - policy
+    statuses = tuple(s.strip() for s in rewrite_status.split(",") if s.strip())
+    new = list(
+        rewrite_pairs(
+            rows,
+            logged,
+            {k: v for k, v in rw.items() if k not in done},
+            existing=policy,
+            max_rewrite_share=max_rewrite_share,
+            rewrite_statuses=statuses,
+        )
+    )
+    new = new[: max(0, int(max_rewrite_share * policy / (1 - max_rewrite_share)) - already)]
+    with out.open("a", encoding="utf-8") as f:
+        for row in new:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    typer.echo(f"{len(new)} rewrite pairs appended to {out} ({policy} policy, {already + len(new)} rewrites)")
 
 
 class MarginWatch:

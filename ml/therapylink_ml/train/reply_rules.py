@@ -87,6 +87,8 @@ def names_allowed_help(text: str) -> bool:
 @dataclass
 class ReplyScore:
     failures: list[str] = field(default_factory=list)
+    # Flags that rank passing replies without failing them (train/dpo_rubric.py SOFT).
+    soft: list[str] = field(default_factory=list)
 
     @property
     def passed(self) -> bool:
