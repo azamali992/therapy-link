@@ -10,25 +10,9 @@ import '../../ui/components/setting_row.dart';
 import '../../ui/components/slab.dart';
 import '../shared/guardian_status.dart';
 import '../shared/widgets.dart';
-import 'account_actions.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
-
-  /// Cloud mode sends conversations off the phone, so switching to it asks first.
-  Future<void> _setRuntime(
-      BuildContext context, WidgetRef ref, EveRuntime r) async {
-    if (r == EveRuntime.cloud) {
-      final l = context.l10n;
-      final ok = await confirmDestructive(
-          context,
-          title: l.cloudConfirmTitle,
-          body: l.cloudConfirmBody,
-          action: l.cloudConfirmAction);
-      if (!ok) return;
-    }
-    await ref.read(settingsProvider.notifier).setEveRuntime(r);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,7 +21,6 @@ class SettingsScreen extends ConsumerWidget {
     final n = ref.read(settingsProvider.notifier);
     final t = Theme.of(context).textTheme;
     final colors = Theme.of(context).extension<JugnuColors>()!;
-    final dev = ref.watch(devControlsProvider);
 
     return Screen(
       title: l.youSettings,
@@ -120,31 +103,13 @@ class SettingsScreen extends ConsumerWidget {
           if (!kIsWeb) const _AppLockTile(),
           const _QuickExitTile(),
 
-          // ── Eve model (dev controls only) ──────────────────────────────
+          // ── Where Eve runs ─────────────────────────────────────────────
+          // v3 serves Eve from our server only. The old on-device / cloud switch did nothing, so
+          // it's gone until on-device Eve ships behind its own flag (docs/ondevice).
           SectionTitle(l.settingsModel),
-          if (dev) ...[
-            SegmentedButton<EveRuntime>(
-              segments: [
-                ButtonSegment(
-                    value: EveRuntime.onDevice,
-                    icon: const Icon(Icons.phone_android_rounded),
-                    label: Text(l.settingsModelOnDevice)),
-                ButtonSegment(
-                    value: EveRuntime.cloud,
-                    icon: const Icon(Icons.cloud_outlined),
-                    label: Text(l.settingsModelCloud)),
-              ],
-              selected: {s.eveRuntime},
-              onSelectionChanged: (v) => _setRuntime(context, ref, v.first),
-            ),
-            const SizedBox(height: Tokens.s8),
-          ],
           Text(
-            s.eveRuntime == EveRuntime.onDevice
-                ? l.evePrivacy
-                : l.evePrivacyCloud,
-            style:
-                t.bodySmall?.copyWith(color: colors.ink2),
+            l.evePrivacyInline,
+            style: t.bodySmall?.copyWith(color: colors.ink2),
           ),
 
           // ── Safety check ───────────────────────────────────────────────
