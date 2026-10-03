@@ -1,0 +1,173 @@
+# TherapyLink on one free VM: TLS ingress -> FastAPI API -> llama-server (Eve, CPU) + Postgres.
+#
+#   cd ops/free && docker compose up -d          # setup.sh does the first run; see docs/deploy/FREE_DEPLOY.md
+#
+# Networks:
+#   edge     ingress (caddy or cloudflared) and the API. Normal bridge, so the API can reach
+#            Firebase to verify ID tokens.
+#   backend  internal: true. The API, Eve and Postgres. No route to or from the internet and no
+#            published ports: llama-server and Postgres are reachable only from the API container.
+#
+# Profiles (COMPOSE_PROFILES in .env): caddy | tunnel, and localdb (leave it out to use Neon).
+
+name: ${COMPOSE_PROJECT_NAME:-therapylink}
+
+x-hardening: &hardening
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges:true
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "5"
+
+services:
+  caddy:
+    <<: *hardening
+    profiles: ["caddy"]
+    image: caddy:2.11.6-alpine@sha256:c776e0c6413b544d0459665e54ec7b8b2a15000c0cbee8b254da0067b1d184ff
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      TL_DOMAIN: ${TL_DOMAIN:?set TL_DOMAIN in ops/free/.env}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in ops/free/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    mem_limit: 256m
+    networks: [edge]
+
+  cloudflared:
+    <<: *hardening
+    profiles: ["tunnel"]
+    image: cloudflare/cloudflared:2026.9.3@sha256:072c067d25ccbe61d46e18f0d0723255f2bb5304f7317caa95b27031520ff92c
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      - api
+    read_only: true
+    cap_drop: [ALL]
+    mem_limit: 256m
+    networks: [edge]
+
+  api:
+    <<: *hardening
+    build:
+      context: ../../api
+    image: therapylink-api:local
+    command: ["serve"]
+    environment:
+      PORT: "7860"
+      WEB_CONCURRENCY: "1"   # one worker: the in-memory rate limits are then exact (no Redis here)
+      TL_ENV: ${TL_ENV:-staging}
+      TL_DATABASE_URL: ${TL_DATABASE_URL:-postgresql+asyncpg://therapylink:${POSTGRES_PASSWORD}@postgres:5432/therapylink}
+      TL_FIREBASE_PROJECT_ID: ${TL_FIREBASE_PROJECT_ID:-therapylink69}
+      TL_FIREBASE_SERVICE_ACCOUNT_JSON: ${FIREBASE_SA_JSON_HOST_PATH:+/run/secrets/firebase.json}
+      TL_INFERENCE_BASE_URL: http://eve:8080
+      TL_INFERENCE_API_KEY: ${TL_LLM_API_KEY:?run setup.sh or set TL_LLM_API_KEY}
+      TL_INFERENCE_MODEL: eve
+      TL_INFERENCE_MAX_TOKENS: "450"
+      TL_INFERENCE_RATE_CAPACITY: ${TL_INFERENCE_RATE_CAPACITY:-30}
+      TL_INFERENCE_RATE_PERIOD_S: ${TL_INFERENCE_RATE_PERIOD_S:-600}
+      TL_INFERENCE_DAILY_CAP: ${TL_INFERENCE_DAILY_CAP:-300}
+      TL_APP_CHECK_REQUIRED: ${TL_APP_CHECK_REQUIRED:-false}
+      TL_LOG_UID_SALT: ${TL_LOG_UID_SALT:?run setup.sh or set TL_LOG_UID_SALT}
+      TL_CORS_ORIGINS: "[]"
+      # TL_PROMPT_SHA256 / TL_PROMPT_CHARS stay unset: the app's summary and memory-note calls
+      # (ServerEveEngine.complete) don't carry the Eve prompt, so the check would 422 them.
+    volumes:
+      - ${FIREBASE_SA_JSON_HOST_PATH:-/dev/null}:/run/secrets/firebase.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    mem_limit: 1g
+    # Under CPU contention the API wins over Eve, so sign-in, journal and check-ins stay quick
+    # while a reply is being generated.
+    cpu_shares: 2048
+    networks: [edge, backend]
+
+  eve:
+    <<: *hardening
+    build:
+      context: ../..
+      dockerfile: ops/free/Dockerfile.eve-cpu
+    image: therapylink-eve-cpu:b10955
+    environment:
+      TL_LLM_API_KEY: ${TL_LLM_API_KEY:?run setup.sh or set TL_LLM_API_KEY}
+      TL_ENV: ${TL_ENV:-staging}
+      TL_LLM_ALLOW_UNAPPROVED: ${TL_LLM_ALLOW_UNAPPROVED:-}
+      TL_LLM_PARALLEL: ${EVE_SLOTS:-2}
+      TL_LLM_CTX_PER_SLOT: ${EVE_CTX_PER_SLOT:-8192}
+      TL_LLM_NGL: "0"
+      # llama-server reads these from the environment; run-llama-server.sh doesn't set them.
+      LLAMA_ARG_THREADS: ${EVE_THREADS:-2}
+      # Full-size sliding-window cache: lets every new conversation reuse the cached ~400-token
+      # Eve prompt instead of re-reading it (measured: first-reply prefill 411 -> 27 tokens).
+      LLAMA_ARG_SWA_FULL: "1"
+      LLAMA_ARG_CACHE_RAM: ${EVE_CACHE_RAM_MIB:-1536}
+      # Read the weights into RAM instead of mmap: steadier speed under memory pressure, and the
+      # VM's memory use stays above Oracle's 20% idle-reclaim line.
+      LLAMA_ARG_LOAD_MODE: none
+    volumes:
+      - ${EVE_MODELS_DIR:-/srv/eve/models}:/models:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    mem_limit: ${EVE_MEM_LIMIT:-7g}
+    cpu_shares: 512
+    networks: [backend]
+
+  postgres:
+    <<: *hardening
+    profiles: ["localdb"]
+    image: postgres:17.11-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+    environment:
+      POSTGRES_USER: therapylink
+      POSTGRES_DB: therapylink
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run setup.sh or set POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --data-checksums"
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - max_connections=40
+      - -c
+      - log_statement=none
+      - -c
+      - log_min_error_statement=panic   # an error must not print the statement (it can hold journal text)
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U therapylink -d therapylink"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    shm_size: 128m
+    mem_limit: 1g
+    networks: [backend]
+
+networks:
+  edge: {}
+  backend:
+    internal: true
+
+volumes:
+  caddy_data: {}
+  caddy_config: {}
+  pgdata: {}
