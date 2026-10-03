@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import '../features/clinician/patient_screen.dart';
 import '../features/clinician/requests_screen.dart';
 import '../features/eve/conversations_screen.dart';
 import '../features/eve/eve_screen.dart';
+import '../ui/gallery.dart';
 import '../features/exercises/exercises_screen.dart';
 import '../features/journal/journal_editor_screen.dart';
 import '../features/journal/journal_screen.dart';
@@ -108,6 +110,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
       GoRoute(path: '/consent', builder: (_, _) => const ConsentScreen()),
       GoRoute(path: '/sign-in', builder: (_, _) => const SignInScreen()),
+
+      // Debug-only component gallery — hidden from release builds.
+      if (kDebugMode)
+        GoRoute(path: '/gallery', builder: (_, _) => const UiGallery()),
 
       // -----------------------------------------------------------------------
       // Patient shell — 4 tabs: Eve · Today · Journal · You
