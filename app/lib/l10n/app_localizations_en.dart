@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcomeBody =>
-      'Eve listens in English or Roman Urdu. By default she runs on this phone, so your conversations with her are kept here.';
+      'Eve listens in English or Roman Urdu. Your conversations with her are saved on this phone. Each message is sent to the TherapyLink server so she can answer, and it isn\'t stored there.';
 
   @override
   String get welcomeLanguage => 'Which do you type in most?';
@@ -100,7 +100,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eveListening => 'Eve is listening';
 
   @override
-  String get evePrivacy => 'Runs on this device. Your words stay here.';
+  String get evePrivacy =>
+      'Saved on this phone. Each message goes to the TherapyLink server to be answered.';
 
   @override
   String get evePrivacyCloud =>
@@ -130,8 +131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guardianTitle => 'Safety check';
 
   @override
-  String get guardianHeuristic =>
-      'Using the built-in keyword check. Download the trained model for better detection in English and Roman Urdu.';
+  String get guardianHeuristic => 'Using the built-in keyword check.';
 
   @override
   String get guardianReady =>
@@ -393,7 +393,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get journalEmptyBody =>
-      'A few honest lines are enough. Entries stay private unless you choose to share them with a clinician.';
+      'A few honest lines are enough. Entries are saved to your account, and a clinician sees them only if you choose to share them.';
 
   @override
   String get journalTitleHint => 'Title (optional)';
@@ -427,7 +427,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get youDataBody =>
-      'Conversations with Eve and her memory notes are kept on this phone; in cloud mode, messages are sent to the TherapyLink server to be answered. Check-in scores, your mood trend and journal entries are stored on your account so they follow you, and a clinician sees them only if you link one and switch that on.';
+      'Conversations with Eve and her memory notes are saved on this phone. To answer you, each message and the notes that relate to it are sent to the TherapyLink server, which doesn\'t store them. Check-in scores, your mood trend and journal entries are stored on your account so they follow you, and a clinician sees them only if you link one and switch that on.';
 
   @override
   String get settingsLanguage => 'Language';
@@ -600,10 +600,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eveGreetingSub =>
-      'I\'ll listen first. Everything here stays private, and you can start with something small.';
+      'I\'ll listen first. You can start with something small.';
 
   @override
-  String get eveSubtitleDevice => 'On this device · private';
+  String get eveSubtitleDevice => 'Saved on this phone';
 
   @override
   String get eveSubtitleCloud => 'Cloud mode · via your TherapyLink server';
@@ -782,7 +782,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcomePointPrivate =>
-      'Your conversations with Eve are kept on this phone. Journal entries and check-ins are saved to your account.';
+      'Your conversations with Eve are saved on this phone, and each message is sent to the TherapyLink server to be answered. Journal entries and check-ins are saved to your account.';
 
   @override
   String get welcomePointLanguage =>
@@ -800,7 +800,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memoryIntro =>
-      'Eve keeps a few short notes from your conversations, like who matters to you and what you agreed to try, so you don\'t have to start from zero each time. They\'re kept on this phone; in cloud mode, the notes that relate to a message are sent along with it.';
+      'Eve keeps a few short notes from your conversations, like who matters to you and what you agreed to try, so you don\'t have to start from zero each time. They\'re saved on this phone, and the notes that relate to a message are sent with it to the TherapyLink server.';
 
   @override
   String get memoryToggle => 'Remember between conversations';
@@ -954,7 +954,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get getHelpNow => 'Get help now';
 
   @override
-  String get youHelpSub => 'Helplines you can call right away';
+  String get youHelpSub => 'Helplines and their numbers';
 
   @override
   String get consentTitle => 'Before you start';
@@ -974,14 +974,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get consentEmergencyBody =>
-      'If you might hurt yourself or someone else, or you\'re in danger, call 1122 or a helpline now. Eve can\'t call anyone for you.';
+      'Nobody watches your chats with Eve, and telling Eve you\'re in danger doesn\'t alert anyone. If you might hurt yourself or someone else, or you\'re in danger, call 1122 or a helpline from Get help now. Eve can\'t call anyone for you.';
 
   @override
   String get consentDataTitle => 'What is stored where';
 
   @override
   String get consentDataBody =>
-      'Your conversations with Eve are kept on this phone. To answer each message, it is sent to our server; it is not stored there. Check-in scores, mood points, journal entries and your account are stored on your TherapyLink account so they follow you. A clinician sees only what you link them to and switch on.';
+      'Your conversations with Eve are saved only on this phone. To answer each message, it is sent to the TherapyLink server with the memory notes that relate to it, and it is not stored there. Check-in scores, mood points, journal entries and your account details are stored on your TherapyLink account so they follow you to a new phone. A clinician sees only what you link them to and switch on.';
 
   @override
   String get consentAge => 'I am 18 or older';
@@ -1007,7 +1007,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get under18Body =>
-      'This app is made for people 18 and over. If something is hard right now, you deserve real support. Talk to an adult you trust, or call one of these:';
+      'This app is made for people 18 and over, so Eve can\'t chat with you here. If something is hard right now, you deserve real support. Talk to an adult you trust, like a teacher, a relative or a neighbour, or call one of these:';
 
   @override
   String get under18CallChild => 'Madadgaar child helpline · 1098';
@@ -1146,7 +1146,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clinicianUnvalidatedTranslationHelp =>
-      'Answered in the app\'s Roman Urdu wording, which has not been validated against the original questionnaire. Read the score and its band with care.';
+      'Answered in the app\'s Roman Urdu wording. It follows the published Urdu versions where it can, but Roman Urdu wording has not itself been validated against the original questionnaire. Read the score and its band with care.';
 
   @override
   String get accessLogTitle => 'Who viewed my data';

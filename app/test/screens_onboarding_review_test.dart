@@ -68,7 +68,7 @@ Future<void> _loadFonts() async {
   final materialLoader = FontLoader('MaterialIcons');
   materialLoader.addFont(
     File(
-      'D:/dev/flutter/bin/cache/artifacts/material_fonts/materialicons-regular.otf',
+      '${Platform.environment['FLUTTER_ROOT']}/bin/cache/artifacts/material_fonts/materialicons-regular.otf',
     ).readAsBytes().then((bytes) => ByteData.view(bytes.buffer)),
   );
   await materialLoader.load();
@@ -96,10 +96,7 @@ Future<void> _loadFonts() async {
 
 /// Wraps [child] in the full test harness: ProviderScope with fake prefs,
 /// MaterialApp with the given [brightness], fixed 360×760 viewport.
-Widget _harness(
-  Widget child, {
-  Brightness brightness = Brightness.dark,
-}) {
+Widget _harness(Widget child, {Brightness brightness = Brightness.dark}) {
   SharedPreferences.setMockInitialValues({});
   return ProviderScope(
     overrides: [
@@ -108,16 +105,14 @@ Widget _harness(
       ),
     ],
     child: MediaQuery(
-      data: const MediaQueryData(
-        size: Size(360, 760),
-        devicePixelRatio: 2,
-      ),
+      data: const MediaQueryData(size: Size(360, 760), devicePixelRatio: 2),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),
-        themeMode:
-            brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light,
+        themeMode: brightness == Brightness.dark
+            ? ThemeMode.dark
+            : ThemeMode.light,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -147,9 +142,7 @@ Future<void> _golden(
 
   await expectLater(
     find.byType(MaterialApp),
-    matchesGoldenFile(
-      '../../docs/design/screens/onboarding/$name.png',
-    ),
+    matchesGoldenFile('../../docs/design/screens/onboarding/$name.png'),
   );
 }
 

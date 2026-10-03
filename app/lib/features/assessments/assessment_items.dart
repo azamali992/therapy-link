@@ -1,7 +1,12 @@
 import '../../core/api/models.dart';
 
-/// PHQ-9 and GAD-7 are public domain (Pfizer). The Roman Urdu wording is an app translation,
-/// not a validated clinical instrument — say so wherever scores are shown to a clinician.
+/// PHQ-9 and GAD-7 are free to use: Pfizer allows reproduction, translation, display and
+/// distribution without permission (phqscreeners.com). The Roman Urdu items are a transliteration
+/// of the validated Urdu versions (PHQ-9: Ahmad et al., JPMA 2018;68:1166-70; GAD-7: Ahmad et al.,
+/// JPMA 2017;67:1536-40). The Roman Urdu wording itself has not been validated, so the
+/// "unvalidated translation" notice stays wherever scores are shown to a clinician. Sources and
+/// item-by-item notes: docs/clinical/assessments-urdu.md (ai-clinical-review 2026-10-03; licensed
+/// clinician sign-off PENDING).
 List<String> assessmentItems(Instrument instrument, String lang) {
   final ur = lang == 'ur';
   return switch (instrument) {
@@ -25,15 +30,15 @@ const _phq9En = [
 ];
 
 const _phq9Ur = [
-  'Kisi kaam mein dilchaspi ya maza na aana',
-  'Udaas, mayoos ya na-umeed mehsoos karna',
-  'Neend aane ya sote rehne mein mushkil, ya bohat zyada sona',
-  'Thakan mehsoos karna ya energy kam hona',
-  'Bhook kam lagna ya zyada khana',
-  'Apne baare mein bura mehsoos karna — ke aap nakaam hain ya aap ne apne aap ko ya ghar walon ko mayoos kiya hai',
-  'Kisi cheez par tawajjo dene mein mushkil, jaise kuch parhna ya dekhna',
-  'Itna aahista chalna ya bolna ke doosron ne mehsoos kiya ho — ya iska ulta, itni bechaini ke aap aam se zyada hilte-julte rahe',
-  'Yeh khayal ke mar jana behtar hoga, ya khud ko kisi tarah nuqsan pohanchane ke khayal',
+  'Rozmarra ke kaamon mein dilchaspi aur lutf ki kami',
+  'Udaasi, afsurdagi ya mayoosi ka ehsaas',
+  'Neend ka na aana, neend aane ke baad sote rehne mein dushwari, ya neend ki zyadti',
+  'Be-sabab thakawat ya kamzori ka ehsaas',
+  'Bila wajah bhook mein kami ya zyadti',
+  'Shikast-khurdagi ya nakami ka ehsaas, ya apne khandan ke afraad ki tawaqqoat par poora na utarne ka ehsaas',
+  'Tawajjo markooz rakhne mein dushwari, jaise akhbaar parhne ya TV dekhne mein',
+  'Itni sust-rawi se chalna ya bolna ke doosron ne is baat ki nishandahi ki ho, ya is ke bar-aks mamool se kai guna barhi hui bechaini ya iztiraab',
+  'Zehan mein is khayal ka baar baar aana ke zinda rehne se mar jana behtar hai, ya apni zaat ko nuqsan pohanchane ke khayalat ka aana',
 ];
 
 const _gad7En = [
@@ -47,11 +52,11 @@ const _gad7En = [
 ];
 
 const _gad7Ur = [
-  'Ghabrahat, bechaini ya tanav mehsoos karna',
-  'Fikar ko rok ya control na kar paana',
-  'Mukhtalif cheezon ke baare mein bohat zyada fikar karna',
-  'Sukoon se baithne mein mushkil',
-  'Itni bechaini ke ek jagah tik kar baithna mushkil ho',
-  'Jaldi chirchira ya naraz ho jana',
-  'Aisa dar ke jaise kuch bohat bura hone wala hai',
+  'Ghabrahat, pareshani ya shadeed nauiyat ka tanao',
+  'Pareshani ya fikr par qaboo paane mein dushwari',
+  'Mukhtalif cheezon ke baare mein hadd se zyada barhi hui tashweesh',
+  'Pur-sukoon rehne mein dushwari',
+  'Is qadar bechaini ya iztiraab ke ek jagah baithna mushkil ho jaye',
+  'Mamooli baaton ka bura lagna ya chirchirapan',
+  'Ek anjaane khauf ka ehsaas, jaise kuch bohat bura hone wala hai',
 ];

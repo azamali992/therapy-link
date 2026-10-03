@@ -4,11 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme/tokens.dart';
 import '../../core/security/app_lock.dart';
 import '../../core/security/quick_exit.dart';
-import 'crisis_copy.dart';
+import '../../ui/components/buttons.dart';
+import '../../ui/components/jugnu_scaffold.dart';
+import '../../ui/jugnu_icons.dart';
 import 'widgets.dart';
 
 /// Shown over everything while the app lock is on. Neutral: no app name, nothing from inside.
-/// Help is on it too and opens without unlocking; someone in crisis must never meet a lock first.
+/// Help is always reachable and opens without unlocking — someone in crisis must never meet a
+/// lock screen first.
 class LockScreen extends ConsumerWidget {
   const LockScreen({super.key});
 
@@ -16,54 +19,81 @@ class LockScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).extension<JugnuColors>()!;
     final lock = ref.watch(appLockProvider);
-    final copy = CrisisCopy.forContext(context);
 
-    return Scaffold(
+    return JugnuScaffold(
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(Tokens.s24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
+          children: [
+            // Get help is always at the top — no app identity, help only.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  Jugnu.s20, Jugnu.s8, Jugnu.s16, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Icon(Icons.lock_outline_rounded, size: 40, color: scheme.primary),
-                  const SizedBox(height: Tokens.s20),
-                  Text(l.lockTitle, style: t.headlineSmall, textAlign: TextAlign.center),
-                  const SizedBox(height: Tokens.s8),
-                  Text(l.lockBody, style: t.bodyMedium?.copyWith(color: scheme.onSurfaceVariant), textAlign: TextAlign.center),
-                  if (lock.failed) ...[
-                    const SizedBox(height: Tokens.s12),
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(l.lockFailed, style: t.bodyMedium?.copyWith(color: scheme.error), textAlign: TextAlign.center),
-                    ),
-                  ],
-                  const SizedBox(height: Tokens.s24),
-                  FilledButton.icon(
-                    onPressed: lock.busy ? null : () => ref.read(appLockProvider.notifier).unlock(l.lockReason),
-                    style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
-                    icon: const Icon(Icons.lock_open_rounded),
-                    label: Text(l.lockUnlock),
-                  ),
-                  const SizedBox(height: Tokens.s12),
-                  OutlinedButton.icon(
-                    onPressed: () => showCrisisSheet(context, copy: copy),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      foregroundColor: scheme.tertiary,
-                      side: BorderSide(color: scheme.tertiary),
-                    ),
-                    icon: const Icon(Icons.support_rounded),
-                    label: Text(copy.helpNow),
-                  ),
+                  GetHelpButton(),
                 ],
               ),
             ),
-          ),
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(Jugnu.s24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Lock glyph.
+                        Icon(
+                          JugnuIcons.lock,
+                          size: 40,
+                          color: colors.protectedState,
+                        ),
+                        const SizedBox(height: Jugnu.s20),
+                        Text(
+                          l.lockTitle,
+                          style: t.headlineSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: Jugnu.s8),
+                        Text(
+                          l.lockBody,
+                          style: t.bodyMedium?.copyWith(color: colors.ink2),
+                          textAlign: TextAlign.center,
+                        ),
+                        if (lock.failed) ...[
+                          const SizedBox(height: Jugnu.s12),
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              l.lockFailed,
+                              style: t.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: Jugnu.s24),
+                        // Primary unlock button.
+                        PrimaryButton(
+                          label: l.lockUnlock,
+                          onPressed: lock.busy
+                              ? () {}
+                              : () => ref
+                                    .read(appLockProvider.notifier)
+                                    .unlock(l.lockReason),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -77,19 +107,46 @@ class NeutralScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Theme.of(context).textTheme;
-    return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, actions: const [GetHelpButton()]),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(Tokens.s24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(context.l10n.quickExitNeutral, style: t.bodyLarge, textAlign: TextAlign.center),
-              const SizedBox(height: Tokens.s16),
-              TextButton(onPressed: () => ref.read(quickExitProvider.notifier).dismiss(context.l10n.lockReason), child: Text(context.l10n.continueLabel)),
-            ],
-          ),
+    return JugnuScaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Always show Get help, nothing else identifiable.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  Jugnu.s20, Jugnu.s8, Jugnu.s16, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GetHelpButton(),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(Jugnu.s24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        context.l10n.quickExitNeutral,
+                        style: t.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: Jugnu.s16),
+                      GhostButton(
+                        label: context.l10n.continueLabel,
+                        onPressed: () => ref
+                            .read(quickExitProvider.notifier)
+                            .dismiss(context.l10n.lockReason),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

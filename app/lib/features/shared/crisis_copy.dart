@@ -2,9 +2,10 @@ import 'package:flutter/widgets.dart';
 
 import '../../core/ml/guardian.dart';
 
-// PENDING CLINICIAN REVIEW. Every string in this file is crisis wording written by engineering from
-// the ship review (docs/ship-review/crisis-safety.md F4, F6, F13; clinical-psychologist.md R5). None
-// of it has been approved by a clinician. It lives here as Dart constants rather than in the ARB
+// ai-clinical-review 2026-10-03. Licensed clinician sign-off: PENDING. The wording below was
+// reviewed and rewritten by the AI team acting in the clinical-lead role (docs/clinical/red-lines.md
+// R5, R11; docs/clinical/AI_REVIEW_LOG.md). It is not a licensed clinician's approval, and a
+// Pakistan-licensed psychologist must sign it before real patients see it. It lives here as Dart constants rather than in the ARB
 // files because the language is chosen from what the person wrote, not from the app's locale.
 // Wording that follows the app's locale, such as the notices shown while Eve's chat is paused,
 // lives in the ARB files instead (eveSafetyNotReady*, eveUnavailable*), still pending review.
@@ -99,7 +100,7 @@ class CrisisCopy {
     language: CrisisLanguage.en,
     helpNow: 'Get help now',
     helpBar: 'Help is here',
-    helpBarBody: 'You can talk to a person right now.',
+    helpBarBody: 'Call one of these numbers to talk to a person.',
     keepTalking: 'Keep talking to Eve',
     copyNumber: 'Copy number',
     numberCopied: 'Number copied',
@@ -116,7 +117,7 @@ class CrisisCopy {
     bodies: {
       CrisisKind.suicide: "You don't have to carry this alone. Are you safe right now? You can talk to someone at one of these numbers.",
       CrisisKind.abuse: "You deserve to be safe. Are you safe right now? If you are in danger, call Rescue. These lines can help.",
-      CrisisKind.child: 'Are you safe right now? These lines help children, and a grown-up you trust can help too.',
+      CrisisKind.child: 'Are you safe right now? These lines help children, and a grown-up you trust, like a teacher or a relative, can help too.',
       CrisisKind.sexualViolence: 'You deserve support and to be safe. Are you safe right now? These lines can help.',
     },
   );
@@ -125,7 +126,7 @@ class CrisisCopy {
     language: CrisisLanguage.romanUrdu,
     helpNow: 'Abhi madad lein',
     helpBar: 'Madad yahan hai',
-    helpBarBody: 'Aap abhi kisi insaan se baat kar sakte hain.',
+    helpBarBody: 'Kisi insaan se baat karne ke liye in mein se kisi number par call karein.',
     keepTalking: 'Eve se baat jaari rakhein',
     copyNumber: 'Number copy karein',
     numberCopied: 'Number copy ho gaya',
@@ -140,9 +141,9 @@ class CrisisCopy {
       CrisisKind.sexualViolence: 'Jo hua, us mein aap ka koi qasoor nahi',
     },
     bodies: {
-      CrisisKind.suicide: 'Aap ko yeh akele nahi uthana. Kya aap abhi mehfooz hain? In numbers par aap abhi kisi se baat kar sakte hain.',
+      CrisisKind.suicide: 'Yeh bojh akele nahi uthana. Kya aap abhi mehfooz hain? In numbers par kisi se baat ho sakti hai.',
       CrisisKind.abuse: 'Aap mehfooz rehne ke haqdar hain. Kya aap abhi mehfooz hain? Agar khatra hai to Rescue ko call karein. Yeh lines madad kar sakti hain.',
-      CrisisKind.child: 'Kya aap abhi mehfooz hain? Yeh lines bachon ki madad karti hain, aur koi bara jis par aap bharosa karte hain woh bhi madad kar sakta hai.',
+      CrisisKind.child: 'Kya aap abhi mehfooz hain? Yeh lines bachon ki madad karti hain, aur koi bara jis par bharosa ho, jaise teacher ya rishtedaar, woh bhi madad kar sakta hai.',
       CrisisKind.sexualViolence: 'Aap sahara aur hifazat ke haqdar hain. Kya aap abhi mehfooz hain? Yeh lines madad kar sakti hain.',
     },
   );

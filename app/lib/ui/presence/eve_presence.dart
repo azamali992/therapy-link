@@ -7,7 +7,7 @@
 /// Usage:
 /// ```dart
 /// EvePresence(
-///   state: EveState.listening,
+///   state: EvePresenceState.listening,
 ///   size: EvePresentSize.welcome,
 /// )
 /// ```
@@ -89,7 +89,7 @@ class EvePresence extends ConsumerStatefulWidget {
     this.showHalo = true,
   });
 
-  final EveState state;
+  final EvePresenceState state;
   final EvePresentSize size;
 
   /// Show the breathing halo behind Eve. Defaults to true; pass false for
@@ -105,7 +105,7 @@ class _EvePresenceState extends ConsumerState<EvePresence>
   VideoPlayerController? _controller;
   VideoPlayerController? _nextController;
   RungChoice? _rung;
-  EveState? _activeState;
+  EvePresenceState? _activeState;
   double _opacity = 1.0;
   Timer? _crossfadeTimer;
 
@@ -163,9 +163,9 @@ class _EvePresenceState extends ConsumerState<EvePresence>
   // ---- state helpers ------------------------------------------------------
 
   /// The state to actually render — overridden to idle in crisis mode.
-  EveState get _effectiveState {
+  EvePresenceState get _effectiveState {
     final crisisHold = ref.read(evePresenceCrisisHoldProvider);
-    return crisisHold ? EveState.idle : widget.state;
+    return crisisHold ? EvePresenceState.idle : widget.state;
   }
 
   void _init() {
@@ -179,7 +179,7 @@ class _EvePresenceState extends ConsumerState<EvePresence>
   /// If [force] is true the switch is immediate (first load). Otherwise a
   /// 240 ms crossfade is used — unless reduced motion is active, in which
   /// case even crossfades are omitted.
-  void _applyState(EveState state, {bool force = false}) {
+  void _applyState(EvePresenceState state, {bool force = false}) {
     if (_rung == null) return;
     if (!force && state == _activeState) return;
     final rung = _rung!;
@@ -257,7 +257,7 @@ class _EvePresenceState extends ConsumerState<EvePresence>
   Widget build(BuildContext context) {
     // Listen to crisis hold changes.
     ref.listen(evePresenceCrisisHoldProvider, (_, next) {
-      if (next) _applyState(EveState.idle, force: true);
+      if (next) _applyState(EvePresenceState.idle, force: true);
     });
 
     final dp = widget.size.dp;
@@ -298,10 +298,10 @@ class _EvePresenceState extends ConsumerState<EvePresence>
     );
   }
 
-  HaloMode get _haloMode => switch (_activeState ?? EveState.idle) {
-        EveState.idle => HaloMode.breathe,
-        EveState.listening => HaloMode.breathe,
-        EveState.thinking => HaloMode.pulse,
+  HaloMode get _haloMode => switch (_activeState ?? EvePresenceState.idle) {
+        EvePresenceState.idle => HaloMode.breathe,
+        EvePresenceState.listening => HaloMode.breathe,
+        EvePresenceState.thinking => HaloMode.pulse,
       };
 
   Widget _buildVideo(double dp) {

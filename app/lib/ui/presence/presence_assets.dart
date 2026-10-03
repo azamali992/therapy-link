@@ -46,12 +46,12 @@ abstract final class EveAssets {
   // ---- helpers ------------------------------------------------------------
 
   /// Returns the correct video asset path for the given state and quality.
-  static String videoFor(EveState state, VideoQuality quality) {
+  static String videoFor(EvePresenceState state, VideoQuality quality) {
     final low = quality == VideoQuality.low;
     return switch (state) {
-      EveState.idle => low ? idleLow : idleHd,
-      EveState.listening => low ? listeningLow : listeningHd,
-      EveState.thinking => low ? thinkingLow : thinkingHd,
+      EvePresenceState.idle => low ? idleLow : idleHd,
+      EvePresenceState.listening => low ? listeningLow : listeningHd,
+      EvePresenceState.thinking => low ? thinkingLow : thinkingHd,
     };
   }
 }
@@ -78,7 +78,10 @@ abstract final class BreathAssets {
 }
 
 /// The three animated states Eve can be in.
-enum EveState {
+///
+/// Renamed from [EveState] to avoid a clash with the [EveState] value-class in
+/// `eve_controller.dart`, which describes the full chat controller state.
+enum EvePresenceState {
   idle,
   listening,
   thinking,
