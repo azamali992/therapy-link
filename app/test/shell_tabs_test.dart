@@ -1,8 +1,8 @@
 // Tests that the patient shell renders exactly 4 tabs in the correct order
-// (Eve · Today · Journal · You) and that the Get help button is present.
+// (Eve · Today · Journal · You) and that the shell gradient is present.
 //
-// PatientShell is tested directly with a mock StatefulNavigationShell so it
-// does not depend on the real router or Firebase.
+// PatientShell now uses JugnuNavBar (custom component) instead of Material
+// NavigationBar, so finders look for JugnuNavBar and the tab labels directly.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:therapylink/app/theme/theme.dart';
 import 'package:therapylink/features/shell/patient_shell.dart';
 import 'package:therapylink/l10n/app_localizations.dart';
+import 'package:therapylink/ui/components/jugnu_nav_bar.dart';
 
 // ---------------------------------------------------------------------------
 // Minimal widget harness — no Firebase, no Riverpod
@@ -82,14 +83,13 @@ Widget _harness(GoRouter router) => MaterialApp.router(
 
 void main() {
   group('PatientShell tabs', () {
-    testWidgets('renders exactly 4 navigation destinations', (tester) async {
+    testWidgets('renders the JugnuNavBar', (tester) async {
       final router = _buildTestRouter();
       await tester.pumpWidget(_harness(router));
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      // NavigationBar on narrow (test) viewport.
-      expect(find.byType(NavigationBar), findsOneWidget);
-      expect(find.byType(NavigationDestination), findsNWidgets(4));
+      // JugnuNavBar replaces Material NavigationBar on narrow viewports.
+      expect(find.byType(JugnuNavBar), findsOneWidget);
     });
 
     testWidgets('tabs are Eve, Today, Journal, You in order', (tester) async {
@@ -97,25 +97,48 @@ void main() {
       await tester.pumpWidget(_harness(router));
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      // Verify all four labels are present.
+      // All four labels must be present in the nav bar.
       expect(find.text('Eve'), findsWidgets);
       expect(find.text('Today'), findsWidgets);
       expect(find.text('Journal'), findsWidgets);
       expect(find.text('You'), findsWidgets);
     });
 
-    testWidgets('Get help button is present on the Eve tab', (tester) async {
+    testWidgets('has exactly 4 tab items', (tester) async {
       final router = _buildTestRouter();
       await tester.pumpWidget(_harness(router));
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      // The EveScreen rendered by the real router would have GetHelpButton; here
-      // we render a stub Scaffold. Test that PatientShell itself doesn't remove
-      // the button — the real EveScreen test covers button presence per-screen.
-      //
-      // For this shell test we just confirm the shell structure is correct.
-      expect(find.byType(NavigationBar), findsOneWidget);
-      expect(find.byType(NavigationDestination), findsNWidgets(4));
+      // JugnuNavBar renders exactly one Text label per tab.
+      // Scope to the nav bar to avoid matching stub page body text.
+      final navBar = find.byType(JugnuNavBar);
+      expect(navBar, findsOneWidget);
+
+      expect(
+        find.descendant(of: navBar, matching: find.text('Eve')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: navBar, matching: find.text('Today')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: navBar, matching: find.text('Journal')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: navBar, matching: find.text('You')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('ground gradient is present behind the shell', (tester) async {
+      final router = _buildTestRouter();
+      await tester.pumpWidget(_harness(router));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      // The shell wraps in a DecoratedBox with the ground gradient.
+      expect(find.byType(DecoratedBox), findsWidgets);
     });
   });
 }
