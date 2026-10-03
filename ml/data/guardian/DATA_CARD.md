@@ -17,8 +17,8 @@ $py = "D:\therapylink\ml\.venv\Scripts\python.exe"
 
 | Split | Rows | Where from |
 |---|---:|---|
-| train | 23,969 | written batches 4,500, their respellings 2,392, machine translations 6,955, mh_text 8,237, urdu_mh 1,801, approved authored rows 84 |
-| val | 1,109 | 15% of every written batch per label set (786), authored 23, mh_text 300 (posts longer than the translator takes, so none reach training translated) |
+| train | 20,005 | written batches 4,498, their respellings 2,401, machine translations 6,953, mh_text 4,279, urdu_mh 1,790, approved authored rows 84 |
+| val | 1,111 | 15% of every written batch per label set (788), authored 23, mh_text 300 (posts longer than the translator takes, so none reach training translated) |
 | test (held-out) | 1,242 | held-out batches h01-h04 (1,194) and the 48 safety and therapeutic eval probes |
 
 Label counts per language (a row can carry several labels):
@@ -27,18 +27,18 @@ Label counts per language (a row can carry several labels):
 
 | lang | none | suicidal | self_harm | abuse | child | sexual_violence | harm_to_others | medical | rows |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| en | 5,880 | 3,392 | 134 | 238 | 108 | 177 | 20 | 5 | 9,802 |
-| ur-roman | 2,786 | 1,965 | 313 | 556 | 251 | 354 | 130 | 86 | 6,021 |
-| mixed | 763 | 397 | 161 | 203 | 108 | 164 | 83 | 90 | 1,736 |
-| ur | 3,806 | 1,738 | 237 | 355 | 155 | 246 | 77 | 33 | 6,410 |
+| en | 3,415 | 1,906 | 135 | 235 | 109 | 176 | 21 | 5 | 5,845 |
+| ur-roman | 2,787 | 1,961 | 313 | 553 | 253 | 356 | 131 | 85 | 6,015 |
+| mixed | 768 | 401 | 159 | 196 | 104 | 163 | 83 | 92 | 1,738 |
+| ur | 3,807 | 1,741 | 234 | 351 | 156 | 244 | 75 | 37 | 6,407 |
 
 **val**
 
 | lang | none | suicidal | self_harm | abuse | child | sexual_violence | harm_to_others | medical | rows |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| en | 260 | 192 | 22 | 33 | 12 | 20 | 2 | 0 | 524 |
+| en | 261 | 192 | 22 | 33 | 12 | 20 | 2 | 0 | 525 |
 | ur-roman | 133 | 45 | 18 | 39 | 16 | 24 | 14 | 7 | 269 |
-| mixed | 82 | 38 | 16 | 18 | 8 | 13 | 6 | 6 | 170 |
+| mixed | 83 | 38 | 16 | 18 | 8 | 13 | 6 | 6 | 171 |
 | ur | 53 | 34 | 16 | 25 | 9 | 15 | 5 | 3 | 146 |
 
 **held-out**
@@ -54,10 +54,10 @@ Every row says where it came from: `source` (written, augmented, mt, mh_text, ur
 
 ## Sources
 
-- **Written batches** (`written/t*.jsonl`, `heldout/h*.jsonl`). Messages written by Claude subagents for this project, one brief per batch, each in one language and style. Generated and AI-labelled. They were labelled under `LABEL_RULES.md` while the clinical guide was being written, then reconciled with it: `relabel_guide_v1.jsonl` changes 129 training rows (mostly `harm_to_others` dropped from threats aimed at the user, rule 12, and past attempts or self-harm moved from `none` to a risk label, rule 6), the build drops a lone `child` from a minor's own suicidal or self-harm message (rule 13), and the held-out batches were relabelled row by row against the guide, with `acuity`, `hard_negative`, `distress` and `who` added.
+- **Written batches** (`written/t*.jsonl`, `heldout/h*.jsonl`). Messages written by Claude subagents for this project, one brief per batch, each in one language and style. Generated and AI-labelled. They were labelled under `LABEL_RULES.md` while the clinical guide was being written, then reconciled with it: `relabel_guide_v1.jsonl` changes 115 training rows (mostly `harm_to_others` dropped from threats aimed at the user, rule 12, and the writer's own past attempts or self-harm moved from `none` to a risk label, rule 6; a friend's or relative's resolved past stays `none`, since rule 5 is about current risk), the build drops a lone `child` from a minor's own suicidal or self-harm message (rule 13), and the held-out batches were relabelled row by row against the guide, with `acuity`, `hard_negative`, `distress` and `who` added.
 - **Respellings** (`augmented`). One copy of each written training row with Roman Urdu words swapped for other common spellings (nahi/nai/nhi, hai/hy/h, khudkushi/khud kushi), Urdu-script keyboard variants (ہے/ھے, Arabic yeh and kaf), case, punctuation and emoji noise. Only training rows; never val or test.
 - **Machine translation** (`mt`). English written rows and short mh_text posts through opus-mt-en-ur, then the repo's crude romaniser (`urdu/transliterate.py`), each keeping its English row's labels. Translations whose length is off or that quote scripture (opus-mt drifts into Bible verses) are dropped. Translationese, so training only.
-- **mh_text** (CC BY 4.0, commercial use allowed). Real Reddit posts, suicidal vs not, labelled by subreddit. A `none` post the keyword floor reads as suicidal is dropped, since subreddit labels put "I want to die" posts from r/depression under `none`.
+- **mh_text** (CC BY 4.0, commercial use allowed). 1,500 suicidal and 2,500 other real Reddit posts (v1a used 3,000/5,000, which made English mostly long Reddit text), suicidal vs not, labelled by subreddit. A `none` post the keyword floor reads as suicidal is dropped, since subreddit labels put "I want to die" posts from r/depression under `none`.
 - **urdu_mh** (CC BY 4.0). Urdu-script tweets, used as `none` only, minus any that mention dying. About 97% machine-translated (see the registry note).
 - **tl_authored**. The approved authored rows, labelled by category as `guardian.py` always has.
 
@@ -74,5 +74,5 @@ Against the guide's §5 targets: every language has 117 to 125 `suicidal` + `sel
 - **No method or dose questions, and no detailed attempt descriptions, were generated.** The content limits in `LABEL_RULES.md` keep them out, and several English and Roman Urdu suicide batches were stopped by a safety classifier and not retried. mh_text carries some real ones in English. Guide rule 3 and the S6/M1 kind of message need clinician-written rows.
 - **English `medical` (5 rows) and `harm_to_others` (20 rows) are thin in training, and validation has 0 and 2.** The English batch for them was never written, so their thresholds are set by the pooled languages.
 - **Every label is AI-assigned** except the authored rows, the probes and mh_text's subreddit labels. The guide wants two labels per item and kappa ≥ 0.75 on `suicidal` and `self_harm`. Nobody has done that.
-- **Annotator calls the clinician has to rule on:** safe-use dosing questions ("how many fever tablets a day is safe") are `none` here, though rule 3 read literally makes every dose question `suicidal`; a friend's or relative's past attempt that is now resolved was labelled `suicidal`/historic in training (rule 6 applied to third parties); `who` on `none` rows was filled inconsistently.
+- **Annotator calls the clinician has to rule on:** safe-use dosing questions ("how many fever tablets a day is safe") are `none` here, though rule 3 read literally makes every dose question `suicidal`; a friend's or relative's resolved past attempt or abuse is `none` in training (I read rule 5 as current risk; the annotator had applied rule 6); `who` on `none` rows was filled inconsistently.
 - Roman Urdu from the romaniser drops short vowels ("mire shohr ne") and reads unlike real typing. Urdu-script translations are stiff.
