@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/theme/theme.dart';
 import '../../app/theme/tokens.dart';
+import '../../app/theme/hero.dart';
 import '../../core/settings/settings.dart';
 import '../../l10n/app_localizations.dart';
 import '../../ui/components/buttons.dart';
@@ -22,20 +23,6 @@ import '../../ui/presence/presence.dart';
 // GetHelpButton from crisis_sheet is a plain IconButton; we use the styled
 // pill from jugnu_app_bar.dart instead, so hide the crisis_sheet version.
 import '../shared/crisis_sheet.dart' hide GetHelpButton;
-
-// Dark overlay gradient matching the reference design.
-// transparent 48% -> night@55% at 66% -> solid night at 92%.
-const _kOverlay = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  stops: [0.48, 0.66, 0.92, 1.0],
-  colors: [
-    Color(0x001D1E2C),
-    Color(0x8C1D1E2C),
-    Color(0xFF1D1E2C),
-    Color(0xFF1D1E2C),
-  ],
-);
 
 class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({super.key});
@@ -103,7 +90,7 @@ class _WelcomeBody extends StatelessWidget {
     final l = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: Jugnu.night,
+      backgroundColor: welcomeGround,
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
@@ -113,7 +100,7 @@ class _WelcomeBody extends StatelessWidget {
           // Dark gradient: fades from transparent to solid night
           const Positioned.fill(
             child: DecoratedBox(
-              decoration: BoxDecoration(gradient: _kOverlay),
+              decoration: BoxDecoration(gradient: welcomeHeroOverlay),
             ),
           ),
 
@@ -125,14 +112,16 @@ class _WelcomeBody extends StatelessWidget {
                 // Top bar: brand mark + get-help pill
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                      Jugnu.s20, Jugnu.s8, Jugnu.s16, 0),
+                    Jugnu.s20,
+                    Jugnu.s8,
+                    Jugnu.s16,
+                    0,
+                  ),
                   child: Row(
                     children: [
                       _BrandMark(),
                       const Spacer(),
-                      GetHelpButton(
-                        onPressed: () => showCrisisSheet(context),
-                      ),
+                      GetHelpButton(onPressed: () => showCrisisSheet(context)),
                     ],
                   ),
                 ),
@@ -140,7 +129,11 @@ class _WelcomeBody extends StatelessWidget {
                 // Language picker sits in the clear top zone, never over Eve.
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                      Jugnu.s20, Jugnu.s12, Jugnu.s20, 0),
+                    Jugnu.s20,
+                    Jugnu.s12,
+                    Jugnu.s20,
+                    0,
+                  ),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: _LanguagePicker(
@@ -162,7 +155,11 @@ class _WelcomeBody extends StatelessWidget {
                 // Footer: CTA + sign-in link
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                      Jugnu.s20, 14, Jugnu.s20, Jugnu.s24),
+                    Jugnu.s20,
+                    14,
+                    Jugnu.s20,
+                    Jugnu.s24,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -202,7 +199,7 @@ class _BrandMark extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                const ColoredBox(color: Jugnu.plum),
+                const ColoredBox(color: welcomeHeroPlaceholder),
                 Image.asset(
                   EveAssets.poster,
                   fit: BoxFit.cover,
@@ -217,12 +214,12 @@ class _BrandMark extends StatelessWidget {
         Text(
           'TherapyLink',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontFamily: 'Unbounded',
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.01 * 13,
-                color: Jugnu.ink,
-              ),
+            fontFamily: 'Unbounded',
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            letterSpacing: 0.01 * 13,
+            color: welcomeInk,
+          ),
         ),
       ],
     );
@@ -234,10 +231,7 @@ class _BrandMark extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _LanguagePicker extends StatelessWidget {
-  const _LanguagePicker({
-    required this.selected,
-    required this.onSelect,
-  });
+  const _LanguagePicker({required this.selected, required this.onSelect});
 
   final int selected;
   final ValueChanged<int> onSelect;
@@ -281,17 +275,18 @@ class _LanguagePicker extends StatelessWidget {
                 child: Tooltip(
                   message: 'jald',
                   child: Container(
-                    constraints:
-                        const BoxConstraints(minHeight: Jugnu.minTarget),
+                    constraints: const BoxConstraints(
+                      minHeight: Jugnu.minTarget,
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     alignment: Alignment.center,
                     child: Text(
                       'اردو',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontFamily: 'NotoNastaliqUrdu',
-                            fontSize: 15,
-                            color: colors.ink3.withValues(alpha: 0.5),
-                          ),
+                        fontFamily: 'NotoNastaliqUrdu',
+                        fontSize: 15,
+                        color: colors.ink3.withValues(alpha: 0.5),
+                      ),
                     ),
                   ),
                 ),
@@ -343,7 +338,7 @@ class _LangOption extends StatelessWidget {
                       color: colors.hairStrong,
                       blurRadius: 0,
                       spreadRadius: 0,
-                    )
+                    ),
                   ]
                 : null,
           ),
@@ -351,7 +346,7 @@ class _LangOption extends StatelessWidget {
           child: Text(
             label,
             style: textStyle?.copyWith(
-              color: active ? Jugnu.ink : colors.ink3,
+              color: active ? welcomeInk : colors.ink3,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -384,7 +379,7 @@ class _MainCopy extends StatelessWidget {
             fontSize: 26,
             height: 1.18,
             letterSpacing: 26 * -0.02,
-            color: Jugnu.ink,
+            color: welcomeInk,
           ),
         ),
         const SizedBox(height: Jugnu.s16),
@@ -413,12 +408,12 @@ class _Facts extends StatelessWidget {
       (
         JugnuIcons.translate,
         'English and Roman Urdu,',
-        ' mixed is fine. She understands both.'
+        ' mixed is fine. She understands both.',
       ),
       (
         JugnuIcons.phoneLock,
         'Chats are saved on this phone only.',
-        " Eve's replies come from our server."
+        " Eve's replies come from our server.",
       ),
     ];
 
@@ -432,7 +427,7 @@ class _Facts extends StatelessWidget {
               // Icon at ink colour, slightly below baseline (margin-top 1)
               Padding(
                 padding: const EdgeInsets.only(top: 1),
-                child: Icon(icon, size: 20, color: Jugnu.ink),
+                child: Icon(icon, size: 20, color: welcomeInk),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -448,7 +443,7 @@ class _Facts extends StatelessWidget {
                       TextSpan(
                         text: bold,
                         style: TextStyle(
-                          color: Jugnu.ink,
+                          color: welcomeInk,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -502,9 +497,9 @@ class _HaveAccountRow extends StatelessWidget {
                 TextSpan(
                   text: 'Sign in',
                   style: TextStyle(
-                    color: Jugnu.ink,
+                    color: welcomeInk,
                     decoration: TextDecoration.underline,
-                    decorationColor: Jugnu.ink,
+                    decorationColor: welcomeInk,
                   ),
                 ),
               ],
