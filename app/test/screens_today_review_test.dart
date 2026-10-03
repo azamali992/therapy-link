@@ -126,6 +126,8 @@ Future<void> _pump(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sp),
+        // Saturday afternoon, so the date line never depends on when the test runs.
+        todayClockProvider.overrideWithValue(() => DateTime(2026, 10, 3, 15)),
         ...overrides,
       ],
       child: MaterialApp(
@@ -143,9 +145,7 @@ Future<void> _pump(
   final suffix = brightness == Brightness.dark ? 'dark' : 'light';
   await expectLater(
     find.byType(MaterialApp),
-    matchesGoldenFile(
-      '../../docs/design/screens/today/${name}_$suffix.png',
-    ),
+    matchesGoldenFile('../../docs/design/screens/today/${name}_$suffix.png'),
   );
 }
 
@@ -168,10 +168,12 @@ void main() {
           moodCheckInCountProvider.overrideWithValue(const AsyncData(18)),
           weekTrendProvider.overrideWithValue(AsyncData(_sampleWeek)),
           moodInsightProvider.overrideWithValue(
-              const AsyncData(_sampleInsight)),
+            const AsyncData(_sampleInsight),
+          ),
           // No prior assessments — avoids "N days ago" text changing daily.
-          assessmentsProvider
-              .overrideWithValue(const AsyncData<List<Assessment>>([])),
+          assessmentsProvider.overrideWithValue(
+            const AsyncData<List<Assessment>>([]),
+          ),
         ],
       );
     });
@@ -184,9 +186,7 @@ void main() {
         'assessment_question',
         const AssessmentScreen(instrument: Instrument.phq9),
         brightness: brightness,
-        overrides: [
-          assessmentsProvider.overrideWithValue(const AsyncData([])),
-        ],
+        overrides: [assessmentsProvider.overrideWithValue(const AsyncData([]))],
       );
     });
 
@@ -229,4 +229,3 @@ void main() {
     });
   }
 }
-

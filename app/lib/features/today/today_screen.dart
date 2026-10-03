@@ -39,8 +39,9 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
     final colors = Theme.of(context).extension<JugnuColors>()!;
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final showQuickExit =
-        ref.watch(privacySettingsProvider.select((s) => s.quickExit));
+    final showQuickExit = ref.watch(
+      privacySettingsProvider.select((s) => s.quickExit),
+    );
 
     final todayMoodAsync = ref.watch(todayMoodProvider);
     final checkInCountAsync = ref.watch(moodCheckInCountProvider);
@@ -51,9 +52,8 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
 
     // Pre-populate the picker with today's already-saved check-in, if any.
     final MoodSummary? preloadedSummary = todayMoodAsync.whenOrNull(
-      data: (v) => v == null
-          ? null
-          : MoodSummary(valence: v, savedAt: DateTime.now()),
+      data: (v) =>
+          v == null ? null : MoodSummary(valence: v, savedAt: DateTime.now()),
     );
     // Once data loads and shows a prior check-in, start the picker folded.
     if (preloadedSummary != null && !_pickerFolded) {
@@ -80,11 +80,14 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: Jugnu.readingWidth),
+            constraints: const BoxConstraints(maxWidth: Jugnu.readingWidth),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(
-                  Jugnu.s20, Jugnu.s4, Jugnu.s20, Jugnu.s48),
+                Jugnu.s20,
+                Jugnu.s4,
+                Jugnu.s20,
+                Jugnu.s48,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -104,11 +107,9 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                           child: _pickerFolded
                               ? const SizedBox.shrink()
                               : Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(l.moodPrompt,
-                                        style: text.titleMedium),
+                                    Text(l.moodPrompt, style: text.titleMedium),
                                     const SizedBox(height: Jugnu.s12),
                                   ],
                                 ),
@@ -118,10 +119,8 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                           showScaleEnds: showScaleEnds,
                           onSelected: (valence) =>
                               recordManualMood(ref, valence - 2),
-                          onFolded: (_) =>
-                              setState(() => _pickerFolded = true),
-                          onChange: () =>
-                              setState(() => _pickerFolded = false),
+                          onFolded: (_) => setState(() => _pickerFolded = true),
+                          onChange: () => setState(() => _pickerFolded = false),
                         ),
                       ],
                     ),
@@ -144,7 +143,8 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2),
+                                  strokeWidth: 2,
+                                ),
                               ),
                             ),
                           ),
@@ -170,7 +170,9 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                       if (insight.kind == InsightKind.notEnoughData) {
                         return Slab(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: Jugnu.slabPadding, vertical: 14),
+                            horizontal: Jugnu.slabPadding,
+                            vertical: 14,
+                          ),
                           child: breathRow,
                         );
                       }
@@ -223,9 +225,9 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
     final l = context.l10n;
     return switch (insight.kind) {
       InsightKind.timeOfDay => l.insightTimeOfDay(
-          _timeLabel(context, insight.worseLabel),
-          _timeLabel(context, insight.betterLabel),
-        ),
+        _timeLabel(context, insight.worseLabel),
+        _timeLabel(context, insight.betterLabel),
+      ),
       InsightKind.weekOverWeek =>
         insight.betterLabel == 'up' ? l.insightWeekUp : l.insightWeekDown,
       InsightKind.notEnoughData || InsightKind.dayOfWeek => '',
@@ -248,10 +250,10 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
 // Date / greeting line
 // ---------------------------------------------------------------------------
 
-class _DateLine extends StatelessWidget {
+class _DateLine extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(todayClockProvider)();
     final colors = Theme.of(context).extension<JugnuColors>()!;
     final text = Theme.of(context).textTheme;
     final locale = dateLocaleOf(context);
@@ -261,8 +263,8 @@ class _DateLine extends StatelessWidget {
     final greeting = now.hour < 12
         ? l.todayMorning
         : now.hour < 17
-            ? l.todayAfternoon
-            : l.todayEvening;
+        ? l.todayAfternoon
+        : l.todayEvening;
     final timePart = greeting.split(' ').last.toLowerCase();
 
     return Text(
@@ -308,14 +310,12 @@ class _BreathingRowContent extends StatelessWidget {
                     Text(l.exerciseBox, style: text.bodyLarge),
                     Text(
                       l.exerciseBoxSub,
-                      style:
-                          text.bodyMedium?.copyWith(color: colors.ink2),
+                      style: text.bodyMedium?.copyWith(color: colors.ink2),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded,
-                  color: colors.ink3, size: 20),
+              Icon(Icons.chevron_right_rounded, color: colors.ink3, size: 20),
             ],
           ),
         ),
@@ -328,7 +328,7 @@ class _BreathingRowContent extends StatelessWidget {
 // Assessment entry slab
 // ---------------------------------------------------------------------------
 
-class _AssessmentSlab extends StatelessWidget {
+class _AssessmentSlab extends ConsumerWidget {
   const _AssessmentSlab({
     required this.instrument,
     required this.assessmentsAsync,
@@ -340,7 +340,7 @@ class _AssessmentSlab extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final colors = Theme.of(context).extension<JugnuColors>()!;
     final text = Theme.of(context).textTheme;
@@ -352,8 +352,7 @@ class _AssessmentSlab extends StatelessWidget {
 
     final Assessment? latest = assessmentsAsync.whenOrNull(
       data: (list) {
-        final filtered =
-            list.where((a) => a.instrument == instrument).toList();
+        final filtered = list.where((a) => a.instrument == instrument).toList();
         if (filtered.isEmpty) return null;
         filtered.sort((a, b) => b.takenAt.compareTo(a.takenAt));
         return filtered.first;
@@ -367,11 +366,13 @@ class _AssessmentSlab extends StatelessWidget {
       scoreWidget = SizedBox(
         width: 14,
         height: 14,
-        child:
-            CircularProgressIndicator(strokeWidth: 1.5, color: colors.ink3),
+        child: CircularProgressIndicator(strokeWidth: 1.5, color: colors.ink3),
       );
     } else if (latest != null) {
-      final daysAgo = DateTime.now().difference(latest.takenAt).inDays;
+      final daysAgo = ref
+          .watch(todayClockProvider)()
+          .difference(latest.takenAt)
+          .inDays;
       scoreWidget = Text(
         '${latest.score}',
         style: text.titleMedium?.copyWith(color: scheme.primary),
@@ -382,15 +383,16 @@ class _AssessmentSlab extends StatelessWidget {
 
     return Slab(
       padding: const EdgeInsets.symmetric(
-          horizontal: Jugnu.slabPadding, vertical: 14),
+        horizontal: Jugnu.slabPadding,
+        vertical: 14,
+      ),
       child: GestureDetector(
         onTap: onTap,
         child: Semantics(
           button: true,
           label: instrumentTitle(context, instrument),
           child: Container(
-            constraints:
-                const BoxConstraints(minHeight: Jugnu.minTarget),
+            constraints: const BoxConstraints(minHeight: Jugnu.minTarget),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -410,8 +412,11 @@ class _AssessmentSlab extends StatelessWidget {
                       scoreWidget,
                     ],
                     const SizedBox(width: Jugnu.s8),
-                    Icon(Icons.chevron_right_rounded,
-                        color: colors.ink3, size: 20),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: colors.ink3,
+                      size: 20,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 2),
@@ -421,8 +426,7 @@ class _AssessmentSlab extends StatelessWidget {
                     Expanded(
                       child: Text(
                         subtitle,
-                        style:
-                            text.bodyMedium?.copyWith(color: colors.ink2),
+                        style: text.bodyMedium?.copyWith(color: colors.ink2),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -431,8 +435,7 @@ class _AssessmentSlab extends StatelessWidget {
                       const SizedBox(width: Jugnu.s8),
                       Text(
                         bandDaysLabel,
-                        style:
-                            text.labelSmall?.copyWith(color: colors.ink2),
+                        style: text.labelSmall?.copyWith(color: colors.ink2),
                       ),
                     ],
                   ],
