@@ -270,7 +270,7 @@ class BreathFlowerState extends ConsumerState<BreathFlower>
           height: dp,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Tokens.plum,
+            color: Jugnu.plum,
           ),
         ),
       ),
