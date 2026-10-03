@@ -53,7 +53,6 @@ dependencies:
   # 3D presence widgets (eve-presence branch)
   video_player: ^2.9.3
   device_info_plus: ^11.5.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
