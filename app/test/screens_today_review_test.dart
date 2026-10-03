@@ -52,18 +52,6 @@ const _sampleInsight = MoodInsight(
   samples: 18,
 );
 
-/// A past PHQ-9 assessment.
-final _sampleAssessments = [
-  Assessment(
-    id: 'a1',
-    instrument: Instrument.phq9,
-    score: 11,
-    band: 'moderate',
-    flags: const [],
-    takenAt: DateTime(2026, 9, 20),
-  ),
-];
-
 /// PHQ-9 result with a delta.
 final _phq9Result = Assessment(
   id: 'a2',

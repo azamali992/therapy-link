@@ -77,6 +77,7 @@
   "moodGood": "Good",
   "moodGreat": "Great",
   "moodTrend": "Last 30 days",
+  "moodTrendWeek": "This week",
   "moodTrendEmpty": "Check in a few times and a trend will appear here.",
   "groundingOffer": "That sounds like a lot to sit with. Would a minute of paced breathing help?",
   "groundingAccept": "Try it",

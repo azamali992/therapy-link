@@ -434,6 +434,12 @@ abstract class AppLocalizations {
   /// **'Last 30 days'**
   String get moodTrend;
 
+  /// No description provided for @moodTrendWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get moodTrendWeek;
+
   /// No description provided for @moodTrendEmpty.
   ///
   /// In en, this message translates to:

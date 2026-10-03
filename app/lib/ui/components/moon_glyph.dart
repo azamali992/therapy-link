@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../app/theme/tokens.dart';
@@ -126,45 +128,37 @@ class _MoonPainter extends CustomPainter {
       ..color = fill
       ..style = PaintingStyle.fill;
 
+    // Clip to circle so the inner ellipse (height == size.height) can't
+    // protrude past the top/bottom of the ring.
     canvas.save();
-    // Clip to circle boundary
-    canvas.clipPath(Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r)));
+    canvas.clipPath(
+        Path()..addOval(Rect.fromCircle(center: Offset(cx, cy), radius: r)));
+
+    // Inner ellipse matching the CSS `radial-gradient(ellipse 34% 50% …)`:
+    //   horizontal semi-axis = 34 % of width, vertical semi-axis = 50 % of height.
+    final innerEllipseRect = Rect.fromCenter(
+      center: Offset(cx, cy),
+      width: size.width * 0.68,   // 2 × 34 %
+      height: size.height,         // 2 × 50 %
+    );
 
     switch (phase) {
       case MoonPhase.crescent:
-        // Right quarter crescent: full right half minus a large ellipse on the left
-        final path = Path();
-        // Right semicircle
-        path.addArc(
-            Rect.fromCircle(center: Offset(cx, cy), radius: r), -1.5708, 3.1416);
-        canvas.drawPath(path, fillPaint);
-        // Erase most of that fill with BlendMode.clear ellipse
-        final erasePaint = Paint()
-          ..blendMode = BlendMode.clear;
-        canvas.drawOval(
-            Rect.fromCenter(
-                center: Offset(cx - r * 0.34, cy),
-                width: r * 1.36,
-                height: r * 2),
-            erasePaint);
+        // Right semicircle minus the inner ellipse → thin right-edge crescent.
+        final rightHalf = _rightHalfPath(Offset(cx, cy), r);
+        final ellipse = Path()..addOval(innerEllipseRect);
+        canvas.drawPath(
+            Path.combine(PathOperation.difference, rightHalf, ellipse),
+            fillPaint);
       case MoonPhase.half:
-        // Right half
-        canvas.drawArc(
-            Rect.fromCircle(center: Offset(cx, cy), radius: r),
-            -1.5708, 3.1416, true, fillPaint);
+        // Right semicircle only.
+        canvas.drawPath(_rightHalfPath(Offset(cx, cy), r), fillPaint);
       case MoonPhase.gibbous:
-        // Full right half + left partial (gibbous)
-        final path = Path();
-        // Fill right half
-        path.addArc(
-            Rect.fromCircle(center: Offset(cx, cy), radius: r), -1.5708, 3.1416);
-        canvas.drawPath(path, fillPaint);
-        // Fill left partial via wide ellipse covering most of left half
-        canvas.drawOval(
-            Rect.fromCenter(
-                center: Offset(cx - r * 0.22, cy),
-                width: r * 1.44,
-                height: r * 2),
+        // Right semicircle union inner ellipse → more-than-half lit area.
+        final rightHalf = _rightHalfPath(Offset(cx, cy), r);
+        final ellipse = Path()..addOval(innerEllipseRect);
+        canvas.drawPath(
+            Path.combine(PathOperation.union, rightHalf, ellipse),
             fillPaint);
       case MoonPhase.full:
         canvas.drawCircle(Offset(cx, cy), r, fillPaint);
@@ -173,6 +167,19 @@ class _MoonPainter extends CustomPainter {
     }
 
     canvas.restore();
+  }
+
+  /// Right semicircle as a closed path (from top, sweeping clockwise 180°).
+  Path _rightHalfPath(Offset center, double r) {
+    return Path()
+      ..moveTo(center.dx, center.dy - r)
+      ..arcTo(
+        Rect.fromCircle(center: center, radius: r),
+        -math.pi / 2,
+        math.pi,
+        false,
+      )
+      ..close(); // straight line from bottom back to top, forming the diameter chord
   }
 
   @override

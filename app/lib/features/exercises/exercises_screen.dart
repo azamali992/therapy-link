@@ -144,7 +144,8 @@ class _BoxBreathingScreen extends ConsumerStatefulWidget {
 class _BoxBreathingScreenState extends ConsumerState<_BoxBreathingScreen> {
   final _flowerKey = GlobalKey<BreathFlowerState>();
   StreamSubscription<BreathClockTick>? _sub;
-  BreathClockTick? _tick;
+  // Initialise to phase 0 so "Breathe in" is shown before the first clock tick.
+  BreathClockTick _tick = const BreathClockTick(phaseIndex: 0, secondsLeft: 4);
   bool _paused = false;
 
   // The four step-pill labels shown beneath the flower.
@@ -181,10 +182,9 @@ class _BoxBreathingScreenState extends ConsumerState<_BoxBreathingScreen> {
     final showQuickExit =
         ref.watch(privacySettingsProvider.select((s) => s.quickExit));
 
-    final tick = _tick;
-    final phaseLabel = tick?.phaseLabel ?? '';
-    final secondsLeft = tick?.secondsLeft ?? 4;
-    final activePhase = tick?.phaseIndex ?? 0;
+    final phaseLabel = _tick.phaseLabel;
+    final secondsLeft = _tick.secondsLeft;
+    final activePhase = _tick.phaseIndex;
 
     return JugnuScaffold(
       appBar: jab.JugnuAppBar(

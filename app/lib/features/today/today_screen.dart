@@ -134,7 +134,7 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l.moodTrend, style: text.titleMedium),
+                        Text(l.moodTrendWeek, style: text.titleMedium),
                         const SizedBox(height: Jugnu.s12),
                         weekAsync.when(
                           loading: () => const SizedBox(

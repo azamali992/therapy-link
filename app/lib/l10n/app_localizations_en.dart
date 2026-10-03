@@ -191,6 +191,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodTrend => 'Last 30 days';
 
   @override
+  String get moodTrendWeek => 'This week';
+
+  @override
   String get moodTrendEmpty =>
       'Check in a few times and a trend will appear here.';
 

@@ -192,6 +192,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get moodTrend => 'Pichlay 30 din';
 
   @override
+  String get moodTrendWeek => 'Is hafte';
+
+  @override
   String get moodTrendEmpty =>
       'Chand baar check-in karein, trend yahan nazar aayega.';
 
