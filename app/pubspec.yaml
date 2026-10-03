@@ -51,6 +51,10 @@ dependencies:
   mutex: ^3.1.0
   logging: ^1.3.0
 
+  # 3D presence widgets (eve-presence branch)
+  video_player: ^2.9.3
+  device_info_plus: ^11.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -69,3 +73,24 @@ hooks:
 flutter:
   uses-material-design: true
   generate: true
+
+  assets:
+    # 3D presence assets (eve-presence branch)
+    # HD videos (720 px square)
+    - assets/3d/eve-idle.mp4
+    - assets/3d/eve-listening.mp4
+    - assets/3d/eve-thinking.mp4
+    - assets/3d/breath-box.mp4
+    # Low-resolution videos (360 px square, battery/low-RAM/data-saver)
+    - assets/3d/eve-idle-360.mp4
+    - assets/3d/eve-listening-360.mp4
+    - assets/3d/eve-thinking-360.mp4
+    - assets/3d/breath-box-360.mp4
+    # Poster stills
+    - assets/3d/eve.png
+    - assets/3d/breath.png
+    # Welcome screen hero (1080×1920)
+    - assets/3d/eve-hero.png
+    # glTF binaries (rung a — reserved for future use)
+    - assets/3d/eve.glb
+    - assets/3d/breath.glb
