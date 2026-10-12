@@ -1,145 +1,118 @@
-# TherapyLink
+<p align="center">
+  <img src="docs/design/brand/icon-master-1024.png" width="120" alt="TherapyLink icon">
+</p>
 
-A mental-health companion app for English and Roman Urdu speakers in Pakistan. Patients chat with Eve (a fine-tuned Gemma 4 E2B served from our own llama-server), log mood, keep an encrypted journal, take PHQ-9 and GAD-7, and can link a clinician who only sees what they switch on. Crisis routing runs on the phone before any message reaches the model, and never depends on the server.
+<h1 align="center">TherapyLink</h1>
 
-This is v3: a new app with a new design, a fresh git history, and the tested API and ML code carried over from v2. The plan is in [docs/rebuild/PLAN.md](docs/rebuild/PLAN.md). It is not cleared for real patients yet (see "Human blockers" in the plan).
+<p align="center">
+  A mental-health companion for English and Roman Urdu speakers in Pakistan.<br>
+  A fine-tuned Gemma 4 chats. A crisis classifier on the phone checks every message first.
+</p>
 
-## Repo layout
+<p align="center">
+  <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white">
+  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-async-009688?logo=fastapi&logoColor=white">
+  <img alt="Gemma 4 E2B" src="https://img.shields.io/badge/Gemma_4-E2B_+_LoRA-4285F4?logo=google&logoColor=white">
+  <img alt="ONNX" src="https://img.shields.io/badge/ONNX-int8_on_device-005CED?logo=onnx&logoColor=white">
+  <img alt="llama.cpp" src="https://img.shields.io/badge/llama.cpp-GGUF_Q4__K__M-333">
+  <a href="https://github.com/azamali992/therapy-link/actions"><img alt="CI" src="https://github.com/azamali992/therapy-link/actions/workflows/ci.yml/badge.svg"></a>
+</p>
 
-| Path | What's in it |
-| --- | --- |
-| `app/` | Flutter 3.47.4 app (Riverpod, go_router, drift + SQLCipher, Firebase Auth). Chats and memories stay on the device. |
-| `api/` | FastAPI gateway: Firebase token checks, consent, server-scored assessments, clinician access log, inference proxy to llama-server. Postgres in prod, SQLite locally. See [api/README.md](api/README.md). |
-| `ml/` | Data pipeline, Guardian and Eve training, the eval harness and the served prompt. See [ml/README.md](ml/README.md). |
-| `ops/serving/` | Running Eve's llama-server from `ml/registry.json` (being added on the `ml-serving` branch). |
-| `docs/rebuild/` | v3 discovery docs: features, model, UX, backend, security, plan. |
-| `docs/clinical/`, `docs/legal/` | Helplines, red lines, pilot protocol, data inventory. |
-| `scripts/` | Windows setup scripts (Android SDK, llama.cpp) and a resumable downloader. |
-| `.github/` | CI and Dependabot. |
+<p align="center">
+  <img src="docs/design/screens/onboarding/welcome_dark.png" width="19%" alt="Welcome">
+  <img src="docs/design/screens/eve/eve_screen_dark.png" width="19%" alt="Chat with Eve">
+  <img src="docs/design/screens/today/today_full_dark.png" width="19%" alt="Today">
+  <img src="docs/design/screens/today/exercises_breathing_dark.png" width="19%" alt="Breathing exercise">
+  <img src="docs/design/screens/journal-you/you_hub_dark.png" width="19%" alt="You">
+</p>
 
-## Local setup (Windows, everything on D:)
+> **Not for real patients yet.** Every clinical decision in this repo (crisis wording, helpline list, red lines, training rows) was reviewed by AI, not by a licensed clinician. That sign-off is still open. See [Where it stands](#where-it-stands).
 
-Nothing goes on C:. Toolchains live under `D:\dev`, and the caches that default to your user profile get moved there too. Set these once, then open a new terminal:
+## What it is
 
-```powershell
-[Environment]::SetEnvironmentVariable("PUB_CACHE",        "D:\dev\pub-cache", "User")
-[Environment]::SetEnvironmentVariable("GRADLE_USER_HOME", "D:\dev\gradle",    "User")
-[Environment]::SetEnvironmentVariable("PIP_CACHE_DIR",    "D:\dev\pip-cache", "User")
-[Environment]::SetEnvironmentVariable("HF_HOME",          "D:\dev\hf",        "User")
-[Environment]::SetEnvironmentVariable("TMP",              "D:\dev\tmp",       "User")
-[Environment]::SetEnvironmentVariable("TEMP",             "D:\dev\tmp",       "User")
+You talk to **Eve**. She asks one open question at a time, remembers what mattered last week, and runs short exercises inside the chat (paced breathing, 5-4-3-2-1 grounding, tense and release). You can also log mood, keep an encrypted journal, take a PHQ-9 or GAD-7, and link a clinician who sees only what you switch on.
+
+Eve is Gemma 4 E2B with a LoRA adapter trained for this, served from my own llama-server. No third-party chat API. Chats, journal and memories live on the phone in a SQLCipher database.
+
+The part I care most about is what happens before Eve answers. **Guardian**, an XLM-RoBERTa classifier running on the phone, reads each message for crisis (suicide, self-harm, abuse, a child at risk, sexual violence, harm to others, a medical emergency). If it fires, the model is never asked. The person gets a card with the right Pakistani helpline for that kind of crisis, in their own language. This works with no network.
+
+## How it fits together
+
+```mermaid
+flowchart LR
+    subgraph Phone["Phone (Flutter)"]
+        UI[Chat, journal,<br/>check-ins] --> G["Guardian<br/>XLM-R int8 ONNX<br/>+ keyword floor"]
+        G -- crisis --> C["Crisis card<br/>helplines by kind"]
+        G -- ok --> S[(SQLCipher<br/>chats, memory)]
+    end
+    G -- ok --> API
+    subgraph Server
+        API["FastAPI<br/>Firebase auth, consent,<br/>rate limits, prompt check"] --> L["llama-server<br/>Gemma 4 E2B + LoRA"]
+        R[("ml/registry.json<br/>weights + prompt sha256")] -. verifies .-> L
+    end
+    L -- SSE stream --> UI
 ```
 
-Then the toolchains:
+The phone filters the model's reply too: a foreign helpline number (a 988 or an 800 line) is cut out and replaced with the real ones.
 
-1. **Flutter 3.47.4** unpacked to `D:\dev\flutter`, with `D:\dev\flutter\bin` on your user PATH. CI pins the same version, so check `flutter --version` before chasing an analyzer difference.
-2. **JDK 17 and the Android SDK** (no Android Studio needed). The script puts them in `D:\dev\jdk-17` and `D:\dev\android-sdk`, sets `JAVA_HOME` and `ANDROID_HOME`, and accepts the licences:
+## The models
 
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts\setup-android-sdk.ps1 -Root D:\dev
-   ```
+| | What | Numbers |
+|---|---|---|
+| **Eve** | Gemma 4 E2B, LoRA, SFT then DPO. Prompt folded into the first user turn. | Latest candidate (DPO v17) names an allowlisted helpline on **65/70** crisis probes, v16 did 49/70. Replies claiming unverified helpline facts: **0/120**, v16 had 47/120. |
+| **Guardian** | XLM-RoBERTa base, 7 crisis labels, int8 ONNX, English, Roman Urdu, Urdu script and mixed. | On 1,242 held-out messages the model alone caught **97.2%** of crises, keywords alone **29.6%**, together **97.5%**. A pruned version is 110 MB, down from 278 MB. |
+| **Eval harness** | Rule checks for 12 written red lines, 5 samples per probe, worst-of-N, multi-turn probes. | Four candidate adapters failed it and were thrown out. |
 
-3. **Python 3.12.** Each Python project gets its own `.venv` inside its folder, so the venvs are on D: with the repo.
-4. **llama.cpp and a base GGUF**, only if you run Eve locally (needs a CUDA GPU, or add `-Cpu`):
+Every number above is from my own probes and held-out sets, not an outside benchmark. Guardian's labels were assigned by AI. The training and eval code is in [ml/](ml/), the served prompt and the registry that pins weights by hash are in [ml/registry.json](ml/registry.json).
 
-   ```powershell
-   powershell -ExecutionPolicy Bypass -File scripts\setup-llama-server.ps1 -Root D:\dev
-   ```
+## Design
 
-5. **gitleaks 8.30+** in `D:\dev\tools\gitleaks`, on PATH, if you want the pre-commit hook (below).
+The app is called **Jugnu** (firefly) inside: dark first, one job per colour, night `#1D1E2C` fading to plum `#34063F`, pink `#F23598` for the one main button on a screen, lime `#89F336` only for "safe" (a switch that's on, data staying on the phone). Eve is a jasmine bud rendered in Blender, with idle, listening (petals open) and thinking loops. Fonts are bundled (Unbounded, Atkinson Hyperlegible, Noto Nastaliq Urdu), so it looks the same offline. The spec is in [docs/design/DESIGN.md](docs/design/DESIGN.md).
+
+## Repo
+
+| Path | What's in it |
+|---|---|
+| [`app/`](app/) | Flutter app: Riverpod, go_router, drift + SQLCipher, Firebase Auth. |
+| [`api/`](api/) | FastAPI gateway: token checks, consent, server-scored assessments, clinician access log, inference proxy. Postgres in prod, SQLite locally. |
+| [`ml/`](ml/) | Data pipeline, Guardian and Eve training, eval harness, model registry. |
+| [`ops/`](ops/) | Serving Eve's llama-server from the registry, and a free-tier hosting kit. |
+| [`docs/`](docs/) | Design, clinical review, security, QA, plan. Start with [docs/rebuild/PLAN.md](docs/rebuild/PLAN.md). |
+
+About 1,150 tests: 625 app, 186 API, 355 ML. CI runs them per folder and scans the whole history with gitleaks. One test checks that the prompt the app sends is byte for byte the prompt the model was trained on.
 
 ## Run it
 
-### API
+Windows setup, the API, the model server, the app and the tests are in **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)**. The short version for the API:
 
 ```powershell
 cd api
 python -m venv .venv
 .venv\Scripts\python -m pip install -e ".[dev]"
-copy .env.example .env          # SQLite and the dev auth bypass, for local work only
+copy .env.example .env
 .venv\Scripts\alembic upgrade head
 .venv\Scripts\uvicorn therapylink_api.main:app --reload
 ```
 
-It listens on `http://localhost:8000`. With `TL_DEV_AUTH_BYPASS=true` in `.env`, send `X-Dev-Uid: anything` instead of a Firebase token. The API refuses to start with the bypass on when `TL_ENV=prod` or the database isn't SQLite.
+The model weights are not in this repo (they're gitignored). `ml/registry.json` lists what the server expects and refuses to start on a hash mismatch.
 
-### Model server (Eve)
+## Where it stands
 
-The served model, its adapter and their checksums come from `ml/registry.json`. [ops/serving/](ops/serving/) starts llama-server on 127.0.0.1 only and refuses to start without an API key:
+Working: the whole app on a real Android phone (chat with streaming, crisis routing, journal, check-ins, assessments, clinician linking, encrypted storage). Email sign-in was wired up last and hasn't been confirmed on the phone yet.
 
-```powershell
-$env:TL_LLM_API_KEY = "<24+ random characters>"
-powershell -ExecutionPolicy Bypass -File ops\serving\run-llama-server.ps1
-```
+Not done, and I'd rather say so:
 
-Point the API at it by adding the same key to `api\.env`. The API won't start with a URL and no key.
+- **No licensed clinician has signed off** the crisis copy, helplines, red-line training rows or DPO pairs. Until that happens it stays out of production: the server refuses an unapproved model.
+- **Helplines are checked against public sources, not by phone.** Umang's website is down and a 2026 directory lists a different number for it.
+- **Guardian is noisy.** It's tuned never to miss a crisis, so it also fires on some ordinary messages ("my boss is stressing me out"). Cutting that without losing recall is an open problem.
+- **Roman Urdu is the weak spot** for both models. Eve's Roman Urdu crisis replies pass 17 of 20 checks.
+- **On-device Eve is a prototype** (a 2.5 GB GGUF at 15 to 17 tokens a second on a laptop CPU). It hasn't passed the safety comparison or run on a phone, so Eve still answers from the server.
+- **Google sign-in** needs the build's signing fingerprint registered in Firebase.
 
-```text
-TL_INFERENCE_BASE_URL=http://127.0.0.1:8080
-TL_INFERENCE_API_KEY=<same key>
-```
+This is a project, not a medical device. If you or someone near you is in danger in Pakistan, call Rescue 1122.
 
-There is no public tunnel any more. A phone reaches Eve only through the API.
+## Licence
 
-### App
+No licence file yet, so all rights are reserved until one is added. The base model and the public datasets used for training have their own terms, listed in [ml/](ml/) and the data cards.
 
-```powershell
-cd app
-flutter pub get
-dart run build_runner build --delete-conflicting-outputs
-flutter gen-l10n
-flutter run --dart-define=TL_API_URL=http://10.0.2.2:8000     # Android emulator
-```
-
-On a USB phone, run `adb reverse tcp:8000 tcp:8000` and use `TL_API_URL=http://localhost:8000`. Release signing reads `app/android/key.properties` and the upload keystore, and neither ever goes into git (CI and the pre-commit hook both fail on them).
-
-## Tests
-
-The same commands CI runs:
-
-```powershell
-# app
-cd app
-flutter analyze
-flutter test
-
-# api
-cd api
-.venv\Scripts\ruff check .
-.venv\Scripts\ruff format --check .
-.venv\Scripts\python -m pytest
-
-# ml (CPU torch is enough for the tests)
-cd ml
-python -m venv .venv
-.venv\Scripts\python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
-.venv\Scripts\python -m pip install transformers peft scikit-learn pandas datasets huggingface_hub pydantic typer rich requests pytest ruff
-.venv\Scripts\python -m pip install -e . --no-deps
-.venv\Scripts\ruff check .
-.venv\Scripts\python -m pytest
-```
-
-`ml/tests/test_prompt_parity.py` checks that the app sends exactly the prompt Eve was trained on, so it reads files under `app/lib`. A change to Eve's prompt touches both folders.
-
-Secret scan, the same way CI does it:
-
-```powershell
-gitleaks git --config .gitleaks.toml --redact .     # every commit
-gitleaks dir --config .gitleaks.toml --redact .     # working tree, untracked files too
-```
-
-## CI
-
-`.github/workflows/ci.yml` runs on every PR and on pushes to `main`. A job runs only when its folder changes; the gitleaks history scan runs every time. `ci-ok` is the one job branch protection needs to require. No repository secrets are used.
-
-Optional local hooks (ruff, gitleaks, dart format, a block on `.env`, keystore and service-account files):
-
-```powershell
-pip install pre-commit
-pre-commit install
-```
-
-## More
-
-- [CONTRIBUTING.md](CONTRIBUTING.md): branches, commits, tests.
-- [SECURITY.md](SECURITY.md): reporting a vulnerability, and what data goes where.
+More: [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md)
