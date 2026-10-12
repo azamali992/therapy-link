@@ -1,6 +1,6 @@
 # Pinned to the multi-arch index digest so a rebuild gets the same base; the tag stays for
 # readability. A Dependabot docker entry for /api keeps the digest current.
-FROM python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+FROM python:3.14-slim@sha256:a2b82f3c48559aa0a8446d9af49826b6e2b2016f4cd2afabfe6013ec53729170
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PORT=7860 WEB_CONCURRENCY=1
 WORKDIR /srv
