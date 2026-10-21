@@ -1,0 +1,14 @@
+{
+  "model_name": "v1-crisis-placeholder",
+  "placeholder": true,
+  "note": "PLACEHOLDER. An earlier crisis classifier with a different label set, wired in only so the API runs today. Its labels are mapped onto the Guardian taxonomy where they overlap and dropped elsewhere. Nothing it returns has been measured against the coverage card. Replace with a Guardian v2 model directory.",
+  "max_len": 128,
+  "pad_id": 1,
+  "pad_token": "<pad>",
+  "labels": ["none", "suicidal", "self_harm", "abuse", "child", "sexual_violence", "harm_to_others", "medical"],
+  "label_map": {"suicidal": "self_harm", "self_harm": "self_harm", "harm_to_others": "violence_threats"},
+  "thresholds": {
+    "strict": {"default": {"violence_threats": 0.5, "harassment": 0.5, "hate_group": 0.5, "self_harm": 0.5, "sexual": 0.5, "needs_caution": 0.5}},
+    "loose": {"default": {"violence_threats": 0.6, "harassment": 0.6, "hate_group": 0.6, "self_harm": 0.6, "sexual": 0.6, "needs_caution": 1.1}}
+  }
+}

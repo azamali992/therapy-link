@@ -1,0 +1,48 @@
+name: guardian-gate
+
+# The release gate in its first form. Fails when the evaluation-set exclusion check fails, when the unit
+# tests fail, or when any form's catch rate on the fixture drops more than 5 points against the last
+# tagged release (guardian/tests/fixtures/gate_baseline.json). The fixture backend reads predictions from
+# a file so the gate needs no model download; a real model directory replaces it by changing GATE_BACKEND.
+
+on:
+  push:
+    paths: ["guardian/**", ".github/workflows/guardian-gate.yml"]
+  pull_request:
+    paths: ["guardian/**"]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    env:
+      GATE_BACKEND: fixture:tests/fixtures/gate_predictions.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        working-directory: guardian
+        run: |
+          python -m pip install -q -e ".[server,dev]" httpx
+      - name: Evaluation-set exclusion check on every committed data file
+        working-directory: guardian
+        run: |
+          python -I data/exclusion.py tests/fixtures/gate.jsonl
+          for f in data/build/*.jsonl; do [ -e "$f" ] && python -I data/exclusion.py "$f"; done; true
+      - name: Unit tests
+        working-directory: guardian
+        run: python -m pytest -q
+      - name: Eval harness on the fixture
+        working-directory: guardian
+        run: |
+          python -m urduguard.eval.harness --backend "$GATE_BACKEND" --data tests/fixtures/gate.jsonl --out /tmp/gate-run --resamples 500
+      - name: Gate against the last tagged release
+        working-directory: guardian
+        run: python -m urduguard.eval.gate --report /tmp/gate-run/report.json --baseline tests/fixtures/gate_baseline.json --ignore-verdicts
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate-report
+          path: /tmp/gate-run/report.md

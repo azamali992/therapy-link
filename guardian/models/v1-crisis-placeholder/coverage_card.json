@@ -1,0 +1,24 @@
+{
+  "taxonomy_version": "urduguard-2.0",
+  "model_name": "v1-crisis-placeholder",
+  "model_hash": null,
+  "placeholder": true,
+  "date": "2026-10-21",
+  "forms_tested": [],
+  "forms": {},
+  "thresholds": {"strict": {}, "loose": {}},
+  "gate": {
+    "R1": {"status": "not_measurable", "measured": null, "limit": 10},
+    "R2": {"status": "not_measurable", "measured": null, "limit": 70},
+    "R3": {"status": "not_measurable", "measured": null, "limit": 5},
+    "R4": {"status": "not_applicable", "measured": null, "limit": 5},
+    "R5": {"status": "cleared", "measured": true, "limit": true}
+  },
+  "form_detector": {"accuracy": null, "confusion": null},
+  "signed_off_by": [],
+  "eval_set": null,
+  "not_tested": [
+    "Everything. This is a placeholder with a different label set; no catch rate or false-alarm rate has been measured for any form.",
+    "harassment, hate_group, sexual and needs_caution are never raised by this model because the source model has no such labels."
+  ]
+}
