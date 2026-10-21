@@ -22,6 +22,10 @@ def read(path: Path) -> list[dict]:
 
 def smoke_subset(rows: list[dict], n: int, seed: int = 13) -> list[dict]:
     """About n rows, spread evenly over (form, first label) cells so every label and form is present."""
+    if n <= 0:  # every row, shuffled
+        rows = list(rows)
+        random.Random(seed).shuffle(rows)
+        return rows
     cells: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for r in rows:
         cells[(r["form"], r["labels"][0])].append(r)

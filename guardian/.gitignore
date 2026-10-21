@@ -3,4 +3,8 @@ __pycache__/
 .pytest_cache/
 build/
 raw/
-runs/
+runs/**/model/
+runs/**/*.onnx
+runs/**/*.safetensors
+runs/**/*.bin
+*.egg-info/

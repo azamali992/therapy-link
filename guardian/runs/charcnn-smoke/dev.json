@@ -1,0 +1,60 @@
+{
+ "per_form": {
+  "en": {
+   "n_protective": 90,
+   "catch_rate": 0.26666666666666666,
+   "n_benign": 28,
+   "false_alarm_rate": 0.03571428571428571
+  },
+  "roman_ur": {
+   "n_protective": 89,
+   "catch_rate": 0.2247191011235955,
+   "n_benign": 28,
+   "false_alarm_rate": 0.10714285714285714
+  },
+  "ur": {
+   "n_protective": 88,
+   "catch_rate": 0.26136363636363635,
+   "n_benign": 28,
+   "false_alarm_rate": 0.17857142857142858
+  }
+ },
+ "per_label": {
+  "violence_threats": {
+   "n": 94,
+   "precision": 0.5,
+   "recall": 0.011,
+   "f1": 0.021
+  },
+  "harassment": {
+   "n": 117,
+   "precision": 0.6,
+   "recall": 0.128,
+   "f1": 0.211
+  },
+  "hate_group": {
+   "n": 103,
+   "precision": 0.703,
+   "recall": 0.437,
+   "f1": 0.539
+  },
+  "self_harm": {
+   "n": 16,
+   "precision": 0.6,
+   "recall": 0.188,
+   "f1": 0.286
+  },
+  "sexual": {
+   "n": 91,
+   "precision": 0.824,
+   "recall": 0.154,
+   "f1": 0.259
+  },
+  "needs_caution": {
+   "n": 105,
+   "precision": 0.714,
+   "recall": 0.048,
+   "f1": 0.089
+  }
+ }
+}

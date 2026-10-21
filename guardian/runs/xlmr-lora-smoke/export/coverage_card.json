@@ -1,0 +1,61 @@
+{
+  "taxonomy_version": "urduguard-2.0",
+  "model_name": "xlmr-lora-smoke",
+  "model_hash": "sha256:85aafd37896beac568d5d8e72daa3a3482b85c4fd5d68701c3343fa485ee7143",
+  "placeholder": true,
+  "date": "2026-10-21",
+  "forms_tested": [],
+  "forms": {},
+  "thresholds": {
+    "strict": {
+      "default": {
+        "violence_threats": 0.5,
+        "harassment": 0.5,
+        "hate_group": 0.5,
+        "self_harm": 0.5,
+        "sexual": 0.5,
+        "needs_caution": 0.5
+      }
+    },
+    "loose": {
+      "default": {
+        "violence_threats": 0.5,
+        "harassment": 0.5,
+        "hate_group": 0.5,
+        "self_harm": 0.5,
+        "sexual": 0.5,
+        "needs_caution": 1.1
+      }
+    }
+  },
+  "gate": {
+    "R1": {
+      "status": "not_measurable",
+      "measured": null
+    },
+    "R2": {
+      "status": "not_measurable",
+      "measured": null
+    },
+    "R3": {
+      "status": "not_measurable",
+      "measured": null
+    },
+    "R4": {
+      "status": "not_applicable"
+    },
+    "R5": {
+      "status": "cleared",
+      "measured": true
+    }
+  },
+  "form_detector": {
+    "accuracy": null,
+    "confusion": null
+  },
+  "signed_off_by": [],
+  "eval_set": null,
+  "not_tested": [
+    "No evaluation has been run on this export yet. Run urduguard eval and fill this card before any release."
+  ]
+}

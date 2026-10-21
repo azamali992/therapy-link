@@ -1,0 +1,14 @@
+{
+ "base": "char-cnn",
+ "rows": 1891,
+ "dev_rows": 519,
+ "epochs": 8,
+ "batch": 32,
+ "lr": 0.001,
+ "max_len_chars": 512,
+ "vocab": 485,
+ "params": 282182,
+ "train_seconds": 10,
+ "final_loss": 0.2760357204079628,
+ "device": "cuda"
+}

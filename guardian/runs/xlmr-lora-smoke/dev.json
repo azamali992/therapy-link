@@ -1,0 +1,60 @@
+{
+ "per_form": {
+  "en": {
+   "n_protective": 90,
+   "catch_rate": 0.0,
+   "n_benign": 28,
+   "false_alarm_rate": 0.0
+  },
+  "roman_ur": {
+   "n_protective": 89,
+   "catch_rate": 0.0,
+   "n_benign": 28,
+   "false_alarm_rate": 0.0
+  },
+  "ur": {
+   "n_protective": 88,
+   "catch_rate": 0.0,
+   "n_benign": 28,
+   "false_alarm_rate": 0.0
+  }
+ },
+ "per_label": {
+  "violence_threats": {
+   "n": 94,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  "harassment": {
+   "n": 117,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  "hate_group": {
+   "n": 103,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  "self_harm": {
+   "n": 16,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  "sexual": {
+   "n": 91,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  },
+  "needs_caution": {
+   "n": 105,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0
+  }
+ }
+}

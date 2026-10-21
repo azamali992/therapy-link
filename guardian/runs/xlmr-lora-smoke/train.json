@@ -1,0 +1,16 @@
+{
+ "base": "FacebookAI/xlm-roberta-base",
+ "lora": true,
+ "lora_r": 8,
+ "rows": 1891,
+ "dev_rows": 519,
+ "steps": 119,
+ "batch": 16,
+ "lr": 0.0002,
+ "max_len": 128,
+ "trainable_params": 1922310,
+ "train_seconds": 30,
+ "final_loss": 0.4783934700489044,
+ "device": "cuda",
+ "gpu_peak_mb": 2439
+}
