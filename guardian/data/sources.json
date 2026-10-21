@@ -1,0 +1,20 @@
+{
+  "aegis2": {
+    "name": "Nemotron Content Safety Dataset V2 (Aegis 2.0)",
+    "hf": "nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+    "licence": "CC BY 4.0",
+    "licence_url": "https://huggingface.co/datasets/nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+    "citation": "Ghosh et al., AEGIS2.0, NAACL 2025",
+    "files": ["train.json", "validation.json", "test.json", "refusals_train.json", "refusals_validation.json"],
+    "verdict": "train (test split is EVAL ONLY and hashed by exclusion.py)"
+  },
+  "indicguard": {
+    "name": "IndicGuard (Urdu and English splits only)",
+    "hf": "l3cube-pune/IndicGuard",
+    "licence": "CC BY 4.0",
+    "licence_url": "https://huggingface.co/datasets/l3cube-pune/IndicGuard",
+    "citation": "L3Cube-Pune, IndicGuard, arXiv 2606.22841",
+    "files": ["Urdu/train.json", "Urdu/valid.json", "Urdu/test.json", "English/train.json", "English/valid.json", "English/test.json"],
+    "verdict": "train (Urdu/test.json and English/test.json are EVAL ONLY; Google-translated Urdu)"
+  }
+}

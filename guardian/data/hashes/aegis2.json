@@ -1,0 +1,27 @@
+{
+  "hf": "nvidia/Aegis-AI-Content-Safety-Dataset-2.0",
+  "licence": "CC BY 4.0",
+  "downloaded": "2026-10-21",
+  "files": {
+    "train.json": {
+      "sha256": "154fba82c71d9fa73abd2ca5588a198e693ddc816c83444df180a22f613e02f6",
+      "bytes": 22705956
+    },
+    "validation.json": {
+      "sha256": "a97200e226ad4f6ba6a639982f817f675909bc74513859df3e8fc9a92951dfcd",
+      "bytes": 1137821
+    },
+    "test.json": {
+      "sha256": "b0a6d602260524866053cb34105194f074f2c2906e3691b68d43b9e6e9318f35",
+      "bytes": 1731373
+    },
+    "refusals_train.json": {
+      "sha256": "ff948d3696c9da94cf2523f5d4ae7f16cad7b3c0fd3cb46a331dad0ed717fbe2",
+      "bytes": 2758729
+    },
+    "refusals_validation.json": {
+      "sha256": "aba81546da0108bc931ae7fb7662b687b42b0bb3e734cde34fbddfbe33cadfcf",
+      "bytes": 109404
+    }
+  }
+}

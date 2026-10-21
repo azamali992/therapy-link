@@ -1,0 +1,31 @@
+{
+  "hf": "l3cube-pune/IndicGuard",
+  "licence": "CC BY 4.0",
+  "downloaded": "2026-10-21",
+  "files": {
+    "Urdu/train.json": {
+      "sha256": "60b84267459e80b3428aa701e0db2a761884173637406efde6bf3954d63f1875",
+      "bytes": 70585120
+    },
+    "Urdu/valid.json": {
+      "sha256": "ad469c5869e5dae42e86c361ea7c43e5f258c46ce96e8faf79e0686f3fba1d11",
+      "bytes": 4744719
+    },
+    "Urdu/test.json": {
+      "sha256": "6eb1387792b274e13b91cbaf8d640316984631f3cb89ddadf21a9449b6704d43",
+      "bytes": 5635465
+    },
+    "English/train.json": {
+      "sha256": "bfc94016cff8774e569d05329e668038f30c438f737399e73844114518f96bbd",
+      "bytes": 48007343
+    },
+    "English/valid.json": {
+      "sha256": "d1c7aa2037aac907821b88450e3e9373612bbb98d1b828d4bd24eb9de935f282",
+      "bytes": 3165336
+    },
+    "English/test.json": {
+      "sha256": "593636cd4804dfbebc1e79c4c68303b79b7496f03f434268e5ab0f144b49a12f",
+      "bytes": 3762217
+    }
+  }
+}

@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "urduguard"
+version = "0.1.0a0"
+description = "A harm classifier for chatbot input in English, Roman Urdu and Urdu script, with a per-form coverage card."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "numpy>=1.24",
+    "onnxruntime>=1.17",
+    "tokenizers>=0.15",
+]
+
+[project.optional-dependencies]
+server = ["fastapi>=0.110", "uvicorn>=0.27", "pydantic>=2"]
+train = ["torch>=2.2", "transformers>=4.40", "datasets>=2.18", "peft>=0.10", "scikit-learn", "onnx"]
+eval = ["torch>=2.2", "transformers>=4.40", "httpx"]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+urduguard = "urduguard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
